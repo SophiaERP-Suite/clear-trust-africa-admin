@@ -1750,7 +1750,7 @@ function AdminDashboard() {
                   <div className="w-full">
                     <div className="flex justify-between items-center -mb-2">
                       <h6 className="mb-0 dark:text-white">
-                        School Dashboard
+                        Princeton Schools
                       </h6>
                       <div
                         className="flex items-center"
@@ -1818,7 +1818,7 @@ function AdminDashboard() {
                   <div className="w-full">
                     <div className="flex justify-between items-center -mb-2">
                       <h6 className="mb-0 dark:text-white">
-                        Fashion Theme
+                        Little Nest Nurseries
                       </h6>
                       <div
                         className="flex items-center"
@@ -1878,7 +1878,7 @@ function AdminDashboard() {
                       </small>
                     </div>
                     <small className="-mt-1 text-secondary-600 dark:text-white">
-                      Due in 3 Days
+                      Due in 6 Days
                     </small>
                   </div>
                 </div>
@@ -1886,7 +1886,7 @@ function AdminDashboard() {
                   <div className="w-full">
                     <div className="flex justify-between items-center -mb-2">
                       <h6 className="mb-0 dark:text-white">
-                        Sidebar Patterns
+                        Little Stars
                       </h6>
                       <div
                         className="flex items-center"
@@ -1946,7 +1946,7 @@ function AdminDashboard() {
                       </small>
                     </div>
                     <small className="-mt-1 text-secondary-600 dark:text-white">
-                      Due in 3 Days
+                      Due in 2 Days
                     </small>
                   </div>
                 </div>
@@ -1954,7 +1954,7 @@ function AdminDashboard() {
                   <div className="w-full">
                     <div className="flex justify-between items-center -mb-2">
                       <h6 className="mb-0 dark:text-white">
-                        Menu Bar Update
+                        Ocean Hearts
                       </h6>
                       <div
                         className="flex items-center"
@@ -2010,18 +2010,18 @@ function AdminDashboard() {
                         <div className="w-20 text-xs leading-none text-center text-white bg-secondary-400 rounded-full"></div>
                       </div>
                       <small className="ms-2 text-secondary-600 dark:text-white mr-2 ml-2">
-                        35% completed
+                        5% completed
                       </small>
                     </div>
                     <small className="-mt-1 text-secondary-600 dark:text-white">
-                      Due in 3 Days
+                      Due in 12 Days
                     </small>
                   </div>
                 </div>
                 <div className="flex justify-between  mb-4">
                   <div className="w-full">
                     <div className="flex justify-between items-center -mb-2">
-                      <h6 className="mb-0 dark:text-white">Blog Theme</h6>
+                      <h6 className="mb-0 dark:text-white">Princeton Schools</h6>
                       <div
                         className="flex items-center"
                         x-data="{ open: false }"
