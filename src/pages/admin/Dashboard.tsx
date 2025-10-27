@@ -16,6 +16,10 @@ import "../../assets2/js/slider-tabs.js";
 import "../../assets2/js/sweet-alert.js";
 import "../../assets2/js/swiper-slider.js";
 import alpha_global from "../../assets2/img/alpha_global.png";
+import imperial_gate from "../../assets2/img/imperial_gate.jpg";
+import princeton from "../../assets2/img/princeton.png";
+import little_nest from "../../assets2/img/little_nest.png";
+import binta from "../../assets2/img/binta.jpeg"
 
 function AdminDashboard() {
   return (
@@ -1454,49 +1458,7 @@ function AdminDashboard() {
           <div className="relative flex flex-col mb-8 bg-white rounded shadow-lg dark:bg-dark-card grid grid-cols-1 lg:col-span-2">
             <div className="flex flex-col overflow-hidden bg-white rounded-lg dark:bg-dark-card dark:text-white">
               <div className="relative flex flex-wrap justify-between p-5">
-                <h4 className="mb-0 dark:text-white">Top Employers</h4>
-                <div
-                  className="flex items-center"
-                  x-data="{ open: false }"
-                >
-                  <div className="" x-data="dropdown">
-                    <span className="flex items-center text-base cursor-pointer text-black dark:text-white mr-2">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        x-bind="checkArrow()"
-                        className="w-5 h-7 duraion-500 transition-transform rotate-0"
-                        viewBox="0 0 512 512"
-                        fill="currentColor"
-                      >
-                        <path d="M128 192l128 128 128-128z"></path>
-                      </svg>
-                    </span>
-                    <div
-                      className="absolute z-50 px-3 py-4 ease-in-out duration-300 right-8 rtl:right-[unset] rtl:left-4 text-left bg-white dark:bg-dark-bg rounded shadow-lg dark:text-secondary-600 origin-top-right"
-                      x-bind="dropdownTransition"
-                      style={{ display: "none" }}
-                    >
-                      <a
-                        className="flex justify-between w-full pl-3 pr-7 mr-2 py-1 hover:bg-primary-500/[0.1] hover:text-primary-500 hover:rounded hover:ease-in-out duration-300 text-secondary-600 dark:text-white dark:hover:text-primary-500 group"
-                        href="javascript:void(0);"
-                      >
-                        This Week
-                      </a>
-                      <a
-                        className="flex justify-between w-full pl-3 pr-7 mr-2 py-1 hover:bg-primary-500/[0.1] hover:text-primary-500 hover:rounded hover:ease-in-out duration-300 text-secondary-600 dark:text-white dark:hover:text-primary-500 group"
-                        href="javascript:void(0);"
-                      >
-                        This Month
-                      </a>
-                      <a
-                        className="flex justify-between w-full pl-3 pr-7 mr-2 py-1 hover:bg-primary-500/[0.1] hover:text-primary-500 hover:rounded hover:ease-in-out duration-300 text-secondary-600 dark:text-white dark:hover:text-primary-500 group"
-                        href="javascript:void(0);"
-                      >
-                        This Year
-                      </a>
-                    </div>
-                  </div>
-                </div>
+                <h4 className="mb-0 dark:text-white">Top Employer Requests</h4>
               </div>
               <div className="flex-auto p-6 pt-0">
                 <div className="border dark:border-secondary-800 rounded overflow-hidden">
@@ -1507,10 +1469,10 @@ function AdminDashboard() {
                     <thead>
                       <tr className="bg-secondary-200 dark:bg-dark-bg">
                         <th className="px-6 py-3 text-left rtl:text-right text-secondary-600 whitespace-nowrap font-semibold dark:text-white">
-                          COMPANIES
+                          SCHOOLS
                         </th>
                         <th className="px-6 py-3 text-left rtl:text-right text-secondary-600 whitespace-nowrap font-semibold dark:text-white">
-                          CONTACTS
+                          CHECKS
                         </th>
                         <th className="px-6 py-3 text-left rtl:text-right text-secondary-600 whitespace-nowrap font-semibold dark:text-white">
                           ORDER
@@ -1581,11 +1543,11 @@ function AdminDashboard() {
                           <div className="flex items-center">
                             <img
                               className="w-10 h-10 p-1 mr-3 rtl:mr-0 rtl:ml-3 text-primary-400 bg-primary-500/10 rounded-xl"
-                              src="../assets/images/shapes/05.png"
+                              src={princeton}
                               alt="profile"
                             />
                             <h6 className="font-medium pl-1 mt-2 dark:text-white">
-                              Netflixer Platforms
+                              Priceton Schools
                             </h6>
                           </div>
                         </td>
@@ -1628,11 +1590,11 @@ function AdminDashboard() {
                           <div className="flex items-center">
                             <img
                               className="w-10 h-10 p-1 mr-3 rtl:mr-0 rtl:ml-3 text-primary-400 bg-primary-500/10 rounded-xl"
-                              src="../assets/images/shapes/02.png"
+                              src={little_nest}
                               alt="profile"
                             />
                             <h6 className="font-medium pl-1 mt-2 dark:text-white">
-                              Shopifi Stores
+                              Little Nest Nursery
                             </h6>
                           </div>
                         </td>
@@ -1675,11 +1637,11 @@ function AdminDashboard() {
                           <div className="flex items-center">
                             <img
                               className="w-10 h-10 p-1 mr-3 rtl:mr-0 rtl:ml-3 text-primary-400 bg-primary-500/10 rounded-xl"
-                              src="../assets/images/shapes/05.png"
+                              src={imperial_gate}
                               alt="profile"
                             />
                             <h6 className="font-medium pl-1 mt-2 dark:text-white">
-                              Netflixer Platforms
+                              Imperial Gates Schools
                             </h6>
                           </div>
                         </td>
@@ -1722,11 +1684,11 @@ function AdminDashboard() {
                           <div className="flex items-center">
                             <img
                               className="w-10 h-10 p-1 mr-3 rtl:mr-0 rtl:ml-3 text-primary-400 bg-primary-500/10 rounded-xl"
-                              src="../assets/images/shapes/02.png"
+                              src={binta}
                               alt="profile"
                             />
                             <h6 className="font-medium pl-1 mt-2 dark:text-white">
-                              Shopifi Stores
+                              Binta International
                             </h6>
                           </div>
                         </td>
@@ -1773,50 +1735,7 @@ function AdminDashboard() {
           <div className="relative flex flex-col mb-8 lg:mb-0 bg-white rounded shadow-lg dark:bg-dark-card grid grid-cols-1">
             <div className="flex flex-col overflow-hidden bg-white rounded-lg dark:bg-dark-card dark:text-secondary-600">
               <div className="relative flex flex-wrap justify-between p-5 border-b dark:border-secondary-800">
-                <h4 className="mb-0 dark:text-white">Sales Analysis</h4>
-                <div
-                  className="flex items-center"
-                  x-data="{ open: false }"
-                >
-                  <div className="" x-data="dropdown">
-                    <span className="flex items-center text-base cursor-pointer dark:text-white text-secondary-700">
-                      All Tasks
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        x-bind="checkArrow()"
-                        className="w-5 h-7 duraion-500 transition-transform rotate-0"
-                        viewBox="0 0 512 512"
-                        fill="currentColor"
-                      >
-                        <path d="M128 192l128 128 128-128z"></path>
-                      </svg>
-                    </span>
-                    <div
-                      className="absolute z-50 px-3 py-4 ease-in-out duration-300 right-8 rtl:right-[unset] rtl:left-4 text-left bg-white dark:bg-dark-card rounded shadow-dropdown shadow-lg dark:text-secondary-600 text-secondary-600 origin-top-right"
-                      x-bind="dropdownTransition"
-                      style={{ display: "none" }}
-                    >
-                      <a
-                        className="flex justify-between w-full pl-3 pr-7 mr-2 py-1 text-secondary-600 hover:bg-primary-500/[0.1] hover:text-primary-500 hover:rounded hover:ease-in-out duration-300 group"
-                        href="javascript:void(0);"
-                      >
-                        This Week
-                      </a>
-                      <a
-                        className="flex justify-between w-full pl-3 pr-7 mr-2 py-1 text-secondary-600 hover:bg-primary-500/[0.1] hover:text-primary-500 hover:rounded hover:ease-in-out duration-300 group"
-                        href="javascript:void(0);"
-                      >
-                        This Month
-                      </a>
-                      <a
-                        className="flex justify-between w-full pl-3 pr-7 mr-2 py-1 text-seconary-600 hover:bg-primary-500/[0.1] hover:text-primary-500 hover:rounded hover:ease-in-out duration-300 group"
-                        href="javascript:void(0);"
-                      >
-                        This Year
-                      </a>
-                    </div>
-                  </div>
-                </div>
+                <h4 className="mb-0 dark:text-white">Recent Reports</h4>
               </div>
               <div className="flex-auto p-5"></div>
             </div>
@@ -1824,50 +1743,7 @@ function AdminDashboard() {
           <div className="relative flex flex-col mb-8 lg:mb-0 bg-white rounded shadow-lg dark:bg-dark-card grid grid-cols-1">
             <div className="flex flex-col overflow-hidden bg-white rounded-lg dark:bg-dark-card dark:text-white">
               <div className="relative flex flex-wrap justify-between p-5 border-b dark:border-secondary-800">
-                <h4 className="mb-0 dark:text-white">To-Do List</h4>
-                <div
-                  className="flex items-center"
-                  x-data="{ open: false }"
-                >
-                  <div className="" x-data="dropdown">
-                    <span className="flex items-center text-secondary-700 text-base cursor-pointer">
-                      All Tasks
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        x-bind="checkArrow()"
-                        className="w-5 h-7 duraion-500 transition-transform rotate-0"
-                        viewBox="0 0 512 512"
-                        fill="currentColor"
-                      >
-                        <path d="M128 192l128 128 128-128z"></path>
-                      </svg>
-                    </span>
-                    <div
-                      className="absolute z-50 px-3 py-4 ease-in-out duration-300 right-8 rtl:right-[unset] rtl:left-4 text-left bg-white dark:bg-dark-card rounded shadow-dropdown shadow-lg dark:text-secondary-600 text-secondary-700 origin-top-right"
-                      x-bind="dropdownTransition"
-                      style={{ display: "none" }}
-                    >
-                      <a
-                        className="flex justify-between w-full pl-3 pr-7 mr-2 py-1 text-secondary-700  hover:bg-primary-500/[0.1] hover:text-primary-500 hover:rounded hover:ease-in-out duration-300 group"
-                        href="javascript:void(0);"
-                      >
-                        This Week
-                      </a>
-                      <a
-                        className="flex justify-between w-full pl-3 pr-7 mr-2 py-1 text-secondary-700 hover:bg-primary-500/[0.1] hover:text-primary-500 hover:rounded hover:ease-in-out duration-300 group"
-                        href="javascript:void(0);"
-                      >
-                        This Month
-                      </a>
-                      <a
-                        className="flex justify-between w-full pl-3 pr-7 mr-2 py-1 text-secondary-700 hover:bg-primary-500/[0.1] hover:text-primary-500 hover:rounded hover:ease-in-out duration-300 group"
-                        href="javascript:void(0);"
-                      >
-                        This Year
-                      </a>
-                    </div>
-                  </div>
-                </div>
+                <h4 className="mb-0 dark:text-white">Checks Awaiting Review</h4>
               </div>
               <div className="p-5">
                 <div className="flex justify-between  mb-4">
@@ -2215,28 +2091,14 @@ function AdminDashboard() {
             <div className="flex flex-col overflow-hidden bg-white rounded-lg dark:bg-dark-card dark:text-white">
               <div className="relative flex flex-wrap justify-between p-5 border-b dark:border-secondary-800">
                 <h4 className="mb-0 dark:text-white">
-                  Activity Overview
+                  Ongoing Check Logs
                 </h4>
               </div>
               <div className="flex-auto p-5">
-                <p className="mb-6 text-success-500 dark:text-success-500 LR">
-                  <svg
-                    className="inline-block mr-2 rtl:mr-0 rtl:ml-2"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      fill="#17904b"
-                      d="M13,20H11V8L5.5,13.5L4.08,12.08L12,4.16L19.92,12.08L18.5,13.5L13,8V20Z"
-                    ></path>
-                  </svg>
-                  16% this month
-                </p>
                 <div className="flex">
                   <div className="">
                     <span className="mb-0 text-black dark:text-white mr-3 rtl:ml-3">
-                      07:45
+                      27/10
                     </span>
                   </div>
                   <div className="relative justify-between flex pb-6 items-top">
@@ -2246,7 +2108,7 @@ function AdminDashboard() {
                     </div>
                     <div className="ml-4 rtl:mr-4 LR">
                       <h6 className=" font-medium dark:text-white mb-0">
-                        $2400, Purchased a Wordpress Theme
+                        Completed Check on Olamide, Samuels for Princeton Schools
                       </h6>
                     </div>
                   </div>
@@ -2254,7 +2116,7 @@ function AdminDashboard() {
                 <div className="flex">
                   <div className="">
                     <span className="mb-0 text-black dark:text-white mr-3 rtl:ml-3">
-                      08:50
+                      24/10
                     </span>
                   </div>
                   <div className="relative justify-between flex pb-6 items-top">
@@ -2264,7 +2126,7 @@ function AdminDashboard() {
                     </div>
                     <div className="ml-4 rtl:mr-4 LR">
                       <h6 className=" font-medium dark:text-white mb-0">
-                        New order placed #8744152 of 3D Icons
+                        Received new requests from Princeton Schools
                       </h6>
                     </div>
                   </div>
@@ -2272,7 +2134,7 @@ function AdminDashboard() {
                 <div className="flex">
                   <div className="">
                     <span className="mb-0 text-black dark:text-white mr-3 rtl:ml-3">
-                      10:00
+                      24/10
                     </span>
                   </div>
                   <div className="relative justify-between flex pb-8 items-top">
@@ -2282,7 +2144,7 @@ function AdminDashboard() {
                     </div>
                     <div className="ml-4 rtl:mr-4 LR">
                       <h6 className=" font-medium dark:text-white mb-0">
-                        Affilate Payout
+                        Reviewed employee reports from Binta International
                       </h6>
                     </div>
                   </div>
@@ -2290,7 +2152,7 @@ function AdminDashboard() {
                 <div className="flex">
                   <div className="">
                     <span className="mb-0 text-black dark:text-white mr-3 rtl:ml-3">
-                      13:15
+                      23/10
                     </span>
                   </div>
                   <div className="relative justify-between flex pb-8 items-top">
@@ -2300,7 +2162,7 @@ function AdminDashboard() {
                     </div>
                     <div className="ml-4 rtl:mr-4 LR">
                       <h6 className=" font-medium dark:text-white mb-0">
-                        New user added in Qompac UI
+                        Finalized check on Folarin, Joshua for Alpha Global Schools
                       </h6>
                     </div>
                   </div>
@@ -2308,7 +2170,7 @@ function AdminDashboard() {
                 <div className="flex">
                   <div className="">
                     <span className="mb-0 text-black dark:text-white mr-3 rtl:ml-3">
-                      15:30
+                      20/10
                     </span>
                   </div>
                   <div className="relative justify-between flex pb-8 items-top">
@@ -2318,25 +2180,7 @@ function AdminDashboard() {
                     </div>
                     <div className="ml-4 rtl:mr-4 LR">
                       <h6 className=" font-medium dark:text-white mb-0">
-                        $Product added in Wish List
-                      </h6>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex">
-                  <div className="">
-                    <span className="mb-0 text-black dark:text-white mr-3 rtl:ml-3">
-                      18:40
-                    </span>
-                  </div>
-                  <div className="relative justify-between flex pb-8 items-top">
-                    <div>
-                      <div className="border border-r rtl:border-l rtl:right-3 rtl:left-0 bg-secondary-100 h-3/5 w-px absolute dark:border-secondary-700 left-3 top-5 z-10"></div>
-                      <div className="w-5 h-5  rtl:right-0 bg-white border-2 border-warning-500 dark:bg-dark-card rounded-full z-10"></div>
-                    </div>
-                    <div className="ml-4 rtl:mr-4 LR">
-                      <h6 className=" font-medium dark:text-white mb-0">
-                        New order Placed #87444892 of Dashboard
+                        Acknowledged new reports from Alpha Global Schools
                       </h6>
                     </div>
                   </div>
