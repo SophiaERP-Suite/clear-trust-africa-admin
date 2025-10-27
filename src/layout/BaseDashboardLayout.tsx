@@ -29,13 +29,13 @@ function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
       <DashboardHead />
 
       <div
-        className="scroll-smooth selection:text-white selection:bg-primary-500"
+        className="scroll-smooth selection:text-white selection:bg-primary-500" 
         x-data="settingInit"
       >
         {/* Sidebar */}
-        <aside
+        <aside 
           x-data="sidebar"
-          className="z-50 sidebar shadow-lg sidebar-base sidebar-default"
+          className="z-50 sidebar shadow-lg sidebar-base sidebar-default w-64 bg-gray-800 text-white min-h-screen" 
           data-toggle="main-sidebar"
         >
           <div className="sidebar-header relative flex items-center justify-start mb-3 border-b dark:border-gray-700 z-0">
@@ -90,8 +90,7 @@ function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
         {/* Main Content */}
         <main className="main-content" x-data="{ data: true }">
           <div className="relative">
-            {/* Top Navigation */}
-            <nav className="z-40 bg-white dark:bg-dark-card nav shadow-lg navbar navbar-expand-xl navbar-light iq-navbar py-0">
+            <nav style={{ display: "none" }} className="z-40 bg-white dark:bg-dark-card nav shadow-lg navbar navbar-expand-xl navbar-light iq-navbar py-0">
               <div className="w-full px-7 py-2">
                 <div className="flex justify-between items-center">
                   <div className="breadcrumb-title">
@@ -100,7 +99,6 @@ function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
                     </small>
                   </div>
 
-                  {/* User Profile */}
                   <div className="flex items-center gap-4">
                     <button className="relative text-gray-500 hover:text-primary-500">
                       <svg
@@ -143,13 +141,13 @@ function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
             </nav>
 
             {/* Page Content */}
-            <div className="p-6 lg:p-8 footer-inner mx-auto main-container">
+            <div className="">
               <Outlet />
             </div>
           </div>
 
           {/* Footer */}
-          <footer className="footer w-full text-sm bg-white dark:bg-dark-card p-4">
+          <footer style={{ display: "none" }} className="footer w-full text-sm bg-white dark:bg-dark-card p-4">
             <div className="flex justify-between items-center">
               <ul className="flex gap-4">
                 <li>

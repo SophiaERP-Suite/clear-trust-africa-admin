@@ -19,7 +19,7 @@ import '../../assets2/js/swiper-slider.js';
 function AdminDashboard() {
   return (
     <>
-        <aside
+        <aside style={{ display: "none" }}
             x-data="sidebar"
             x-bind:className="[setting.sidebar_menu_style, setting.sidebar_color, setting.sidebar_type.join(' ')]"
             className="z-50 sidebar shadow-lg sidebar-base sidebar-default shepherd-enabled shepherd-target"
@@ -380,7 +380,6 @@ function AdminDashboard() {
             </div>
         </aside>
 
-        <main  className="main-content " x-data="{ data: true }">
             <div  className="relative">
                 <nav  className="z-40 bg-white dark:bg-dark-card nav shadow-lg navbar navbar-expand-xl navbar-light iq-navbar py-0" x-data="{ selected: null }" x-bind:className="setting.header_navbar">
                     <div className="w-full px-7 py-2">
@@ -2080,7 +2079,6 @@ function AdminDashboard() {
                     </footer>
                 </div>
             </div>
-        </main>
     </>
   )
     
