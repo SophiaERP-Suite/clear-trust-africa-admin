@@ -15,6 +15,7 @@ import "../../assets2/js/libs.min.js";
 import "../../assets2/js/slider-tabs.js";
 import "../../assets2/js/sweet-alert.js";
 import "../../assets2/js/swiper-slider.js";
+import alpha_global from "../../assets2/img/alpha_global.png";
 
 function AdminDashboard() {
   return (
@@ -1525,10 +1526,10 @@ function AdminDashboard() {
                           <div className="flex items-center">
                             <img
                               className="w-10 h-10 p-1 mr-3 rtl:mr-0 rtl:ml-3 text-primary-400 bg-primary-500/10 rounded-xl"
-                              src="../assets/images/shapes/01.png"
+                              src={alpha_global}
                               alt="profile"
                             />
-                            <h6 className="font-medium pl-1 mt-2 dark:text-white">
+                            <h6 className="text-base pl-1 mt-2 dark:text-white">
                               Alpha Global Schools
                             </h6>
                           </div>
