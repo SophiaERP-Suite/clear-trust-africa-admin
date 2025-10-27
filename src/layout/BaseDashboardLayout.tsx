@@ -1,11 +1,11 @@
 // src/layouts/BaseDashboardLayout.tsx
 import { Outlet, NavLink } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, type JSX } from "react";
 import DashboardHead from "../components/DashboardHead";
 
 interface NavItem {
   path: string;
-  icon: string;
+  icon?: JSX.Element;
   label: string;
 }
 
@@ -35,7 +35,7 @@ function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
         {/* Sidebar */}
         <aside
           x-data="sidebar"
-          className="z-50 sidebar shadow-lg sidebar-base sidebar-default w-64 bg-gray-800 text-white min-h-screen"
+          className="z-50 sidebar shadow-lg sidebar-base sidebar-default w-60 bg-gray-800 text-white min-h-screen"
           data-toggle="main-sidebar"
         >
           <div className="sidebar-header relative flex items-center justify-start mb-3 border-b dark:border-gray-700 z-0">
@@ -66,7 +66,14 @@ function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
           </div>
 
           <div className="sidebar-body data-scrollbar">
+             <div className="nav-item static-item">
+                <p className="nav-link static-item disabled">
+                  <span className="default-icon">Admin</span>
+                  <span className="mini-icon">-</span>
+                </p>
+              </div>
             <ul className="sidebar-main-menu">
+             
               {navItems.map((item) => (
                 <li key={item.path} className="nav-item">
                   <NavLink
@@ -75,10 +82,7 @@ function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
                       `nav-link ${isActive ? "active" : ""}`
                     }
                   >
-                    <i
-                      className="icon"
-                      dangerouslySetInnerHTML={{ __html: item.icon }}
-                    />
+                    {item.icon}
                     <span className="item-name">{item.label}</span>
                   </NavLink>
                 </li>
@@ -187,15 +191,15 @@ function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
 
                     <div className="breadcrumb-title xl:flex sm:hidden justify-center items-center lg:flex ml-2">
                       <small className="capitalize hidden md:block mr-3 pr-3 border-r border-secondary-300 dark:border-secondary-700 dark:text-white">
-                        Home
+                        Admin
                       </small>
                     </div>
 
                     <div className="offcanvas-body">
                       <ul className="iq-nav-menu header-menu w-full lg:w-auto list-unstyled ml-2 rtl:mr-2 rtl:ml-0">
-                        <li className="nav-item active">
+                        <li className="nav-item">
                           <a
-                            className="menu-arrow justify-start text-secondary-600"
+                            className="nav-link menu-arrow justify-start text-secondary-600"
                             href="javascript:void(0)"
                             aria-controls="homeData"
                           >
@@ -1313,6 +1317,7 @@ function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
                         <li
                           className="flex items-center pl-2"
                           x-data="{ open: false }"
+                          style={{ display: "none" }}
                         >
                           <a
                             href="#"
@@ -1423,7 +1428,7 @@ function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
                           </div>
                         </li>
                         <li
-                          className="flex items-center pl-2"
+                          className="flex items-center pl-2 border-r"
                           x-data="{ open: false }"
                         >
                           <a
@@ -1577,6 +1582,7 @@ function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
                         <li
                           className="flex items-center pl-2"
                           x-data="{ open: false }"
+                          style={{ display: "none" }}
                         >
                           <a
                             href="#"
@@ -1802,6 +1808,7 @@ function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
                         <li
                           className="nav-item iq-full-screen sm:hidden xl:block border-r"
                           id="fullscreen-item"
+                          style={{ display: "none" }}
                         >
                           <a
                             className="flex items-center p-2 hover:text-primary-500 focusa text-secondary-600"
@@ -1896,9 +1903,10 @@ function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
                             aria-expanded="false"
                           >
                             <img
-                              src="..//assets/images/avatars/01.png"
+                              src="/user.jpg"
                               alt="User-Profile"
                               className="h-12 w-12 rounded-full truncate"
+                              style={{ objectFit: "cover" }}
                               loading="lazy"
                             />
                             <div className="caption ml-3 d-none d-md-block ">
