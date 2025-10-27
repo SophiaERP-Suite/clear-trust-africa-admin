@@ -25,13 +25,7 @@ function AppRoutes() {
         <Route path="communication" element={<div>Settings Page</div>} />
         <Route path="control-panel" element={<div>Settings Page</div>} />
       </Route>
-
-      {/* Dashboard Routes - Add these later */}
-      {/* <Route path="/admin/*" element={<AdminRoutes />} /> */}
-      {/* <Route path="/client/*" element={<ClientRoutes />} /> */}
-      {/* <Route path="/vendor/*" element={<VendorRoutes />} /> */}
-
-      {/* Catch all - redirect to home */}
+      
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
