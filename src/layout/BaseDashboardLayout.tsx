@@ -1918,7 +1918,7 @@ function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
                                 Austin Robertson
                               </h6>
                               <p className="mb-0 caption-sub-title focusa active:text-primary-500  focus:text-primary-500 hover:text-primary-500 text-black mr-4">
-                                Marketing Administrator
+                                DBS Admin
                               </p>
                             </div>
                           </a>
