@@ -37,5 +37,18 @@
   },
   "overrides": {
     "vite": "npm:rolldown-vite@7.1.14"
-  }
+  },
+  "description": "This is a project criminal record investigation developed by SophiaERP",
+  "main": "eslint.config.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SophiaERP-Suite/alpha-check.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SophiaERP-Suite/alpha-check/issues"
+  },
+  "homepage": "https://github.com/SophiaERP-Suite/alpha-check#readme"
 }
