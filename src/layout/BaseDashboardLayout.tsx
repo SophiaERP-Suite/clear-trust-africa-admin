@@ -2,6 +2,8 @@
 import { Outlet, NavLink } from "react-router-dom";
 import { useEffect, type JSX } from "react";
 import DashboardHead from "../components/DashboardHead";
+import { Bell, Search } from 'lucide-react';
+import tcrn_image from "../assets2/img/TRCN.jpg"
 
 interface NavItem {
   path: string;
@@ -44,7 +46,7 @@ function BaseDashboardLayout({ navItems }: BaseDashboardLayoutProps) {
               href="/admin/dashboard"
               className="flex px-5 py-4 mr-4 rtl:ml-4 rtl:mr-0 text-xl whitespace-nowrap"
             >
-              <span className="sidebar-logo ml-2" style={{ width: "110px"}}>
+              <span className="sidebar-logo ml-2" style={{ width: "170px"}}>
                 <img src="/clear-logo.png" alt="logo" />
               </span>
             </a>
@@ -63,7 +65,7 @@ function BaseDashboardLayout({ navItems }: BaseDashboardLayoutProps) {
                   <NavLink
                     to={item.path}
                     className={({ isActive }) =>
-                      `nav-link ${isActive ? "active" : ""}`
+                      `nav-link ${isActive ? "active" : ""} text-black`
                     }
                   >
                     {item.icon}
@@ -122,68 +124,20 @@ function BaseDashboardLayout({ navItems }: BaseDashboardLayoutProps) {
                     </button>
                   </div>
 
-                  <div className="flex">
-                    <div className="flex items-center xl:hidden gap-2 display-none">
-                      <div
-                        className="btn btn-primary btn-icon btn-sm rounded-full"
-                        data-toggle="sidebar"
-                        x-on:click="sidebarMini"
-                        data-active="true"
-                      >
-                        <span className="btn-inner">
-                          <svg width="20px" height="20px" viewBox="0 0 24 24">
-                            <path
-                              fill="currentColor"
-                              d="M4,11V13H16L10.5,18.5L11.92,19.92L19.84,12L11.92,4.08L10.5,5.5L16,11H4Z"
-                            ></path>
-                          </svg>
-                        </span>
-                      </div>
-                      <a
-                        href="../dashboard/index.html"
-                        className="flex items-center whitespace-nowrap gap-4"
-                      >
-                        {/* Logo start */}
-                        <svg
-                          width="30"
-                          className="text-primary-500 dark:text-primary-500 brand-logo"
-                          viewBox="0 0 30 30"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            clipRule="evenodd"
-                            d="M7.25333 2H22.0444L29.7244 15.2103L22.0444 28.1333H7.25333L0 15.2103L7.25333 2ZM11.2356 9.32316H18.0622L21.3334 15.2103L18.0622 20.9539H11.2356L8.10669 15.2103L11.2356 9.32316Z"
-                            fill="currentColor"
-                          ></path>
-                          <path
-                            d="M23.751 30L13.2266 15.2103H21.4755L31.9999 30H23.751Z"
-                            fill="#3FF0B9"
-                          ></path>
-                        </svg>
-                        {/* logo End */}
-                        <h4
-                          className="mb-0"
-                          data-setting="app_name"
-                          x-text="setting.app_name"
-                        >
-                          Qompac UI
-                        </h4>
-                      </a>
+                  <div className="flex h-16">
+
+
+                    <div className="breadcrumb-title xl:flex sm:hidden justify-center items-center lg:flex ml-2 mt-3">
+                      <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+                        ADMIN PORTAL
+                      </h1>
                     </div>
 
-                    <div className="breadcrumb-title xl:flex sm:hidden justify-center items-center lg:flex ml-2">
-                      <small className="capitalize hidden md:block mr-3 pr-3 border-r border-secondary-300 dark:border-secondary-700 dark:text-white">
-                        Admin
-                      </small>
-                    </div>
-
-                    <div className="offcanvas-body">
+                    <div className="hidden offcanvas-body">
                       <ul className="iq-nav-menu header-menu w-full lg:w-auto list-unstyled ml-2 rtl:mr-2 rtl:ml-0">
-                        <li className="nav-item">
+                        <li className="nav-item hidden">
                           <a
-                            className="nav-link menu-arrow justify-start text-secondary-600"
+                            className="nav-link menu-arrow justify-start text-secondary-600 text-black"
                             href="javascript:void(0)"
                             aria-controls="homeData"
                           >
@@ -199,7 +153,7 @@ function BaseDashboardLayout({ navItems }: BaseDashboardLayoutProps) {
                                 fill="currentColor"
                               ></path>
                             </svg>
-                            <span className="nav-text ml-2 rtl:ml-0 rtl:mr-2">
+                            <span className="nav-text ml-2 rtl:ml-0 rtl:mr-2 text-black">
                               Home
                             </span>
                           </a>
@@ -1158,28 +1112,7 @@ function BaseDashboardLayout({ navItems }: BaseDashboardLayoutProps) {
                             href="#"
                             className="block p-2 group hover:text-primary-500 focusa text-secondary-600"
                           >
-                            <svg
-                              width="24"
-                              height="24"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <rect
-                                opacity="0.5"
-                                x="17.0365"
-                                y="15.1223"
-                                width="8.15546"
-                                height="2"
-                                rx="1"
-                                transform="rotate(45 17.0365 15.1223)"
-                                fill="currentColor"
-                              ></rect>
-                              <path
-                                d="M11 19C6.55556 19 3 15.4444 3 11C3 6.55556 6.55556 3 11 3C15.4444 3 19 6.55556 19 11C19 15.4444 15.4444 19 11 19ZM11 5C7.53333 5 5 7.53333 5 11C5 14.4667 7.53333 17 11 17C14.4667 17 17 14.4667 17 11C17 7.53333 14.4667 5 11 5Z"
-                                fill="currentColor"
-                              ></path>
-                            </svg>
+                            <Search className="text-black" size={22} />
                           </a>
                           <div
                             x-show="open"
@@ -1419,23 +1352,7 @@ function BaseDashboardLayout({ navItems }: BaseDashboardLayoutProps) {
                             href="#"
                             className="block p-2 group hover:text-primary-500 focusa text-secondary-600"
                           >
-                            <svg
-                              className="icon-24"
-                              width="24"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                d="M19.7695 11.6453C19.039 10.7923 18.7071 10.0531 18.7071 8.79716V8.37013C18.7071 6.73354 18.3304 5.67907 17.5115 4.62459C16.2493 2.98699 14.1244 2 12.0442 2H11.9558C9.91935 2 7.86106 2.94167 6.577 4.5128C5.71333 5.58842 5.29293 6.68822 5.29293 8.37013V8.79716C5.29293 10.0531 4.98284 10.7923 4.23049 11.6453C3.67691 12.2738 3.5 13.0815 3.5 13.9557C3.5 14.8309 3.78723 15.6598 4.36367 16.3336C5.11602 17.1413 6.17846 17.6569 7.26375 17.7466C8.83505 17.9258 10.4063 17.9933 12.0005 17.9933C13.5937 17.9933 15.165 17.8805 16.7372 17.7466C17.8215 17.6569 18.884 17.1413 19.6363 16.3336C20.2118 15.6598 20.5 14.8309 20.5 13.9557C20.5 13.0815 20.3231 12.2738 19.7695 11.6453Z"
-                                fill="currentColor"
-                              ></path>
-                              <path
-                                opacity="0.4"
-                                d="M14.0088 19.2283C13.5088 19.1215 10.4627 19.1215 9.96275 19.2283C9.53539 19.327 9.07324 19.5566 9.07324 20.0602C9.09809 20.5406 9.37935 20.9646 9.76895 21.2335L9.76795 21.2345C10.2718 21.6273 10.8632 21.877 11.4824 21.9667C11.8123 22.012 12.1482 22.01 12.4901 21.9667C13.1083 21.877 13.6997 21.6273 14.2036 21.2345L14.2026 21.2335C14.5922 20.9646 14.8734 20.5406 14.8983 20.0602C14.8983 19.5566 14.4361 19.327 14.0088 19.2283Z"
-                                fill="currentColor"
-                              ></path>
-                            </svg>
+                            <Bell className="text-black" size={22} />
                           </a>
                           <div
                             x-show="open"
@@ -1801,84 +1718,12 @@ function BaseDashboardLayout({ navItems }: BaseDashboardLayoutProps) {
                           >
                             <div className="w-8 rounded-full">
                               <span className="btn-inner">
-                                <svg
-                                  className="normal-screen icon-32"
-                                  width="32"
-                                  height="24"
-                                  viewBox="0 0 24 24"
-                                  fill="none"
-                                  xmlns="http://www.w3.org/2000/svg"
-                                >
-                                  <path
-                                    d="M18.5528 5.99656L13.8595 10.8961"
-                                    stroke="currentColor"
-                                    stroke-width="1.5"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                  ></path>
-                                  <path
-                                    d="M14.8016 5.97618L18.5524 5.99629L18.5176 9.96906"
-                                    stroke="currentColor"
-                                    stroke-width="1.5"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                  ></path>
-                                  <path
-                                    d="M5.8574 18.896L10.5507 13.9964"
-                                    stroke="currentColor"
-                                    stroke-width="1.5"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                  ></path>
-                                  <path
-                                    d="M9.60852 18.9164L5.85775 18.8963L5.89258 14.9235"
-                                    stroke="currentColor"
-                                    stroke-width="1.5"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                  ></path>
-                                </svg>
-                                <svg
-                                  className="full-normal-screen icon-24 hidden"
-                                  width="32"
-                                  height="24"
-                                  viewBox="0 0 24 24"
-                                  fill="none"
-                                  xmlns="http://www.w3.org/2000/svg"
-                                >
-                                  <path
-                                    d="M13.7542 10.1932L18.1867 5.79319"
-                                    stroke="white"
-                                    stroke-width="1.5"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                  ></path>
-                                  <path
-                                    d="M17.2976 10.212L13.7547 10.1934L13.7871 6.62518"
-                                    stroke="currentColor"
-                                    stroke-width="1.5"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                  ></path>
-                                  <path
-                                    d="M10.4224 13.5726L5.82149 18.1398"
-                                    stroke="white"
-                                    stroke-width="1.5"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                  ></path>
-                                  <path
-                                    d="M6.74391 13.5535L10.4209 13.5723L10.3867 17.2755"
-                                    stroke="currentColor"
-                                    stroke-width="1.5"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                  ></path>
-                                </svg>
+                                <Search className="text-black" size={22} />
                               </span>
                             </div>
                           </a>
                         </li>
+                        
                         <li x-data="{ open: false }" id="itemdropdown1">
                           <a
                             className="py-0 flex items-center p-2 ml-2 hover:text-primary-500 active:text-primary-500 focus:text-primary-500 focus"
@@ -1887,7 +1732,7 @@ function BaseDashboardLayout({ navItems }: BaseDashboardLayoutProps) {
                             aria-expanded="false"
                           >
                             <img
-                              src="/user.jpg"
+                              src={tcrn_image}
                               alt="User-Profile"
                               className="h-12 w-12 rounded-full truncate"
                               style={{ objectFit: "cover" }}
