@@ -15,56 +15,56 @@ import {
 function AdminLayout() {
   const navItems = [
     {
-      path: "/admin/dashboard",
+      path: "/dashboard",
       icon: <LayoutDashboard size={18} />,
       label: "Dashboard",
     },
     {
-      path: "/admin/applicantsMgt",
+      path: "/applicantsMgt",
       icon: <Users size={18} />,
       label: "Applicant Mgt",
     },
     {
-      path: "/admin/employersMgt",
+      path: "/employersMgt",
       icon: <Briefcase size={18} />,
       label: "Employers Mgt",
     },
     {
-      path: "/admin/tracker",
+      path: "/tracker",
       icon: <ClipboardList size={18} />,
       label: "DBS Tracker",
     },
     {
-      path: "/admin/incidentMgt",
+      path: "/incidentMgt",
       icon: <AlertTriangle size={18} />,
       label: "Incident Mgt",
     },
 
     {
-      path: "/admin/financeMgt",
+      path: "/financeMgt",
       icon: <Wallet size={18} />,
       label: "Finance Mgt",
     },
     {
-      path: "/admin/reports",
+      path: "/reports",
       icon: <BarChart3 size={18} />,
       label: "Reports & Analytics",
     },
 
     {
-      path: "/admin/communication",
+      path: "/communication",
       icon: <MessageSquare size={18} />,
       label: "Communication",
     },
 
     {
-      path: "/admin/control-panel",
+      path: "/control-panel",
       icon: <Settings size={18} />,
       label: "Control Panel",
     },
 
     {
-      path: "/admin/control-panel",
+      path: "/control-panel",
       icon: <LogOut size={18} />,
       label: "Logout",
     },
