@@ -84,78 +84,33 @@ const Header = () => {
                       <a href="#">How it works</a>
                     </li>
                     <li className="with-megamenu">
-                      <a href="#">Features</a>
-                    </li>
-                    <li className="has-droupdown ">
-                      <a href="#">Solutions</a>
+                      <a href="#">Services</a>
                     </li>
                     <li className="has-droupdown has-menu-child-item">
-                      <a href="#">Blog</a>
+                      <a href="#">Solutions</a>
                       <ul className="submenu">
                         <li>
-                          <a href="blog-grid-white.html">Blog Grid</a>
+                          <a href="#">For Schools</a>
                         </li>
                         <li>
-                          <a href="blog-list-view-white.html">Blog List View</a>
-                        </li>
-                        <li>
-                          <a href="blog-bento-white.html">Blog Bento</a>
-                        </li>
-                        <li className="has-third-lev">
-                          <a href="#">Blog Details</a>
-                          <ul className="submenu">
-                            <li>
-                              <a href="blog-details-white.html">Blog Details</a>
-                            </li>
-                            <li>
-                              <a href="blog-details-standard-white.html">
-                                Blog Details Standard
-                              </a>
-                            </li>
-                            <li>
-                              <a href="blog-details-sidebar-white.html">
-                                Blog Details Right Sidebar
-                              </a>
-                            </li>
-                            <li>
-                              <a href="blog-deails-sidebar-left-white.html">
-                                Blog Details Left Sidebar
-                              </a>
-                            </li>
-                            <li>
-                              <a href="blog-deails-video-white.html">
-                                Blog Details Left Sidebar
-                              </a>
-                            </li>
-                            <li>
-                              <a href="blog-deails-video-two-white.html">
-                                Blog Details Video Two
-                              </a>
-                            </li>
-                            <li>
-                              <a href="blog-deails-video-popup-white.html">
-                                Blog Details Video Popup
-                              </a>
-                            </li>
-                          </ul>
+                          <a href="#">For Other Organizations</a>
                         </li>
                       </ul>
                     </li>
+                    <li className="has-droupdown ">
+                      <a href="#">Pricing</a>
+                    </li>
 
                     <li>
-                      <a href="contact-white.html">Contact</a>
+                      <a href="#">Contact</a>
                     </li>
                   </ul>
                 </nav>
 
                 {/* Start Header Btn  */}
                 <div className="header-btn">
-                  <div className="search-area-btn cursor-pointer" id="search">
-                    <i data-feather="search"></i>
-                    {/* <img src="/assets/main/images/icons/search.svg" alt="Business"> */}
-                  </div>
                   <div className="dot-btn">
-                    {/* <img src="/assets/main/images/shop/dot.svg" alt="" /> */}
+                    <img src="/assets/main/images/shop/dot.svg" alt="" />
                     <span className="offcanvas-trigger">
                       <span className="offcanvas-bars">
                         <span></span>
