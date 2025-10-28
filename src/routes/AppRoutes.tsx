@@ -23,22 +23,12 @@ function AppRoutes() {
         <Route path="employersMgt" element={<Employers />} />
         <Route path="employerNew" element={<EmployersNew />} />
         <Route path="employerProfile" element={<EmployerProfile />} />
-<<<<<<< HEAD
         <Route path="tracker" element={<DBSTrackerModule />} />
-        <Route path="incidentMgt" element={<div>Settings Page</div>} />
-        <Route path="financeMgt" element={<div>Settings Page</div>} />
-        <Route path="reports" element={<div>Settings Page</div>} />
-        <Route path="communication" element={<div>Settings Page</div>} />
-        <Route path="control-panel" element={<div>Settings Page</div>} />
-=======
-        <Route path="employersMgt" element={<Dashboard />} />
-        <Route path="tracker" element={<Dashboard />} />
         <Route path="incidentMgt" element={<Dashboard />} />
         <Route path="financeMgt" element={<Dashboard />} />
         <Route path="reports" element={<Dashboard />} />
         <Route path="communication" element={<Dashboard />} />
         <Route path="control-panel" element={<Dashboard />} />
->>>>>>> main
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
