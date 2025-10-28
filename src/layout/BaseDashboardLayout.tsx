@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, type JSX } from "react";
 import DashboardHead from "../components/DashboardHead";
 import { Bell, Search } from 'lucide-react';
 import tcrn_image from "../assets2/img/TRCN.jpg"
+import femi from "../assets2/img/femi_adebayo.jpg";
 
 interface NavItem {
   path: string;
@@ -64,11 +65,30 @@ function BaseDashboardLayout({ navItems }: BaseDashboardLayoutProps) {
           </div>
 
           <div className="sidebar-body data-scrollbar">
-            <div className="nav-item static-item">
-              <p className="nav-link static-item disabled">
-                <span className="default-icon">Admin</span>
-                <span className="mini-icon">-</span>
-              </p>
+            <div className="nav-item static-item mb-2">
+              <a
+                className="py-0 flex items-center p-2 ml-2 hover:text-primary-500 active:text-primary-500 focus:text-primary-500 focus"
+                href="#"
+              >
+                <img
+                  src={femi}
+                  alt="User-Profile"
+                  className="h-12 w-12 rounded-full truncate"
+                  style={{ objectFit: "cover" }}
+                  loading="lazy"
+                />
+                <div className="caption ml-3 d-none d-md-block">
+                  <h6
+                    className="mb-0 caption-title mr-4"
+                    style={{}}
+                  >
+                    Oluwafemi Lawal
+                  </h6>
+                  <p className="mb-0 caption-sub-title focusa active:text-primary-500  focus:text-primary-500 hover:text-primary-500 text-black mr-4">
+                    DBS Admin
+                  </p>
+                </div>
+              </a>
             </div>
             <ul className="sidebar-main-menu">
               {navItems.map((item) => (
@@ -349,7 +369,7 @@ function BaseDashboardLayout({ navItems }: BaseDashboardLayoutProps) {
                                   </p>
                                   <hr />
                                   <button className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100">
-                                    Profile
+                                    Organization Profile
                                   </button>
                                   <button className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100">
                                     Settings
