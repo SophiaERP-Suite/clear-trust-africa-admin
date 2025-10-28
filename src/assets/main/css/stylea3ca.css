@@ -99,6 +99,10 @@
 /**************************************
     Default Styles
 ***************************************/
+
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap");
+
+
 /*-- Variables --*/
 :root {
   --color-primary: #5237f9;
@@ -13584,9 +13588,12 @@ Primary style
   transition: 0.3s;
 }
 
-.header-top-bar .header-right .address-content p i {
+.header-top-bar .header-right .address-content p i,
+.header-top-bar .header-right .address-content p svg {
   margin-right: 8px;
-  font-size: 16px;
+  width: 1.5rem;
+  height: 1.5rem;
+  vertical-align: middle;
 }
 
 .header-top-bar .social-default.icon-naked {
@@ -13601,6 +13608,12 @@ Primary style
   color: var(--color-body);
   font-size: 15px;
   line-height: 26px;
+}
+
+.header-top-bar .social-default.icon-naked li a svg {
+  width: 1.5rem;
+  height: 1.5rem;
+  vertical-align: middle;
 }
 
 .header-top-bar .social-icon-wrapper {
@@ -14582,12 +14595,16 @@ Primary style
 }
 
 .tmp-btn.icon-hover.icon-hover-left .btn-icon i,
-.btn-default.icon-hover.icon-hover-left .btn-icon i {
+.btn-default.icon-hover.icon-hover-left .btn-icon i,
+.tmp-btn.icon-hover.icon-hover-left .btn-icon svg,
+.btn-default.icon-hover.icon-hover-left .btn-icon svg {
   transform: translateX(7px);
 }
 
 .tmp-btn.icon-hover.icon-hover-left:hover .btn-icon i,
-.btn-default.icon-hover.icon-hover-left:hover .btn-icon i {
+.btn-default.icon-hover.icon-hover-left:hover .btn-icon i,
+.tmp-btn.icon-hover.icon-hover-left:hover .btn-icon svg,
+.btn-default.icon-hover.icon-hover-left:hover .btn-icon svg {
   transform: translateX(-7px);
 }
 
@@ -14601,6 +14618,14 @@ Primary style
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.tmp-btn.hover-icon-reverse .icon-reverse-wrapper svg,
+.btn-default.hover-icon-reverse .icon-reverse-wrapper svg {
+  vertical-align: middle;
+  transform: translateY(-90%);
+  width: 2rem;
+  height: 2rem;
 }
 
 .tmp-btn.hover-icon-reverse .btn-text,
