@@ -1304,7 +1304,7 @@ function AdminDashboard() {
                   </div>
                   <div>
                     <h2 className="dark:text-white text-black">
-                      $16,996
+                      #3,750,000
                     </h2>
                     <small className="dark:text-white text-secondary-700 text-base">
                       This Month
@@ -1343,7 +1343,7 @@ function AdminDashboard() {
                       <div className="flex justify-between">
                         <h6 className="mb-0 dark:text-white">Payments</h6>
                         <p className="leading-tight font-medium text-secondary-600">
-                          $23,386
+                          #4,850,000
                         </p>
                       </div>
                       <div className="flex w-full h-1.5 mt-2 align-middle bg-primary-500/10 dark:bg-dark-strip rounded-full">
@@ -1374,7 +1374,7 @@ function AdminDashboard() {
                       <div className="flex justify-between">
                         <h6 className="mb-0 dark:text-white">Accrued Costs</h6>
                         <p className="leading-tight font-medium text-secondary-600">
-                          $4,765
+                          #1,100,000
                         </p>
                       </div>
                       <div className="flex w-full h-1.5 mt-2 align-middle bg-info-500/10 dark:bg-dark-strip rounded-full">
@@ -1406,7 +1406,7 @@ function AdminDashboard() {
                       <div className="flex justify-between">
                         <h6 className="mb-0 dark:text-white">Gross Profits</h6>
                         <p className="leading-tight font-medium text-secondary-600">
-                          $8,224
+                          #2,750,000
                         </p>
                       </div>
                       <div className="flex w-full h-1.5 mt-2 align-middle bg-success-500/10 dark:bg-dark-strip rounded-full">
@@ -1447,7 +1447,7 @@ function AdminDashboard() {
                           Check Loss
                         </h6>
                         <p className="leading-tight font-medium text-secondary-600">
-                          $1,224
+                          #120,000
                         </p>
                       </div>
                       <div className="flex w-full h-1.5 mt-2 align-middle bg-danger-500/10 dark:bg-dark-strip rounded-full">
@@ -1529,7 +1529,7 @@ function AdminDashboard() {
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap dark:text-secondary-500 text-secondary-600">
-                          $14,000
+                          #1,253,000
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center mb-2">
@@ -1576,7 +1576,7 @@ function AdminDashboard() {
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap dark:text-secondary-500 text-secondary-600">
-                          $30,000
+                          #1,203,000
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center mb-2">
@@ -1623,7 +1623,7 @@ function AdminDashboard() {
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap  dark:text-secondary-500 text-secondary-600">
-                          $8,500
+                          #853,000
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center mb-2">
@@ -1670,7 +1670,7 @@ function AdminDashboard() {
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap dark:text-secondary-500 text-secondary-600">
-                          $30,000
+                          #783,000
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center mb-2">
@@ -1717,7 +1717,7 @@ function AdminDashboard() {
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap  dark:text-secondary-500 text-secondary-600">
-                          $8,500
+                          #753,000
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center mb-2">
