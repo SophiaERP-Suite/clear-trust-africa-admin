@@ -12,7 +12,7 @@ function AppRoutes() {
     <Routes>
       <Route
         path="/admin/*"
-        element={<AdminLayout/>}
+        element={<AdminLayout/>}>
         <Route index element={<Dashboard />} />
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="applicantsMgt" element={<Applicants />} />
