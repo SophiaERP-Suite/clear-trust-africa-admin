@@ -19,7 +19,11 @@ import alpha_global from "../../assets2/img/alpha_global.png";
 import imperial_gate from "../../assets2/img/imperial_gate.jpg";
 import princeton from "../../assets2/img/princeton.png";
 import little_nest from "../../assets2/img/little_nest.png";
-import binta from "../../assets2/img/binta.jpeg"
+import binta from "../../assets2/img/binta.jpeg";
+import donald from "../../assets2/img/donald_adolphus.jpg";
+import rashkin from "../../assets2/img/isaiah_rashkin.jpg";
+import deborah from "../../assets2/img/deborah_wilkins.jpg";
+import femi from "../../assets2/img/femi_adebayo.jpg";
 
 function AdminDashboard() {
   return (
@@ -1737,7 +1741,90 @@ function AdminDashboard() {
               <div className="relative flex flex-wrap justify-between p-5 border-b dark:border-secondary-800">
                 <h4 className="mb-0 dark:text-white">Recent Reports</h4>
               </div>
-              <div className="flex-auto p-5"></div>
+              <div className="p-5">
+                <div className="flex items-center gap-4 mb-8">
+                  <div className="bg-primary-500/10 p-2 rounded text-primary-500">
+                    <img
+                        className="w-10 h-10 p-0 mr-3 rtl:mr-0 rtl:ml-3 text-primary-400 bg-primary-500/10 rounded-xl"
+                        src={femi}
+                        alt="profile"
+                      />
+                  </div>
+                  <div className="w-full">
+                    <div className="flex justify-between">
+                      <h6 className="mb-0 dark:text-white">Femi, Adebayo</h6>
+                      <p className="leading-tight font-medium text-secondary-600">
+                        10/27/25
+                      </p>
+                    </div>
+                    <small className="mt-1 text-secondary-600 dark:text-white">
+                      Pilfering Theft
+                    </small>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4 mb-8">
+                  <div className="bg-info-500/10 p-2 rounded text-info-500">
+                    <img
+                        className="w-10 h-10 p-0 mr-3 rtl:mr-0 rtl:ml-3 text-primary-400 bg-primary-500/10 rounded-xl"
+                        src={deborah}
+                        alt="profile"
+                      />
+                  </div>
+                  <div className="w-full">
+                    <div className="flex justify-between">
+                      <h6 className="mb-0 dark:text-white">Deborah, Wilkins</h6>
+                      <p className="leading-tight font-medium text-secondary-600">
+                        10/27/25
+                      </p>
+                    </div>
+                    <small className="mt-1 text-secondary-600 dark:text-white">
+                      Compulsive Liar
+                    </small>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4 mb-8">
+                  <div className="bg-success-500/10 p-2 rounded text-success-500">
+                    <img
+                        className="w-10 h-10 p-0 mr-3 rtl:mr-0 rtl:ml-3 text-primary-400 bg-primary-500/10 rounded-xl"
+                        src={donald}
+                        alt="profile"
+                      />
+                  </div>
+                  <div className="w-full">
+                    <div className="flex justify-between">
+                      <h6 className="mb-0 dark:text-white">Donald, Adolphus</h6>
+                      <p className="leading-tight font-medium text-secondary-600">
+                        10/24/25
+                      </p>
+                    </div>
+                    <small className="mt-1 text-secondary-600 dark:text-white">
+                      Child Predator
+                    </small>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4 ">
+                  <div className="bg-danger-500/10 p-2 rounded text-danger-500">
+                    <img
+                        className="w-10 h-10 p-0 mr-3 rtl:mr-0 rtl:ml-3 text-primary-400 bg-primary-500/10 rounded-xl"
+                        src={rashkin}
+                        alt="profile"
+                      />
+                  </div>
+                  <div className="w-full">
+                    <div className="flex justify-between">
+                      <h6 className="mb-0 dark:text-white">
+                        Isaiah, Rashkin
+                      </h6>
+                      <p className="leading-tight font-medium text-secondary-600">
+                        10/24/25
+                      </p>
+                    </div>
+                    <small className="mt-1 text-secondary-600 dark:text-white">
+                      Pedophile
+                    </small>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           <div className="relative flex flex-col mb-8 lg:mb-0 bg-white rounded shadow-lg dark:bg-dark-card grid grid-cols-1">
