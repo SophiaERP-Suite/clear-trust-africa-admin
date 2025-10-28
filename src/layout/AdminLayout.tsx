@@ -70,7 +70,7 @@ function AdminLayout() {
     },
   ];
 
-  return <BaseDashboardLayout navItems={navItems} title="Admin Panel" />;
+  return <BaseDashboardLayout navItems={navItems} />;
 }
 
 export default AdminLayout;

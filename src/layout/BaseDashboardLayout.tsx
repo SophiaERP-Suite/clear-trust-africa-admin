@@ -11,10 +11,9 @@ interface NavItem {
 
 interface BaseDashboardLayoutProps {
   navItems: NavItem[];
-  title: string;
 }
 
-function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
+function BaseDashboardLayout({ navItems }: BaseDashboardLayoutProps) {
   // const navigate = useNavigate();
 
   useEffect(() => {
@@ -62,7 +61,9 @@ function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
                   fill="#3FF0B9"
                 />
               </svg>
-              <h4 className="sidebar-logo ml-2">{title}</h4>
+              <h4 className="sidebar-logo ml-2">
+                <img src="clear-logo.png" alt="logo" />
+              </h4>
             </a>
           </div>
 
@@ -304,7 +305,7 @@ function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
                             </li>
                           </ul>
                         </li>
-                        <li className="nav-item" style={{display: 'none'}}>
+                        <li className="nav-item" style={{ display: "none" }}>
                           <a
                             className="nav-link menu-arrow justify-start text-secondary-600"
                             href="javascript:void(0)"
