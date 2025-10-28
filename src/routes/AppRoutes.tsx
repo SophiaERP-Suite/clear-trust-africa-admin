@@ -7,14 +7,12 @@ import ApplicantProfile from "../pages/admin/applicant/ApplicantProfile";
 import EmployersNew from "../pages/admin/employer/EmployerNew";
 import Employers from "../pages/admin/employer/Employers";
 import EmployerProfile from "../pages/admin/employer/EmployerProfile";
-import Home from "../pages/main/Home";
-import MainLayout from "../layout/MainLayout";
 
 function AppRoutes() {
   return (
     <Routes>
       <Route
-        path="/admin/*"
+        path="/"
         element={<AdminLayout/>}>
         <Route index element={<Dashboard />} />
         <Route path="dashboard" element={<Dashboard />} />
@@ -31,11 +29,6 @@ function AppRoutes() {
         <Route path="reports" element={<div>Settings Page</div>} />
         <Route path="communication" element={<div>Settings Page</div>} />
         <Route path="control-panel" element={<div>Settings Page</div>} />
-      </Route>
-      
-      <Route path="/" element={<MainLayout />}>
-        <Route index element={<Home />} />
-        <Route path="home" element={<Home />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
