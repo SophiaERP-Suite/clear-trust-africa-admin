@@ -13,7 +13,11 @@ interface BaseDashboardLayoutProps {
   navItems: NavItem[];
 }
 
+<<<<<<< HEAD
+function BaseDashboardLayout({ navItems }: BaseDashboardLayoutProps) {
+=======
 function BaseDashboardLayout({ navItems}: BaseDashboardLayoutProps) {
+>>>>>>> main
   // const navigate = useNavigate();
 
   useEffect(() => {
@@ -43,9 +47,14 @@ function BaseDashboardLayout({ navItems}: BaseDashboardLayoutProps) {
               href="/admin/dashboard"
               className="flex px-5 py-4 mr-4 rtl:ml-4 rtl:mr-0 text-xl whitespace-nowrap"
             >
+<<<<<<< HEAD
+              <span className="sidebar-logo ml-2" style={{ width: "110px"}}>
+                <img src="/clear-logo.png" alt="logo" />
+=======
            
               <span className="sidebar-logo ml-2">
                 <img src="/clear-logo.png" style={{width: "110px"}} alt="logo" />
+>>>>>>> main
               </span>
             </a>
           </div>
@@ -288,7 +297,7 @@ function BaseDashboardLayout({ navItems}: BaseDashboardLayoutProps) {
                             </li>
                           </ul>
                         </li>
-                        <li className="nav-item" style={{display: 'none'}}>
+                        <li className="nav-item" style={{ display: "none" }}>
                           <a
                             className="nav-link menu-arrow justify-start text-secondary-600"
                             href="javascript:void(0)"

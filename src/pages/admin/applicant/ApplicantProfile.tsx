@@ -1428,86 +1428,95 @@ function AdminApplicantsNew() {
                   </div>
                 </div>
               </div> */}
-              <div x-show="openTab === 4">
-                <div className="relative flex flex-col mb-8  bg-white shadow rounded dark:bg-dark-card">
-                  <div className="p-6 border-b dark:border-secondary-800">
-                    <h4 className="text-2xl font-medium  card-title mb-0 dark:text-white">
-                      Profile
-                    </h4>
-                  </div>
-                  <div className="p-6 ">
-                    <div className="text-center">
-                      <div className="user-profile">
-                        <img
-                          src="/test.jpg"
-                          alt="profile-img"
-                          style={{ objectFit: "cover" }}
-                          className="inline-block w-32 h-32 max-w-full rounded-full img-fluid"
-                        />
+              {activeTab === "History" && (
+                <div style={{ textAlign: "center" }}>No Information</div>
+              )}
+              {activeTab === "Records" && (
+                <div style={{ textAlign: "center" }}>No Information</div>
+              )}
+              {activeTab === "Overview" && (
+                <div className="w-full flex-auto">
+                  <div className="relative flex flex-col mb-8  bg-white shadow rounded dark:bg-dark-card">
+                    <div className="p-6 border-b dark:border-secondary-800">
+                      <h4 className="text-2xl font-medium  card-title mb-0 dark:text-white">
+                        Profile
+                      </h4>
+                    </div>
+                    <div className="p-6 ">
+                      <div className="text-center">
+                        <div className="user-profile">
+                          <img
+                            src="/test.jpg"
+                            alt="profile-img"
+                            style={{ objectFit: "cover" }}
+                            className="inline-block w-32 h-32 max-w-full rounded-full img-fluid"
+                          />
+                        </div>
+                        <div className="mt-4">
+                          <h3 className="inline-block dark:text-white">
+                            Austin Robertson
+                          </h3>
+                          <p className="inline-block dark:text-white">
+                            -Web developer
+                          </p>
+                          {/* <p className="mb-0 text-secondary-600 dark:text-white">
+                            Lorem Ipsum is simply dummy text of the printing and
+                            typesetting industry. Lorem Ipsum has been the
+                            industry's standard dummy text ever since the 1500s
+                          </p> */}
+                        </div>
                       </div>
-                      <div className="mt-4">
-                        <h3 className="inline-block dark:text-white">
-                          Austin Robertson
-                        </h3>
-                        <p className="inline-block dark:text-white">
-                          -Web developer
+                    </div>
+                  </div>
+
+                  <div className="relative flex flex-col mb-8  bg-white shadow rounded-xl dark:bg-dark-card">
+                    <div className="p-5 border-b dark:border-secondary-800 dark:border-secondary-800">
+                      <h4 className="card-title mb-0 dark:text-white">
+                        About User
+                      </h4>
+                    </div>
+                    <div className="p-6">
+                      {/* <div className="user-bio">
+                        <p className="mb-3 text-secondary-600 dark:text-white">
+                          Tart I love sugar plum I love oat cake. Sweet roll
+                          caramels I love jujubes. Topping cake wafer.
                         </p>
-                        <p className="mb-0 text-secondary-600 dark:text-white">
-                          Lorem Ipsum is simply dummy text of the printing and
-                          typesetting industry. Lorem Ipsum has been the
-                          industry's standard dummy text ever since the 1500s
+                      </div> */}
+                      <div className="mt-2">
+                        <h6 className="mb-1 dark:text-white">Joined:</h6>
+                        <p className="mb-3 dark:text-white">Oct 15, 2025</p>
+                      </div>
+                      <div className="mt-2">
+                        <h6 className="mb-1 dark:text-white">Lives:</h6>
+                        <p className="mb-3 dark:text-white">
+                          United States of America
+                        </p>
+                      </div>
+                      <div className="mt-2">
+                        <h6 className="mb-1 dark:text-white">Email:</h6>
+                        <p className="mb-3 dark:text-secondary-600">
+                          <a href="#"> austin@gmail.com</a>
+                        </p>
+                      </div>
+                      <div className="mt-2">
+                        <h6 className="mb-1 dark:text-white">Url:</h6>
+                        <p className="mb-3 dark:textsecondary-600">
+                          <a href="#" target="_blank">
+                            {" "}
+                            www.tailwindui.com{" "}
+                          </a>
+                        </p>
+                      </div>
+                      <div className="mt-2">
+                        <h6 className="mb-1 dark:text-white">Contact:</h6>
+                        <p className="mb-3 dark:text-secondary-600">
+                          <a href="#">(001) 4544 565 456</a>
                         </p>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div className="relative flex flex-col mb-8  bg-white shadow rounded-xl dark:bg-dark-card">
-                  <div className="p-5 border-b dark:border-secondary-800 dark:border-secondary-800">
-                    <h4 className="card-title mb-0 dark:text-white">
-                      About User
-                    </h4>
-                  </div>
-                  <div className="p-6">
-                    <div className="user-bio">
-                      <p className="mb-3 text-secondary-600 dark:text-white">
-                        Tart I love sugar plum I love oat cake. Sweet roll
-                        caramels I love jujubes. Topping cake wafer.
-                      </p>
-                    </div>
-                    <div className="mt-2">
-                      <h6 className="mb-1 dark:text-white">Joined:</h6>
-                      <p className="mb-3 dark:text-white">Feb 15, 2021</p>
-                    </div>
-                    <div className="mt-2">
-                      <h6 className="mb-1 dark:text-white">Lives:</h6>
-                      <p className="mb-3 dark:text-white">
-                        United States of America
-                      </p>
-                    </div>
-                    <div className="mt-2">
-                      <h6 className="mb-1 dark:text-white">Email:</h6>
-                      <p className="mb-3 dark:text-secondary-600">
-                        <a href="#"> austin@gmail.com</a>
-                      </p>
-                    </div>
-                    <div className="mt-2">
-                      <h6 className="mb-1 dark:text-white">Url:</h6>
-                      <p className="mb-3 dark:textsecondary-600">
-                        <a href="#" target="_blank">
-                          {" "}
-                          www.tailwindui.com{" "}
-                        </a>
-                      </p>
-                    </div>
-                    <div className="mt-2">
-                      <h6 className="mb-1 dark:text-white">Contact:</h6>
-                      <p className="mb-3 dark:text-secondary-600">
-                        <a href="#">(001) 4544 565 456</a>
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              )}
             </div>
           </div>
         </div>
