@@ -1,6 +1,8 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import Dashboard from "../pages/admin/Dashboard";
 import AdminLayout from "../layout/AdminLayout";
+import Home from "../pages/main/Home";
+import MainLayout from "../layout/MainLayout";
 import ApplicantNew from "../pages/admin/ApplicantNew";
 import Applicants from "../pages/admin/Applicants";
 import ApplicantProfile from "../pages/admin/ApplicantProfile";
@@ -11,7 +13,6 @@ function AppRoutes() {
       <Route
         path="/admin/*"
         element={<AdminLayout/>}
-      >
         <Route index element={<Dashboard />} />
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="applicantsMgt" element={<Applicants />} />
@@ -25,7 +26,12 @@ function AppRoutes() {
         <Route path="communication" element={<div>Settings Page</div>} />
         <Route path="control-panel" element={<div>Settings Page</div>} />
       </Route>
-      
+
+      <Route path="/" element={<MainLayout />}>
+        <Route index element={<Home />} />
+        <Route path="home" element={<Home />} />
+      </Route>
+
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
