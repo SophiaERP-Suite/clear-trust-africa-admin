@@ -30,7 +30,7 @@ function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
 
       <div
         className="scroll-smooth selection:text-white selection:bg-primary-500"
-        style={{overflowX: "hidden"}}
+        style={{ overflowX: "hidden" }}
         x-data="settingInit"
       >
         {/* Sidebar */}
@@ -67,14 +67,13 @@ function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
           </div>
 
           <div className="sidebar-body data-scrollbar">
-             <div className="nav-item static-item">
-                <p className="nav-link static-item disabled">
-                  <span className="default-icon">Admin</span>
-                  <span className="mini-icon">-</span>
-                </p>
-              </div>
+            <div className="nav-item static-item">
+              <p className="nav-link static-item disabled">
+                <span className="default-icon">Admin</span>
+                <span className="mini-icon">-</span>
+              </p>
+            </div>
             <ul className="sidebar-main-menu">
-             
               {navItems.map((item) => (
                 <li key={item.path} className="nav-item">
                   <NavLink
@@ -305,7 +304,7 @@ function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
                             </li>
                           </ul>
                         </li>
-                        <li className="nav-item">
+                        <li className="nav-item" style={{display: 'none'}}>
                           <a
                             className="nav-link menu-arrow justify-start text-secondary-600"
                             href="javascript:void(0)"
@@ -719,7 +718,7 @@ function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
                             </li>
                           </ul>
                         </li>
-                        <li className="nav-item">
+                        <li className="nav-item" style={{ display: "none" }}>
                           <a
                             className="nav-link menu-arrow justify-start text-secondary-600"
                             href="javascript:void(0)"
@@ -1918,7 +1917,7 @@ function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
                                 Austin Robertson
                               </h6>
                               <p className="mb-0 caption-sub-title focusa active:text-primary-500  focus:text-primary-500 hover:text-primary-500 text-black mr-4">
-                                Marketing Administrator
+                                DBS Admin
                               </p>
                             </div>
                           </a>

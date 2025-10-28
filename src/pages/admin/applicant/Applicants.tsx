@@ -1,20 +1,20 @@
-import "../../assets2/css/choices.min.css";
-import "../../assets2/css/flatpickr.min.css";
-import "../../assets2/css/libs.min.css";
-import "../../assets2/css/quill.snow.css";
-import "../../assets2/css/responsive.css";
-import "../../assets2/css/sheperd.css";
-import "../../assets2/css/sweetalert2.min.css";
-import "../../assets2/css/tailwind.css";
-import "../../assets2/css/uppy.min.css";
-import "../../assets2/js/choice.js";
-import "../../assets2/js/choices.min.js";
-import "../../assets2/js/dashboard.js";
-import "../../assets2/js/fslightbox.js";
-import "../../assets2/js/libs.min.js";
-import "../../assets2/js/slider-tabs.js";
-import "../../assets2/js/sweet-alert.js";
-import "../../assets2/js/swiper-slider.js";
+import "../../../assets2/css/choices.min.css";
+import "../../../assets2/css/flatpickr.min.css";
+import "../../../assets2/css/libs.min.css";
+import "../../../assets2/css/quill.snow.css";
+import "../../../assets2/css/responsive.css";
+import "../../../assets2/css/sheperd.css";
+import "../../../assets2/css/sweetalert2.min.css";
+import "../../../assets2/css/tailwind.css";
+import "../../../assets2/css/uppy.min.css";
+import "../../../assets2/js/choice.js";
+import "../../../assets2/js/choices.min.js";
+import "../../../assets2/js/dashboard.js";
+import "../../../assets2/js/fslightbox.js";
+import "../../../assets2/js/libs.min.js";
+import "../../../assets2/js/slider-tabs.js";
+import "../../../assets2/js/sweet-alert.js";
+import "../../../assets2/js/swiper-slider.js";
 import { ChevronRightIcon, Plus } from "lucide-react";
 
 function AdminApplicants() {

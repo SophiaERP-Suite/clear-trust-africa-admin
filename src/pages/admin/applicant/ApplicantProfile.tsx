@@ -1,24 +1,27 @@
 import { ChevronRightIcon, Users } from "lucide-react";
-import "../../assets2/css/choices.min.css";
-import "../../assets2/css/flatpickr.min.css";
-import "../../assets2/css/libs.min.css";
-import "../../assets2/css/quill.snow.css";
-import "../../assets2/css/responsive.css";
-import "../../assets2/css/sheperd.css";
-import "../../assets2/css/sweetalert2.min.css";
-import "../../assets2/css/tailwind.css";
-import "../../assets2/css/uppy.min.css";
-import "../../assets2/js/choice.js";
-import "../../assets2/js/choices.min.js";
-import "../../assets2/js/dashboard.js";
-import "../../assets2/js/fslightbox.js";
-import "../../assets2/js/libs.min.js";
-import "../../assets2/js/slider-tabs.js";
-import "../../assets2/js/sweet-alert.js";
-import "../../assets2/js/swiper-slider.js";
+import "../../../assets2/css/choices.min.css";
+import "../../../assets2/css/flatpickr.min.css";
+import "../../../assets2/css/libs.min.css";
+import "../../../assets2/css/quill.snow.css";
+import "../../../assets2/css/responsive.css";
+import "../../../assets2/css/sheperd.css";
+import "../../../assets2/css/sweetalert2.min.css";
+import "../../../assets2/css/tailwind.css";
+import "../../../assets2/css/uppy.min.css";
+import "../../../assets2/js/choice.js";
+import "../../../assets2/js/choices.min.js";
+import "../../../assets2/js/dashboard.js";
+import "../../../assets2/js/fslightbox.js";
+import "../../../assets2/js/libs.min.js";
+import "../../../assets2/js/slider-tabs.js";
+import "../../../assets2/js/sweet-alert.js";
+import "../../../assets2/js/swiper-slider.js";
+import { useState } from "react";
 // import { ChevronRightIcon } from "lucide-react";
 
 function AdminApplicantsNew() {
+  const [activeTab, setActiveTab] = useState("overview");
+
   return (
     <>
       <div
@@ -30,13 +33,13 @@ function AdminApplicantsNew() {
             <div className="px-4 col-md-12">
               <div className="flex flex-wrap items-center justify-between">
                 <div>
-                  <h1 className="text-white mb-2 mr-16">New Applicant</h1>
+                  <h1 className="text-white mb-2 mr-16">Applicant Profile</h1>
                   <p className="mb-4 text-white mr-16">
                     <p className="text-secondary-600 text-white">
                       <a href="/admin/dashboard">Dashboard</a>{" "}
                       <ChevronRightIcon size={14} />{" "}
                       <a href="applicants">Applicants Management</a>{" "}
-                      <ChevronRightIcon size={14} /> New Applicant
+                      <ChevronRightIcon size={14} /> Austin Robertson's Profile
                     </p>
                   </p>
                 </div>
@@ -58,7 +61,7 @@ function AdminApplicantsNew() {
           style={{ zIndex: -1 }}
         >
           <img
-            src="../../assets/images/dashboard/top-header.html"
+            src="/test.jpg"
             alt="header"
             className="animated-scaleX object-cover w-screen h-full rounded-2xl"
           />
@@ -76,8 +79,9 @@ function AdminApplicantsNew() {
                   <div className="flex flex-wrap items-center">
                     <div className="right-0 lg:relative mb-0 mr-4 -mt-20 lg:top-0 top-9 md:top-4 lg:mb-0 profile-logo profile-logo1">
                       <img
-                        src="user.jpg"
+                        src="/test.jpg"
                         className="w-24 h-24 border-4 border-white mb-3 rounded-full"
+                        style={{ objectFit: "cover" }}
                         alt="profile-image"
                       />
                     </div>
@@ -92,7 +96,7 @@ function AdminApplicantsNew() {
                     </div>
                   </div>
                   <ul className="flex flex-wrap mb-0 text-center ">
-                    <li className="nav-item">
+                    {/* <li className="nav-item">
                       <a
                         className="block px-4 py-2 text-secondary-600 hover:text-primary-500 rounded-full focus:text-white focus:bg-primary-500 focus:rounded-full"
                         href="#profile-feed"
@@ -118,302 +122,39 @@ function AdminApplicantsNew() {
                       >
                         Records
                       </a>
-                    </li>
-                 
+                    </li> */}
+
+                    {[
+                      { id: "Overview", label: "Overview" },
+                      { id: "History", label: "History" },
+                      { id: "Records", label: "Records" },
+                    ].map((tab) => {
+                      // const Icon = tab.icon;
+                      return (
+                        <li className="nav-item">
+                          <button
+                            key={tab.id}
+                            onClick={() => setActiveTab(tab.id)}
+                            className={`block px-4 py-2 text-secondary-600 hover:text-primary-500 rounded-full focus:text-white focus:bg-primary-500 focus:rounded-full ${
+                              activeTab === tab.id
+                                ? "border-radius:9999px; color:white; background-color:#7016d0"
+                                : ""
+                            }`}
+                          >
+                            {/* <Icon size={18} /> */}
+                            {tab.label}
+                          </button>
+                        </li>
+                      );
+                    })}
                   </ul>
                 </div>
               </div>
             </div>
           </div>
           <div className="lg:flex grid grid-cols-1 lg:grid-cols-3 lg:gap-8">
-            <div className="flex-auto w-full lg:w-1/4 ">
-              <div className="relative flex flex-col mb-8  bg-white shadow rounded dark:bg-dark-card">
-                <div className="p-5 border-b dark:border-secondary-800">
-                  <h4 className="font-medium mb-0 dark:text-white">News</h4>
-                </div>
-                <div className="flex-auto p-5 ">
-                  <ul className="p-0 m-0 list-inline">
-                    <li className="flex mb-2">
-                      <div className="mr-4 text-secondary-600 dark:text-white mt-2 md:mt-1 rtl:ml-2">
-                        <svg width="20" viewBox="0 0 24 24">
-                          <path
-                            fill="currentColor"
-                            d="M20,2H4A2,2 0 0,0 2,4V22L6,18H20A2,2 0 0,0 22,16V4C22,2.89 21.1,2 20,2Z"
-                          ></path>
-                        </svg>
-                      </div>
-                      <p className="mb-0 news-detail text-secondary-600 dark:text-white">
-                        there is a meetup in your city on friday at 19:00.
-                        <a
-                          href="#"
-                          className="text-primary-500 hover:text-primary-500"
-                        >
-                          see details
-                        </a>
-                      </p>
-                    </li>
-                    <li className="flex">
-                      <div className="mr-4 text-secondary-600 dark:text-white mt-1 rtl:ml-2">
-                        <svg width="20" viewBox="0 0 24 24">
-                          <path
-                            fill="currentColor"
-                            d="M20,2H4A2,2 0 0,0 2,4V22L6,18H20A2,2 0 0,0 22,16V4C22,2.89 21.1,2 20,2Z"
-                          ></path>
-                        </svg>
-                      </div>
-                      <p className="mb-0 news-detail text-secondary-600 dark:text-white">
-                        20% off coupon on selected items at pharmaprix{" "}
-                      </p>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-              <div className="relative flex flex-col mb-8  bg-white shadow rounded dark:bg-dark-card">
-                <div className="flex items-center justify-between p-5 border-b dark:border-secondary-800">
-                  <h4 className="text-2xl font-medium mb-0 dark:text-white">
-                    Gallery
-                  </h4>
-                  <span className="dark:text-white">132 pics</span>
-                </div>
-                <div className="flex-auto p-6">
-                  <div className="grid grid-cols-3 gap-6">
-                    <a
-                      data-fslightbox="gallery"
-                      href="../../assets/images/icons/04.html"
-                    >
-                      <img
-                        src="../../assets/images/icons/04.html"
-                        className="w-full h-auto rounded bg-info-500/10 text-info-500"
-                        alt="profile-image"
-                      />
-                    </a>
-                    <a
-                      data-fslightbox="gallery"
-                      href="../../assets/images/shapes/02.html"
-                    >
-                      <img
-                        src="../../assets/images/shapes/02.html"
-                        className="w-full text-primary-500 bg-primary-500/10 rounded"
-                        alt="profile-image"
-                      />
-                    </a>
-                    <a
-                      data-fslightbox="gallery"
-                      href="../../assets/images/icons/08.html"
-                    >
-                      <img
-                        src="../../assets/images/icons/08.html"
-                        className="w-full rounded bg-info-500/10 text-info-500"
-                        alt="profile-image"
-                      />
-                    </a>
-                    <a
-                      data-fslightbox="gallery"
-                      href="../../assets/images/shapes/04.html"
-                    >
-                      <img
-                        src="../../assets/images/shapes/04.html"
-                        className="w-full text-primary-500 bg-primary-500/10 rounded"
-                        alt="profile-image"
-                      />
-                    </a>
-                    <a
-                      data-fslightbox="gallery"
-                      href="../../assets/images/icons/02.html"
-                    >
-                      <img
-                        src="../../assets/images/shapes/03.html"
-                        className="w-full text-warning-500 bg-warning-500/10 rounded"
-                        alt="profile-image"
-                      />
-                    </a>
-                    <a
-                      data-fslightbox="gallery"
-                      href="../../assets/images/shapes/06.html"
-                    >
-                      <img
-                        src="../../assets/images/shapes/06.html"
-                        className="w-full text-primary-500 bg-primary-500/10 rounded"
-                        alt="profile-image"
-                      />
-                    </a>
-                    <a
-                      data-fslightbox="gallery"
-                      href="../../assets/images/icons/05.html"
-                    >
-                      <img
-                        src="../../assets/images/shapes/05.html"
-                        className="w-full text-danger-500 bg-danger-500/10 rounded"
-                        alt="profile-image"
-                      />
-                    </a>
-                    <a
-                      data-fslightbox="gallery"
-                      href="../../assets/images/shapes/04.html"
-                    >
-                      <img
-                        src="../../assets/images/shapes/04.html"
-                        className="w-full text-primary-500 bg-primary-500/10 rounded"
-                        alt="profile-image"
-                      />
-                    </a>
-                    <a
-                      data-fslightbox="gallery"
-                      href="../../assets/images/icons/01.html"
-                    >
-                      <img
-                        src="../../assets/images/icons/01.html"
-                        className="w-full text-success-500 bg-success-500/10 rounded"
-                        alt="profile-image"
-                      />
-                    </a>
-                  </div>
-                </div>
-              </div>
-              <div className="relative flex flex-col mb-8  bg-white shadow rounded dark:bg-dark-card">
-                <div className="flex-auto p-5 border-b dark:border-secondary-800">
-                  <h4 className="text-2xl font-medium dark:text-white mb-0">
-                    Twitter Feeds
-                  </h4>
-                </div>
-                <div className="flex-auto px-5 pt-5">
-                  <div>
-                    <div className="flex items-center mb-2">
-                      <img
-                        className="w-12 h-12  mr-4 bg-danger-500/10 rounded-full rtl:ml-4"
-                        src="../../assets/images/avatars/03.html"
-                      />
-                      <div className="media-support-info">
-                        <h6 className="mb-0  font-medium dark:text-white">
-                          Wade Warren
-                        </h6>
-                        <p className="mb-0 dark:text-white">
-                          @wade007
-                          <span className="text-primary-500">
-                            <svg
-                              width="15"
-                              className="inline-block"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                fill="currentColor"
-                                d="M10,17L5,12L6.41,10.58L10,14.17L17.59,6.58L19,8M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"
-                              ></path>
-                            </svg>
-                          </span>
-                        </p>
-                      </div>
-                    </div>
-                    <div className="media-support-body">
-                      <p className="mb-0 text-secondary-600 dark:text-white">
-                        Lorem Ipsum is simply dummy text of the printing and
-                        typesetting industry
-                      </p>
-                      <div className="flex flex-wrap text-primary-500 hover:text-primary-600">
-                        <a href="#" className="pr-2 twit-meta-tag">
-                          #Html
-                        </a>
-                        <a href="#" className="pr-2 twit-meta-tag">
-                          #Bootstrap
-                        </a>
-                      </div>
-                      <div className="twit-date dark:text-white">
-                        07 Jan 2021
-                      </div>
-                    </div>
-                  </div>
-                  <hr className="my-6 text-secondary-500" />
-                  <div className="flex items-center mb-2">
-                    <img
-                      className="w-12 h-12  mr-4 bg-primary-500/10 rounded-full rtl:ml-4"
-                      src="../../assets/images/avatars/04.html"
-                    />
-                    <div className="media-support-info">
-                      <h6 className="mb-0  font-medium dark:text-white">
-                        Flutter
-                      </h6>
-                      <p className="mb-0 dark:text-white">
-                        @jane59
-                        <span className="text-primary-500">
-                          <svg
-                            width="15"
-                            className="inline-block"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              fill="currentColor"
-                              d="M10,17L5,12L6.41,10.58L10,14.17L17.59,6.58L19,8M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"
-                            ></path>
-                          </svg>
-                        </span>
-                      </p>
-                    </div>
-                  </div>
-                  <div className="media-support-body">
-                    <p className="mb-0 text-secondary-600 dark:text-white">
-                      Lorem Ipsum is simply dummy text of the printing and
-                      typesetting industry
-                    </p>
-                    <div className="flex flex-wrap text-primary-500 hover:text-primary-600">
-                      <a href="#" className="pr-2 twit-meta-tag">
-                        #Js
-                      </a>
-                      <a href="#" className="pr-2 twit-meta-tag">
-                        #Bootstrap
-                      </a>
-                    </div>
-                    <div className="twit-date dark:text-white">18 Feb 2021</div>
-                  </div>
-                </div>
-
-                <div className="px-6 pb-6">
-                  <hr className="my-6 text-secondary-500" />
-                  <div className="flex items-center mb-2">
-                    <img
-                      className="w-12 h-12  mr-4 bg-warning-500/10 rounded-full rtl:ml-4"
-                      src="../../assets/images/avatars/02.html"
-                    />
-                    <div className="mt-2">
-                      <h6 className="mb-0  font-medium dark:text-white">
-                        Guy Hawkins
-                      </h6>
-                      <p className="mb-0 dark:text-white">
-                        @hawk_g
-                        <span className="text-primary-500">
-                          <svg
-                            width="15"
-                            className="inline-block"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              fill="currentColor"
-                              d="M10,17L5,12L6.41,10.58L10,14.17L17.59,6.58L19,8M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"
-                            ></path>
-                          </svg>
-                        </span>
-                      </p>
-                    </div>
-                  </div>
-                  <div className="media-support-body">
-                    <p className="mb-0 text-secondary-600 dark:text-white">
-                      Lorem Ipsum is simply dummy text of the printing and
-                      typesetting industry
-                    </p>
-                    <div className="flex flex-wrap text-primary-500 hover:text-primary-600">
-                      <a href="#" className="pr-2 twit-meta-tag">
-                        #Html
-                      </a>
-                      <a href="#" className="pr-2 twit-meta-tag">
-                        #CSS
-                      </a>
-                    </div>
-                    <div className="twit-date dark:text-white">15 Mar 2021</div>
-                  </div>
-                </div>
-              </div>
-            </div>
             <div className="flex-auto w-full lg:w-2/4">
-              <div x-show="openTab === 1">
+              {/* <div x-show="openTab === 1">
                 <div className="relative flex flex-col mb-8 bg-white shadow rounded dark:bg-dark-card">
                   <div className="flex items-center justify-between flex-auto p-6 pb-6">
                     <div className="header-title">
@@ -1249,8 +990,8 @@ function AdminApplicantsNew() {
                     </div>
                   </div>
                 </div>
-              </div>
-              <div x-show="openTab === 3">
+              </div> */}
+              {/* <div x-show="openTab === 3">
                 <div className="relative flex flex-col mb-8  bg-white shadow rounded dark:bg-dark-card">
                   <div className="flex justify-between p-6 border-b dark:border-secondary-800">
                     <h4 className="mb-0 dark:text-white">Friends</h4>
@@ -1686,7 +1427,7 @@ function AdminApplicantsNew() {
                     </ul>
                   </div>
                 </div>
-              </div>
+              </div> */}
               <div x-show="openTab === 4">
                 <div className="relative flex flex-col mb-8  bg-white shadow rounded dark:bg-dark-card">
                   <div className="p-6 border-b dark:border-secondary-800">
@@ -1698,8 +1439,9 @@ function AdminApplicantsNew() {
                     <div className="text-center">
                       <div className="user-profile">
                         <img
-                          src="../../assets/images/avatars/01.html"
+                          src="/test.jpg"
                           alt="profile-img"
+                          style={{ objectFit: "cover" }}
                           className="inline-block w-32 h-32 max-w-full rounded-full img-fluid"
                         />
                       </div>
@@ -1764,576 +1506,6 @@ function AdminApplicantsNew() {
                       </p>
                     </div>
                   </div>
-                </div>
-              </div>
-            </div>
-            <div className="flex-auto w-full lg:w-1/4">
-              <div className="relative flex flex-col mb-8  bg-white shadow rounded dark:bg-dark-card">
-                <div className="flex-auto p-5 border-b dark:border-secondary-800">
-                  <h4 className="font-medium mb-0 dark:text-white">About</h4>
-                </div>
-                <div className="flex-auto p-5">
-                  <p className="mb-4 text-secondary-600 dark:text-white">
-                    Lorem ipsum dolor sit amet, contur adipiscing elit.
-                  </p>
-                  <div className="mb-1 text-secondary-600 dark:text-white">
-                    Email:{" "}
-                    <a
-                      href="#"
-                      className="ml-4 text-primary-500 hover:text-primary-600 rtl:ml-0"
-                    >
-                      nikjone@demoo.com
-                    </a>
-                  </div>
-                  <div className="mb-1 text-secondary-600 dark:text-white   ">
-                    Phone:{" "}
-                    <a
-                      href="#"
-                      className="ml-4 text-primary-500 hover:text-primary-600 rtl:ml-0"
-                    >
-                      001 2351 256 12
-                    </a>
-                  </div>
-                  <div className="text-secondary-600 dark:text-white">
-                    Location: <span className="ml-4 rtl:ml-0">USA</span>
-                  </div>
-                </div>
-              </div>
-              <div className="relative flex flex-col mb-8  bg-white shadow rounded dark:bg-dark-card">
-                <div className="flex-auto p-5 border-b dark:border-secondary-800 dark:border-secondary-800">
-                  <h4 className="font-medium mb-0 dark:text-white">Stories</h4>
-                </div>
-                <div className="flex-auto p-6">
-                  <ul className="p-0 m-0 list-inline">
-                    <li className="flex items-center mb-6">
-                      <img
-                        src="../../assets/images/shapes/02.html"
-                        alt="story-img"
-                        className="w-16 h-16 max-w-full p-1 bg-secondary-500/10  rounded-full rtl:ml-4"
-                      />
-                      <div className="ml-4">
-                        <h5 className=" font-medium mb-0 dark:text-white">
-                          Web Design
-                        </h5>
-                        <p className="mb-0 dark:text-white">1 hour ago</p>
-                      </div>
-                    </li>
-                    <li className="flex items-center mb-4">
-                      <img
-                        src="../../assets/images/shapes/04.html"
-                        alt="story-img"
-                        className="w-16 h-16 max-w-full p-1 bg-danger-500/10  rounded-full rtl:ml-4"
-                      />
-                      <div className="ml-4">
-                        <h5 className="font-medium mb-0 dark:text-white">
-                          App Design
-                        </h5>
-                        <p className="mb-0 dark:text-white">4 hour ago</p>
-                      </div>
-                    </li>
-                    <li className="flex items-center">
-                      <img
-                        src="../../assets/images/shapes/06.html"
-                        alt="story-img"
-                        className="w-16 h-16 max-w-full p-1 bg-primary-500/10  rounded-full rtl:ml-4"
-                      />
-                      <div className="ml-4">
-                        <h5 className="font-medium mb-0 dark:text-white">
-                          Abstract Design
-                        </h5>
-                        <p className="mb-0 dark:text-white">9 hour ago</p>
-                      </div>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-              <div className="relative flex flex-col mb-8  bg-white shadow rounded dark:bg-dark-card">
-                <div className="flex-auto p-5 border-b dark:border-secondary-800">
-                  <h4 className="text-2xl font-medium dark:text-white mb-0">
-                    Suggestions
-                  </h4>
-                </div>
-                <div className="p-5">
-                  <ul className="p-0 m-0 list-inline">
-                    <li className="flex items-center mb-6">
-                      <div className="max-w-full bg-warning-500/10 rounded-full rtl:ml-4">
-                        <img
-                          src="../../assets/images/avatars/02.html"
-                          alt="story-img"
-                          className="w-10 h-10 rounded-full"
-                        />
-                      </div>
-                      <div className="flex-grow ml-4">
-                        <h6 className="mb-0 dark:text-white">Paul Molive</h6>
-                        <p className="mb-0 dark:text-white">4 mutual friends</p>
-                      </div>
-                      <a
-                        href="javascript:void(0);"
-                        className="btn btn-outlined btn-primary hover:bg-primary-500 hover:text-white inline-flex rounded-full btn-sm btn-icon"
-                      >
-                        <span>
-                          <svg
-                            width="17"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              fill-rule="evenodd"
-                              clip-rule="evenodd"
-                              d="M9.87651 15.2063C6.03251 15.2063 2.74951 15.7873 2.74951 18.1153C2.74951 20.4433 6.01251 21.0453 9.87651 21.0453C13.7215 21.0453 17.0035 20.4633 17.0035 18.1363C17.0035 15.8093 13.7415 15.2063 9.87651 15.2063Z"
-                              stroke="currentColor"
-                              stroke-width="1.5"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            ></path>
-                            <path
-                              fill-rule="evenodd"
-                              clip-rule="evenodd"
-                              d="M9.8766 11.886C12.3996 11.886 14.4446 9.841 14.4446 7.318C14.4446 4.795 12.3996 2.75 9.8766 2.75C7.3546 2.75 5.3096 4.795 5.3096 7.318C5.3006 9.832 7.3306 11.877 9.8456 11.886H9.8766Z"
-                              stroke="currentColor"
-                              stroke-width="1.5"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            ></path>
-                            <path
-                              d="M19.2036 8.66919V12.6792"
-                              stroke="currentColor"
-                              stroke-width="1.5"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            ></path>
-                            <path
-                              d="M21.2497 10.6741H17.1597"
-                              stroke="currentColor"
-                              stroke-width="1.5"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            ></path>
-                          </svg>
-                        </span>
-                      </a>
-                    </li>
-                    <li className="flex items-center mb-6">
-                      <div className="max-w-full bg-danger-500/10 rounded-full rtl:ml-4">
-                        <img
-                          src="../../assets/images/avatars/03.html"
-                          alt="story-img"
-                          className="w-10 h-10 rounded-full"
-                        />
-                      </div>
-                      <div className="flex-grow ml-4">
-                        <h6 className="mb-0 dark:text-white">Robert Fox</h6>
-                        <p className="mb-0 dark:text-white">4 mutual friends</p>
-                      </div>
-                      <a
-                        href="javascript:void(0);"
-                        className="btn btn-outlined btn-primary hover:bg-primary-500 hover:text-white inline-flex rounded-full btn-sm btn-icon"
-                      >
-                        <span>
-                          <svg
-                            width="17"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              fill-rule="evenodd"
-                              clip-rule="evenodd"
-                              d="M9.87651 15.2063C6.03251 15.2063 2.74951 15.7873 2.74951 18.1153C2.74951 20.4433 6.01251 21.0453 9.87651 21.0453C13.7215 21.0453 17.0035 20.4633 17.0035 18.1363C17.0035 15.8093 13.7415 15.2063 9.87651 15.2063Z"
-                              stroke="currentColor"
-                              stroke-width="1.5"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            ></path>
-                            <path
-                              fill-rule="evenodd"
-                              clip-rule="evenodd"
-                              d="M9.8766 11.886C12.3996 11.886 14.4446 9.841 14.4446 7.318C14.4446 4.795 12.3996 2.75 9.8766 2.75C7.3546 2.75 5.3096 4.795 5.3096 7.318C5.3006 9.832 7.3306 11.877 9.8456 11.886H9.8766Z"
-                              stroke="currentColor"
-                              stroke-width="1.5"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            ></path>
-                            <path
-                              d="M19.2036 8.66919V12.6792"
-                              stroke="currentColor"
-                              stroke-width="1.5"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            ></path>
-                            <path
-                              d="M21.2497 10.6741H17.1597"
-                              stroke="currentColor"
-                              stroke-width="1.5"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            ></path>
-                          </svg>
-                        </span>
-                      </a>
-                    </li>
-                    <li className="flex items-center mb-6">
-                      <div className="max-w-full bg-secondary-500/10 rounded-full rtl:ml-4">
-                        <img
-                          src="../../assets/images/avatars/04.html"
-                          alt="story-img"
-                          className="w-10 h-10 rounded-full"
-                        />
-                      </div>
-                      <div className="flex-grow ml-4">
-                        <h6 className="mb-0 dark:text-white">Jenny Wilson</h6>
-                        <p className="mb-0 dark:text-white">6 mutual friends</p>
-                      </div>
-                      <a
-                        href="javascript:void(0);"
-                        className="btn btn-outlined btn-primary hover:bg-primary-500 hover:text-white inline-flex rounded-full btn-sm btn-icon"
-                      >
-                        <span>
-                          <svg
-                            width="17"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              fill-rule="evenodd"
-                              clip-rule="evenodd"
-                              d="M9.87651 15.2063C6.03251 15.2063 2.74951 15.7873 2.74951 18.1153C2.74951 20.4433 6.01251 21.0453 9.87651 21.0453C13.7215 21.0453 17.0035 20.4633 17.0035 18.1363C17.0035 15.8093 13.7415 15.2063 9.87651 15.2063Z"
-                              stroke="currentColor"
-                              stroke-width="1.5"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            ></path>
-                            <path
-                              fill-rule="evenodd"
-                              clip-rule="evenodd"
-                              d="M9.8766 11.886C12.3996 11.886 14.4446 9.841 14.4446 7.318C14.4446 4.795 12.3996 2.75 9.8766 2.75C7.3546 2.75 5.3096 4.795 5.3096 7.318C5.3006 9.832 7.3306 11.877 9.8456 11.886H9.8766Z"
-                              stroke="currentColor"
-                              stroke-width="1.5"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            ></path>
-                            <path
-                              d="M19.2036 8.66919V12.6792"
-                              stroke="currentColor"
-                              stroke-width="1.5"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            ></path>
-                            <path
-                              d="M21.2497 10.6741H17.1597"
-                              stroke="currentColor"
-                              stroke-width="1.5"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            ></path>
-                          </svg>
-                        </span>
-                      </a>
-                    </li>
-                    <li className="flex items-center mb-6">
-                      <div className="max-w-full bg-primary-500/10 rounded-full rtl:ml-4">
-                        <img
-                          src="../../assets/images/avatars/05.html"
-                          alt="story-img"
-                          className="w-10 h-10 rounded-full"
-                        />
-                      </div>
-                      <div className="flex-grow ml-4">
-                        <h6 className="mb-0 dark:text-white">Cody Fisher</h6>
-                        <p className="mb-0 dark:text-white">8 mutual friends</p>
-                      </div>
-                      <a
-                        href="javascript:void(0);"
-                        className="btn btn-outlined btn-primary hover:bg-primary-500 hover:text-white inline-flex rounded-full btn-sm btn-icon"
-                      >
-                        <span>
-                          <svg
-                            width="17"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              fill-rule="evenodd"
-                              clip-rule="evenodd"
-                              d="M9.87651 15.2063C6.03251 15.2063 2.74951 15.7873 2.74951 18.1153C2.74951 20.4433 6.01251 21.0453 9.87651 21.0453C13.7215 21.0453 17.0035 20.4633 17.0035 18.1363C17.0035 15.8093 13.7415 15.2063 9.87651 15.2063Z"
-                              stroke="currentColor"
-                              stroke-width="1.5"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            ></path>
-                            <path
-                              fill-rule="evenodd"
-                              clip-rule="evenodd"
-                              d="M9.8766 11.886C12.3996 11.886 14.4446 9.841 14.4446 7.318C14.4446 4.795 12.3996 2.75 9.8766 2.75C7.3546 2.75 5.3096 4.795 5.3096 7.318C5.3006 9.832 7.3306 11.877 9.8456 11.886H9.8766Z"
-                              stroke="currentColor"
-                              stroke-width="1.5"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            ></path>
-                            <path
-                              d="M19.2036 8.66919V12.6792"
-                              stroke="currentColor"
-                              stroke-width="1.5"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            ></path>
-                            <path
-                              d="M21.2497 10.6741H17.1597"
-                              stroke="currentColor"
-                              stroke-width="1.5"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            ></path>
-                          </svg>
-                        </span>
-                      </a>
-                    </li>
-                    <li className="flex items-center mb-6">
-                      <div className="max-w-full rounded-full rtl:ml-4 bg-info-500/10">
-                        <img
-                          src="../../assets/images/avatars/06.html"
-                          alt="story-img"
-                          className="w-10 h-10 rounded-full"
-                        />
-                      </div>
-                      <div className="flex-grow ml-4">
-                        <h6 className="mb-0 dark:text-white">Bessie Cooper</h6>
-                        <p className="mb-0 dark:text-white">1 mutual friends</p>
-                      </div>
-                      <a
-                        href="javascript:void(0);"
-                        className="btn btn-outlined btn-primary hover:bg-primary-500 hover:text-white inline-flex rounded-full btn-sm btn-icon"
-                      >
-                        <span>
-                          <svg
-                            width="17"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              fill-rule="evenodd"
-                              clip-rule="evenodd"
-                              d="M9.87651 15.2063C6.03251 15.2063 2.74951 15.7873 2.74951 18.1153C2.74951 20.4433 6.01251 21.0453 9.87651 21.0453C13.7215 21.0453 17.0035 20.4633 17.0035 18.1363C17.0035 15.8093 13.7415 15.2063 9.87651 15.2063Z"
-                              stroke="currentColor"
-                              stroke-width="1.5"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            ></path>
-                            <path
-                              fill-rule="evenodd"
-                              clip-rule="evenodd"
-                              d="M9.8766 11.886C12.3996 11.886 14.4446 9.841 14.4446 7.318C14.4446 4.795 12.3996 2.75 9.8766 2.75C7.3546 2.75 5.3096 4.795 5.3096 7.318C5.3006 9.832 7.3306 11.877 9.8456 11.886H9.8766Z"
-                              stroke="currentColor"
-                              stroke-width="1.5"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            ></path>
-                            <path
-                              d="M19.2036 8.66919V12.6792"
-                              stroke="currentColor"
-                              stroke-width="1.5"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            ></path>
-                            <path
-                              d="M21.2497 10.6741H17.1597"
-                              stroke="currentColor"
-                              stroke-width="1.5"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            ></path>
-                          </svg>
-                        </span>
-                      </a>
-                    </li>
-                    <li className="flex items-center mb-6">
-                      <div className="max-w-full bg-warning-500/10 rounded-full rtl:ml-4">
-                        <img
-                          src="../../assets/images/avatars/07.html"
-                          alt="story-img"
-                          className="w-10 h-10 rounded-full"
-                        />
-                      </div>
-                      <div className="flex-grow ml-4">
-                        <h6 className="mb-0 dark:text-white">Wade Warren</h6>
-                        <p className="mb-0 dark:text-white">3 mutual friends</p>
-                      </div>
-                      <a
-                        href="javascript:void(0);"
-                        className="btn btn-outlined btn-primary hover:bg-primary-500 hover:text-white inline-flex rounded-full btn-sm btn-icon"
-                      >
-                        <span>
-                          <svg
-                            width="17"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              fill-rule="evenodd"
-                              clip-rule="evenodd"
-                              d="M9.87651 15.2063C6.03251 15.2063 2.74951 15.7873 2.74951 18.1153C2.74951 20.4433 6.01251 21.0453 9.87651 21.0453C13.7215 21.0453 17.0035 20.4633 17.0035 18.1363C17.0035 15.8093 13.7415 15.2063 9.87651 15.2063Z"
-                              stroke="currentColor"
-                              stroke-width="1.5"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            ></path>
-                            <path
-                              fill-rule="evenodd"
-                              clip-rule="evenodd"
-                              d="M9.8766 11.886C12.3996 11.886 14.4446 9.841 14.4446 7.318C14.4446 4.795 12.3996 2.75 9.8766 2.75C7.3546 2.75 5.3096 4.795 5.3096 7.318C5.3006 9.832 7.3306 11.877 9.8456 11.886H9.8766Z"
-                              stroke="currentColor"
-                              stroke-width="1.5"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            ></path>
-                            <path
-                              d="M19.2036 8.66919V12.6792"
-                              stroke="currentColor"
-                              stroke-width="1.5"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            ></path>
-                            <path
-                              d="M21.2497 10.6741H17.1597"
-                              stroke="currentColor"
-                              stroke-width="1.5"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            ></path>
-                          </svg>
-                        </span>
-                      </a>
-                    </li>
-                    <li className="flex items-center mb-6">
-                      <div className="max-w-full bg-success-500/10 rounded-full rtl:ml-4">
-                        <img
-                          src="../../assets/images/avatars/08.html"
-                          alt="story-img"
-                          className="w-10 h-10 rounded-full"
-                        />
-                      </div>
-                      <div className="flex-grow ml-4">
-                        <h6 className="block  font-medium mb-0 dark:text-white">
-                          Guy Hawkins
-                        </h6>
-                        <p className="mb-0 dark:text-white">
-                          12 mutual friends
-                        </p>
-                      </div>
-                      <a
-                        href="javascript:void(0);"
-                        className="btn btn-outlined btn-primary hover:bg-primary-500 hover:text-white inline-flex rounded-full btn-sm btn-icon"
-                      >
-                        <span>
-                          <svg
-                            width="17"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              fill-rule="evenodd"
-                              clip-rule="evenodd"
-                              d="M9.87651 15.2063C6.03251 15.2063 2.74951 15.7873 2.74951 18.1153C2.74951 20.4433 6.01251 21.0453 9.87651 21.0453C13.7215 21.0453 17.0035 20.4633 17.0035 18.1363C17.0035 15.8093 13.7415 15.2063 9.87651 15.2063Z"
-                              stroke="currentColor"
-                              stroke-width="1.5"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            ></path>
-                            <path
-                              fill-rule="evenodd"
-                              clip-rule="evenodd"
-                              d="M9.8766 11.886C12.3996 11.886 14.4446 9.841 14.4446 7.318C14.4446 4.795 12.3996 2.75 9.8766 2.75C7.3546 2.75 5.3096 4.795 5.3096 7.318C5.3006 9.832 7.3306 11.877 9.8456 11.886H9.8766Z"
-                              stroke="currentColor"
-                              stroke-width="1.5"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            ></path>
-                            <path
-                              d="M19.2036 8.66919V12.6792"
-                              stroke="currentColor"
-                              stroke-width="1.5"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            ></path>
-                            <path
-                              d="M21.2497 10.6741H17.1597"
-                              stroke="currentColor"
-                              stroke-width="1.5"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            ></path>
-                          </svg>
-                        </span>
-                      </a>
-                    </li>
-                    <li className="flex items-center">
-                      <div className="max-w-full rounded-full rtl:ml-4 bg-info-500/10">
-                        <img
-                          src="../../assets/images/avatars/09.html"
-                          alt="story-img"
-                          className="w-10 h-10 rounded-full"
-                        />
-                      </div>
-                      <div className="flex-grow ml-4">
-                        <h6 className="block  font-medium text-black mb-0 dark:text-white">
-                          Floyd Miles
-                        </h6>
-                        <p className="mb-0 dark:text-white">2 mutual friends</p>
-                      </div>
-                      <a
-                        href="javascript:void(0);"
-                        className="btn btn-outlined btn-primary hover:bg-primary-500 hover:text-white inline-flex rounded-full btn-sm btn-icon"
-                      >
-                        <span>
-                          <svg
-                            width="17"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              fill-rule="evenodd"
-                              clip-rule="evenodd"
-                              d="M9.87651 15.2063C6.03251 15.2063 2.74951 15.7873 2.74951 18.1153C2.74951 20.4433 6.01251 21.0453 9.87651 21.0453C13.7215 21.0453 17.0035 20.4633 17.0035 18.1363C17.0035 15.8093 13.7415 15.2063 9.87651 15.2063Z"
-                              stroke="currentColor"
-                              stroke-width="1.5"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            ></path>
-                            <path
-                              fill-rule="evenodd"
-                              clip-rule="evenodd"
-                              d="M9.8766 11.886C12.3996 11.886 14.4446 9.841 14.4446 7.318C14.4446 4.795 12.3996 2.75 9.8766 2.75C7.3546 2.75 5.3096 4.795 5.3096 7.318C5.3006 9.832 7.3306 11.877 9.8456 11.886H9.8766Z"
-                              stroke="currentColor"
-                              stroke-width="1.5"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            ></path>
-                            <path
-                              d="M19.2036 8.66919V12.6792"
-                              stroke="currentColor"
-                              stroke-width="1.5"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            ></path>
-                            <path
-                              d="M21.2497 10.6741H17.1597"
-                              stroke="currentColor"
-                              stroke-width="1.5"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            ></path>
-                          </svg>
-                        </span>
-                      </a>
-                    </li>
-                  </ul>
                 </div>
               </div>
             </div>

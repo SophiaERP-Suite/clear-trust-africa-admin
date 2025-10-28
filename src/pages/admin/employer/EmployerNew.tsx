@@ -1,24 +1,24 @@
 import { ChevronRightIcon, Users } from "lucide-react";
-import "../../assets2/css/choices.min.css";
-import "../../assets2/css/flatpickr.min.css";
-import "../../assets2/css/libs.min.css";
-import "../../assets2/css/quill.snow.css";
-import "../../assets2/css/responsive.css";
-import "../../assets2/css/sheperd.css";
-import "../../assets2/css/sweetalert2.min.css";
-import "../../assets2/css/tailwind.css";
-import "../../assets2/css/uppy.min.css";
-import "../../assets2/js/choice.js";
-import "../../assets2/js/choices.min.js";
-import "../../assets2/js/dashboard.js";
-import "../../assets2/js/fslightbox.js";
-import "../../assets2/js/libs.min.js";
-import "../../assets2/js/slider-tabs.js";
-import "../../assets2/js/sweet-alert.js";
-import "../../assets2/js/swiper-slider.js";
+import "../../../assets2/css/choices.min.css";
+import "../../../assets2/css/flatpickr.min.css";
+import "../../../assets2/css/libs.min.css";
+import "../../../assets2/css/quill.snow.css";
+import "../../../assets2/css/responsive.css";
+import "../../../assets2/css/sheperd.css";
+import "../../../assets2/css/sweetalert2.min.css";
+import "../../../assets2/css/tailwind.css";
+import "../../../assets2/css/uppy.min.css";
+import "../../../assets2/js/choice.js";
+import "../../../assets2/js/choices.min.js";
+import "../../../assets2/js/dashboard.js";
+import "../../../assets2/js/fslightbox.js";
+import "../../../assets2/js/libs.min.js";
+import "../../../assets2/js/slider-tabs.js";
+import "../../../assets2/js/sweet-alert.js";
+import "../../../assets2/js/swiper-slider.js";
 // import { ChevronRightIcon } from "lucide-react";
 
-function AdminApplicantsNew() {
+function EmployersNew() {
   return (
     <>
       <div
@@ -30,23 +30,23 @@ function AdminApplicantsNew() {
             <div className="px-4 col-md-12">
               <div className="flex flex-wrap items-center justify-between">
                 <div>
-                  <h1 className="text-white mb-2 mr-16">New Applicant</h1>
+                  <h1 className="text-white mb-2 mr-16">New Employer</h1>
                   <p className="mb-4 text-white mr-16">
                     <p className="text-secondary-600 text-white">
                       <a href="/admin/dashboard">Dashboard</a>{" "}
                       <ChevronRightIcon size={14} />{" "}
-                      <a href="applicants">Applicants Management</a>{" "}
-                      <ChevronRightIcon size={14} /> New Applicant
+                      <a href="EmployersMgt">Employers Management</a>{" "}
+                      <ChevronRightIcon size={14} /> New Employer
                     </p>
                   </p>
                 </div>
                 <div>
                   <a
-                    href="applicantsMgt"
+                    href="EmployersMgt"
                     className="text-white btn shadow-md btn-soft-light hover:shadow-xl hover:bg-glass focus:bg-gray-200"
                   >
                     <Users size={18}  className="mr-2"/>
-                    All Applicants
+                    All Employers
                   </a>
                 </div>
               </div>
@@ -73,7 +73,7 @@ function AdminApplicantsNew() {
             <div className="relative flex flex-col mb-8 text-secondary-500 bg-white shadow rounded -mt-2 dark:bg-dark-card">
               <div className="flex justify-between flex-auto p-5 mb-4 border-b dark:border-secondary-800">
                 <div className="header-title">
-                  <h4 className="mb-0 dark:text-white">Add New User</h4>
+                  <h4 className="mb-0 dark:text-white">Add New Employer</h4>
                 </div>
               </div>
               <div className="p-5">
@@ -82,7 +82,7 @@ function AdminApplicantsNew() {
                     <div className="relative">
                       <img
                         className="w-24 h-24 rounded"
-                        src="assets/images/avatars/01.html"
+                        src="/company-avatar.png"
                         alt="profile-pic"
                       />
                       <div className="image-upload absolute cursor-pointer top-auto w-8 h-8 text-center bg-primary-500 border-4 border-white rounded-full left-20 rtl:right-20 rtl:left-0 -bottom-2">
@@ -220,7 +220,7 @@ function AdminApplicantsNew() {
           <div className="flex-auto w-full lg:w-3/4">
             <div className="relative flex flex-col mb-8 text-secondary-500 bg-white shadow rounded -mt-2 dark:bg-dark-card">
               <div className="flex justify-between flex-auto p-6 border-b dark:border-secondary-800">
-                <h4 className="mb-0 dark:text-white">New User Information</h4>
+                <h4 className="mb-0 dark:text-white">Employer Information</h4>
               </div>
               <div className="p-6 ">
                 <form>
@@ -445,7 +445,7 @@ function AdminApplicantsNew() {
                     </label>
                   </div>
                   <button type="submit" className="btn btn-primary">
-                    Add New User
+                    Submit
                   </button>
                 </form>
               </div>
@@ -457,4 +457,4 @@ function AdminApplicantsNew() {
   );
 }
 
-export default AdminApplicantsNew;
+export default EmployersNew;
