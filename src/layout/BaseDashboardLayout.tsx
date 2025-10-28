@@ -1,11 +1,11 @@
 // src/layouts/BaseDashboardLayout.tsx
 import { Outlet, NavLink } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, type JSX } from "react";
 import DashboardHead from "../components/DashboardHead";
 
 interface NavItem {
   path: string;
-  icon: string;
+  icon?: JSX.Element;
   label: string;
 }
 
@@ -30,12 +30,13 @@ function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
 
       <div
         className="scroll-smooth selection:text-white selection:bg-primary-500"
+        style={{overflowX: "hidden"}}
         x-data="settingInit"
       >
         {/* Sidebar */}
         <aside
           x-data="sidebar"
-          className="z-50 sidebar shadow-lg sidebar-base sidebar-default w-64 bg-gray-800 text-white min-h-screen"
+          className="z-50 sidebar shadow-lg sidebar-base sidebar-default w-60 bg-gray-800 text-white min-h-screen"
           data-toggle="main-sidebar"
         >
           <div className="sidebar-header relative flex items-center justify-start mb-3 border-b dark:border-gray-700 z-0">
@@ -66,7 +67,14 @@ function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
           </div>
 
           <div className="sidebar-body data-scrollbar">
+             <div className="nav-item static-item">
+                <p className="nav-link static-item disabled">
+                  <span className="default-icon">Admin</span>
+                  <span className="mini-icon">-</span>
+                </p>
+              </div>
             <ul className="sidebar-main-menu">
+             
               {navItems.map((item) => (
                 <li key={item.path} className="nav-item">
                   <NavLink
@@ -75,10 +83,7 @@ function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
                       `nav-link ${isActive ? "active" : ""}`
                     }
                   >
-                    <i
-                      className="icon"
-                      dangerouslySetInnerHTML={{ __html: item.icon }}
-                    />
+                    {item.icon}
                     <span className="item-name">{item.label}</span>
                   </NavLink>
                 </li>
@@ -187,15 +192,15 @@ function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
 
                     <div className="breadcrumb-title xl:flex sm:hidden justify-center items-center lg:flex ml-2">
                       <small className="capitalize hidden md:block mr-3 pr-3 border-r border-secondary-300 dark:border-secondary-700 dark:text-white">
-                        Home
+                        Admin
                       </small>
                     </div>
 
                     <div className="offcanvas-body">
                       <ul className="iq-nav-menu header-menu w-full lg:w-auto list-unstyled ml-2 rtl:mr-2 rtl:ml-0">
-                        <li className="nav-item active">
+                        <li className="nav-item">
                           <a
-                            className="menu-arrow justify-start text-secondary-600"
+                            className="nav-link menu-arrow justify-start text-secondary-600"
                             href="javascript:void(0)"
                             aria-controls="homeData"
                           >
@@ -1313,6 +1318,7 @@ function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
                         <li
                           className="flex items-center pl-2"
                           x-data="{ open: false }"
+                          style={{ display: "none" }}
                         >
                           <a
                             href="#"
@@ -1423,7 +1429,7 @@ function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
                           </div>
                         </li>
                         <li
-                          className="flex items-center pl-2"
+                          className="flex items-center pl-2 border-r"
                           x-data="{ open: false }"
                         >
                           <a
@@ -1577,6 +1583,7 @@ function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
                         <li
                           className="flex items-center pl-2"
                           x-data="{ open: false }"
+                          style={{ display: "none" }}
                         >
                           <a
                             href="#"
@@ -1802,6 +1809,7 @@ function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
                         <li
                           className="nav-item iq-full-screen sm:hidden xl:block border-r"
                           id="fullscreen-item"
+                          style={{ display: "none" }}
                         >
                           <a
                             className="flex items-center p-2 hover:text-primary-500 focusa text-secondary-600"
@@ -1896,9 +1904,10 @@ function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
                             aria-expanded="false"
                           >
                             <img
-                              src="..//assets/images/avatars/01.png"
+                              src="/user.jpg"
                               alt="User-Profile"
                               className="h-12 w-12 rounded-full truncate"
+                              style={{ objectFit: "cover" }}
                               loading="lazy"
                             />
                             <div className="caption ml-3 d-none d-md-block ">
@@ -1909,7 +1918,7 @@ function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
                                 Austin Robertson
                               </h6>
                               <p className="mb-0 caption-sub-title focusa active:text-primary-500  focus:text-primary-500 hover:text-primary-500 text-black mr-4">
-                                Marketing Administrator
+                                DBS Admin
                               </p>
                             </div>
                           </a>
@@ -2672,31 +2681,13 @@ function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
               </li>
             </ul>
             <div className="footer-second text-secondary-700 flex flex-wrap dark:text-white text-sm">
-              ©<script>document.write(new Date().getFullYear())</script>2025
-              Qompac UI, Made with &nbsp;
-              <span>
-                <svg
-                  width="15"
-                  className="text-secondary-600 mt-1"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    clip-rule="evenodd"
-                    d="M15.85 2.50065C16.481 2.50065 17.111 2.58965 17.71 2.79065C21.401 3.99065 22.731 8.04065 21.62 11.5806C20.99 13.3896 19.96 15.0406 18.611 16.3896C16.68 18.2596 14.561 19.9196 12.28 21.3496L12.03 21.5006L11.77 21.3396C9.48102 19.9196 7.35002 18.2596 5.40102 16.3796C4.06102 15.0306 3.03002 13.3896 2.39002 11.5806C1.26002 8.04065 2.59002 3.99065 6.32102 2.76965C6.61102 2.66965 6.91002 2.59965 7.21002 2.56065H7.33002C7.61102 2.51965 7.89002 2.50065 8.17002 2.50065H8.28002C8.91002 2.51965 9.52002 2.62965 10.111 2.83065H10.17C10.21 2.84965 10.24 2.87065 10.26 2.88965C10.481 2.96065 10.69 3.04065 10.89 3.15065L11.27 3.32065C11.3618 3.36962 11.4649 3.44445 11.554 3.50912C11.6104 3.55009 11.6612 3.58699 11.7 3.61065C11.7163 3.62028 11.7329 3.62996 11.7496 3.63972C11.8354 3.68977 11.9247 3.74191 12 3.79965C13.111 2.95065 14.46 2.49065 15.85 2.50065ZM18.51 9.70065C18.92 9.68965 19.27 9.36065 19.3 8.93965V8.82065C19.33 7.41965 18.481 6.15065 17.19 5.66065C16.78 5.51965 16.33 5.74065 16.18 6.16065C16.04 6.58065 16.26 7.04065 16.68 7.18965C17.321 7.42965 17.75 8.06065 17.75 8.75965V8.79065C17.731 9.01965 17.8 9.24065 17.94 9.41065C18.08 9.58065 18.29 9.67965 18.51 9.70065Z"
-                    fill="currentColor"
-                  ></path>
-                </svg>
-              </span>
-              &nbsp; by &nbsp;
+              ©<script>document.write(new Date().getFullYear())</script>
               <a
                 className="text-primary-500 dark:text-primary-500"
                 href="https://iqonic.design/"
               >
                 {" "}
-                IQONIC Design.
+                SophiaERP
               </a>
             </div>
           </footer>

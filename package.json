@@ -12,6 +12,7 @@
   "dependencies": {
     "@types/feather-icons": "^4.29.4",
     "feather-icons": "^4.29.2",
+    "@tailwindcss/vite": "^4.1.16",
     "framer-motion": "^12.23.24",
     "jquery": "^3.7.1",
     "lucide-react": "^0.548.0",
@@ -25,7 +26,6 @@
     "@types/node": "^24.6.0",
     "@types/react": "^19.1.16",
     "@types/react-dom": "^19.1.9",
-    "@types/react-helmet-async": "^1.0.1",
     "@vitejs/plugin-react": "^5.0.4",
     "autoprefixer": "^10.4.21",
     "eslint": "^9.36.0",
