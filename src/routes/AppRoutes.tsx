@@ -22,6 +22,7 @@ function AppRoutes() {
         <Route path="employersMgt" element={<Employers />} />
         <Route path="employerNew" element={<EmployersNew />} />
         <Route path="employerProfile" element={<EmployerProfile />} />
+        {/* <Route path="tracker" element={<DBSTrackerModule />} /> */}
         <Route path="tracker" element={<Dashboard />} />
         <Route path="incidentMgt" element={<Dashboard />} />
         <Route path="financeMgt" element={<Dashboard />} />

@@ -16,6 +16,7 @@ import {
   Bell,
   XCircle,
 } from "lucide-react";
+import { NavLink } from "react-router-dom";
 
 export default function DBSTrackerModule() {
   const [activeView, setActiveView] = useState("dashboard");
@@ -197,10 +198,28 @@ export default function DBSTrackerModule() {
       <div className="mb-6">
         <div className="flex justify-between items-start mb-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+            <div className="flex">
               <Shield className="text-blue-600" size={36} />
-              DBS Tracker & Compliance
-            </h1>
+              <div className="mt-3">
+                <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-3 w-full" style={{ lineHeight: '.5rem' }}>
+                  DBS Tracker & Compliance
+                </h1>
+                <small className="flex gap-3">
+                  <NavLink
+                    to='/dashboard'
+                    className='text-black'
+                  >Dashboard
+                  </NavLink>
+                  /
+                  <NavLink
+                    to='/tracker'
+                    className='text-black'
+                  >DBS Tracker
+                  </NavLink>
+                </small>
+              </div>
+              
+            </div>
             <p className="text-gray-600 mt-1">
               Monitor and manage background checks
             </p>
