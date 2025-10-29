@@ -7,7 +7,6 @@ import ApplicantProfile from "../pages/admin/applicant/ApplicantProfile";
 import EmployersNew from "../pages/admin/employer/EmployerNew";
 import Employers from "../pages/admin/employer/Employers";
 import EmployerProfile from "../pages/admin/employer/EmployerProfile";
-import DBSTrackerModule from "../pages/admin/Tracker/DbsTracker";
 
 function AppRoutes() {
   return (
@@ -23,12 +22,14 @@ function AppRoutes() {
         <Route path="employersMgt" element={<Employers />} />
         <Route path="employerNew" element={<EmployersNew />} />
         <Route path="employerProfile" element={<EmployerProfile />} />
-        <Route path="tracker" element={<DBSTrackerModule />} />
+        {/* <Route path="tracker" element={<DBSTrackerModule />} /> */}
+        <Route path="tracker" element={<Dashboard />} />
         <Route path="incidentMgt" element={<Dashboard />} />
         <Route path="financeMgt" element={<Dashboard />} />
         <Route path="reports" element={<Dashboard />} />
         <Route path="communication" element={<Dashboard />} />
         <Route path="control-panel" element={<Dashboard />} />
+
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
