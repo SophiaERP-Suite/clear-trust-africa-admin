@@ -1,7 +1,8 @@
 // src/layouts/BaseDashboardLayout.tsx
 import { Outlet, NavLink } from "react-router-dom";
-import { useEffect, type JSX } from "react";
+import { useEffect, useState, type JSX } from "react";
 import DashboardHead from "../components/DashboardHead";
+import { ArrowRight, ArrowLeft, Menu, X } from "lucide-react";
 
 interface NavItem {
   path: string;
@@ -13,12 +14,17 @@ interface BaseDashboardLayoutProps {
   navItems: NavItem[];
 }
 
-<<<<<<< HEAD
 function BaseDashboardLayout({ navItems }: BaseDashboardLayoutProps) {
-=======
-function BaseDashboardLayout({ navItems}: BaseDashboardLayoutProps) {
->>>>>>> main
-  // const navigate = useNavigate();
+  const [isOpen, setIsOpen] = useState(false);
+  const [isOpenMobile, setIsOpenMobile] = useState(false);
+
+  function handleSideBarToggle() {
+    setIsOpen(!isOpen);
+  }
+
+  function handleMobileSideBarToggle() {
+    setIsOpenMobile(!isOpenMobile);
+  }
 
   useEffect(() => {
     // Initialize Alpine.js if it's loaded
@@ -32,35 +38,119 @@ function BaseDashboardLayout({ navItems}: BaseDashboardLayoutProps) {
       <DashboardHead />
 
       <div
-        className="scroll-smooth selection:text-white selection:bg-primary-500"
+        className="scroll-smooth flex selection:text-white selection:bg-primary-500"
         style={{ overflowX: "hidden" }}
         x-data="settingInit"
       >
         {/* Sidebar */}
         <aside
-          x-data="sidebar"
-          className="z-50 sidebar shadow-lg sidebar-base sidebar-default w-60 bg-gray-800 text-white min-h-screen"
-          data-toggle="main-sidebar"
+          className={`${
+            isOpen ? "w-64" : "w-20"
+          } z-50 sidebar hidden md:block shadow-lg sidebar-base sidebar-default w-60 bg-gray-800 text-white min-h-screen`}
+        >
+          <div className="sidebar-header relative flex items-center justify-start mb-3 border-b dark:border-gray-700 z-0">
+            {isOpen ? (
+              <div className="flex items-center">
+                <a
+                  href="/admin/dashboard"
+                  className="flex px-5 py-4 mr-4 rtl:ml-4 rtl:mr-0 text-xl whitespace-nowrap"
+                >
+                  <div className="sidebar-logo ml-2">
+                    <img
+                      src="/clear-logo.png"
+                      style={{ width: "10px" }}
+                      alt="logo"
+                      className="mr-3"
+                    />
+                  </div>
+                </a>
+                <div>
+                  <ArrowLeft size={100} onClick={handleSideBarToggle} />
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center">
+                <a
+                  href="/admin/dashboard"
+                  className="flex px-5 py-4 mr-4 rtl:ml-4 rtl:mr-0 text-xl whitespace-nowrap"
+                >
+                  <div className="sidebar-logo ml-2">
+                    <img
+                      src="/clear-logo.png"
+                      style={{ width: "10px" }}
+                      alt="logo"
+                      className="mr-3"
+                    />
+                  </div>
+                </a>
+                     <div>
+                  <ArrowLeft size={100} onClick={handleSideBarToggle} />
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="sidebar-body data-scrollbar">
+            <div className="nav-item static-item">
+              <p className="nav-link static-item disabled">
+                <span className="default-icon">Admin</span>
+                <span className="mini-icon">-</span>
+              </p>
+              <p className="nav-link static-item disabled">
+                <span className="default-icon">Admin</span>
+                <span className="mini-icon">-</span>
+              </p>
+            </div>
+            <ul className="sidebar-main-menu">
+              {navItems.map((item) => (
+                <li key={item.path} className="nav-item">
+                  <NavLink
+                    to={item.path}
+                    className={({ isActive }) =>
+                      `nav-link ${isActive ? "active" : ""}`
+                    }
+                  >
+                    {item.icon}
+                    {isOpen ? (
+                      <span className="item-name">{item.label}</span>
+                    ) : null}
+                  </NavLink>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </aside>
+
+        <aside
+          className={`${
+            isOpenMobile ? "block" : "hidden"
+          } z-50 sidebar block md:hidden shadow-lg sidebar-base sidebar-default w-60 bg-gray-800 text-white min-h-screen`}
         >
           <div className="sidebar-header relative flex items-center justify-start mb-3 border-b dark:border-gray-700 z-0">
             <a
               href="/admin/dashboard"
               className="flex px-5 py-4 mr-4 rtl:ml-4 rtl:mr-0 text-xl whitespace-nowrap"
             >
-<<<<<<< HEAD
-              <span className="sidebar-logo ml-2" style={{ width: "110px"}}>
-                <img src="/clear-logo.png" alt="logo" />
-=======
-           
-              <span className="sidebar-logo ml-2">
-                <img src="/clear-logo.png" style={{width: "110px"}} alt="logo" />
->>>>>>> main
-              </span>
+              <div className="sidebar-logo ml-2">
+                <img
+                  src="/clear-logo.png"
+                  style={{ width: "110px" }}
+                  alt="logo"
+                  className="mr-3"
+                />
+              </div>
             </a>
+            <div>
+              <X size={18} onClick={handleMobileSideBarToggle} />
+            </div>
           </div>
 
           <div className="sidebar-body data-scrollbar">
             <div className="nav-item static-item">
+              <p className="nav-link static-item disabled">
+                <span className="default-icon">Admin</span>
+                <span className="mini-icon">-</span>
+              </p>
               <p className="nav-link static-item disabled">
                 <span className="default-icon">Admin</span>
                 <span className="mini-icon">-</span>
@@ -85,13 +175,14 @@ function BaseDashboardLayout({ navItems}: BaseDashboardLayoutProps) {
         </aside>
 
         {/* Main Content */}
-        <main className="main-content" x-data="{ data: true }">
+        <main
+          className={`main-content flex-1 bg-gray-50 overflow-y-auto transition-all duration-300 ${
+            isOpen ? "ml-64" : "ml-20"
+          }`}
+          x-data="{ data: true }"
+        >
           <div className="relative">
-            <nav
-              className="z-40 bg-white dark:bg-dark-card nav shadow-lg navbar navbar-expand-xl navbar-light iq-navbar py-0"
-              x-data="{ selected: null }"
-              x-bind:className="setting.header_navbar"
-            >
+            <nav className="z-40 bg-white dark:bg-dark-card nav shadow-lg navbar navbar-expand-xl navbar-light iq-navbar py-0">
               <div className="w-full px-7 py-2">
                 <div className="relative">
                   {/* Mobile menu button */}
@@ -101,85 +192,36 @@ function BaseDashboardLayout({ navItems}: BaseDashboardLayoutProps) {
                   >
                     <button
                       type="button"
-                      className="inline-flex items-center justify-center text-xl text-secondary-500 rounded"
+                      className="inline-flex items-center justify-center text-xl text-black"
                     >
-                      <span className="sr-only">Open main menu</span>
-                      <svg
-                        className="block w-8 h-8"
-                        id="mobileicon"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M4 6h16M4 12h16M4 18h16"
-                        ></path>
-                      </svg>
-                      <svg
-                        className="hidden w-6 h-6"
-                        id="cancel"
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 16 16"
-                        fill="gray"
-                      >
-                        <path d="M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z"></path>
-                      </svg>
+                      <Menu size={18} onClick={handleMobileSideBarToggle} />
+                      {/* <X size={18} /> */}
                     </button>
                   </div>
 
                   <div className="flex">
                     <div className="flex items-center xl:hidden gap-2 display-none">
-                      <div
-                        className="btn btn-primary btn-icon btn-sm rounded-full"
-                        data-toggle="sidebar"
-                        x-on:click="sidebarMini"
-                        data-active="true"
-                      >
-                        <span className="btn-inner">
-                          <svg width="20px" height="20px" viewBox="0 0 24 24">
-                            <path
-                              fill="currentColor"
-                              d="M4,11V13H16L10.5,18.5L11.92,19.92L19.84,12L11.92,4.08L10.5,5.5L16,11H4Z"
-                            ></path>
-                          </svg>
-                        </span>
-                      </div>
                       <a
                         href="../dashboard/index.html"
                         className="flex items-center whitespace-nowrap gap-4"
                       >
-                        {/* Logo start */}
-                        <svg
-                          width="30"
-                          className="text-primary-500 dark:text-primary-500 brand-logo"
-                          viewBox="0 0 30 30"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            clipRule="evenodd"
-                            d="M7.25333 2H22.0444L29.7244 15.2103L22.0444 28.1333H7.25333L0 15.2103L7.25333 2ZM11.2356 9.32316H18.0622L21.3334 15.2103L18.0622 20.9539H11.2356L8.10669 15.2103L11.2356 9.32316Z"
-                            fill="currentColor"
-                          ></path>
-                          <path
-                            d="M23.751 30L13.2266 15.2103H21.4755L31.9999 30H23.751Z"
-                            fill="#3FF0B9"
-                          ></path>
-                        </svg>
-                        {/* logo End */}
-                        <h4
-                          className="mb-0"
-                          data-setting="app_name"
-                          x-text="setting.app_name"
-                        >
-                          Qompac UI
-                        </h4>
+                        <img
+                          src="/clear-logo.png"
+                          style={{ width: "110px" }}
+                          alt="logo"
+                          className="mr-3"
+                        />
                       </a>
+                    </div>
+
+                    <div className="breadcrumb-title xl:flex sm:hidden justify-center items-center lg:flex ml-2">
+                      <small className="capitalize hidden md:block mr-3 pr-3 border-r border-secondary-300 dark:border-secondary-700 dark:text-white">
+                        {!isOpen ? (
+                          <ArrowRight size={18} onClick={handleSideBarToggle} />
+                        ) : (
+                          <ArrowLeft size={18} onClick={handleSideBarToggle} />
+                        )}
+                      </small>
                     </div>
 
                     <div className="breadcrumb-title xl:flex sm:hidden justify-center items-center lg:flex ml-2">
