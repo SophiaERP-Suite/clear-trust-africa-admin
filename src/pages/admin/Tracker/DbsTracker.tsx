@@ -2,16 +2,17 @@ import { useState } from "react";
 import {
   Shield,
   AlertTriangle,
-//   CheckCircle,
   Clock,
   Search,
   Filter,
   Download,
-  Plus,
+  ChevronRightIcon,
+  ListChecks,
+  Hourglass,
+  ClockAlert,
+  ClockFading,
   Eye,
   RefreshCw,
-//   Calendar,
-//   Users,
   FileText,
   Bell,
   XCircle,
@@ -158,28 +159,6 @@ export default function DBSTrackerModule() {
     ),
   };
 
-  //   const getStatusColor = (status) => {
-  //     const colors = {
-  //       'Valid': 'bg-green-100 text-green-800 border-green-200',
-  //       'Expiring Soon': 'bg-yellow-100 text-yellow-800 border-yellow-200',
-  //       'Expired': 'bg-red-100 text-red-800 border-red-200',
-  //       'Pending': 'bg-blue-100 text-blue-800 border-blue-200',
-  //       'Under Review': 'bg-purple-100 text-purple-800 border-purple-200'
-  //     };
-  //     return colors[status] || 'bg-gray-100 text-gray-800 border-gray-200';
-  //   };
-
-  //   const getStatusIcon = (status) => {
-  //     switch(status) {
-  //       case 'Valid': return <CheckCircle className="text-green-600" size={20} />;
-  //       case 'Expiring Soon': return <Clock className="text-yellow-600" size={20} />;
-  //       case 'Expired': return <XCircle className="text-red-600" size={20} />;
-  //       case 'Pending': return <Clock className="text-blue-600" size={20} />;
-  //       case 'Under Review': return <AlertTriangle className="text-purple-600" size={20} />;
-  //       default: return <Shield size={20} />;
-  //     }
-  //   };
-
   const filteredChecks = dbsChecks.filter((check) => {
     const matchesSearch =
       check.employeeName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -194,78 +173,79 @@ export default function DBSTrackerModule() {
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
+
       {/* Header */}
       <div className="mb-6">
-        <div className="flex justify-between items-start mb-4">
-          <div>
-            <div className="flex">
-              <Shield className="text-blue-600" size={36} />
-              <div className="mt-3">
-                <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-3 w-full" style={{ lineHeight: '.5rem' }}>
-                  DBS Tracker & Compliance
-                </h1>
-                <small className="flex gap-3">
-                  <NavLink
-                    to='/dashboard'
-                    className='text-black'
-                  >Dashboard
-                  </NavLink>
-                  /
-                  <NavLink
-                    to='/tracker'
-                    className='text-black'
-                  >DBS Tracker
-                  </NavLink>
-                </small>
+        <div className="w-full mb-8">
+          <div className="row">
+            <div className="col-md-12">
+              <div className="flex flex-wrap items-center justify-between">
+                <div className="flex">
+                  <Shield className="text-blue-600 mr-2" size={36} />
+                  <div>
+                    <h3 className="mb-0 text-black">
+                      DBS Tracker & Compliance
+                    </h3>
+                    <p className="text-secondary-600 text-black">
+                      <NavLink to="/Dashboard">Dashboard</NavLink>{" "}
+                      <ChevronRightIcon size={14} />{" "}
+                      <NavLink to="/Tracker">DBS Tracker</NavLink>{" "}
+                    </p>
+                  </div>
+                </div>
+
+                <div>
+                </div>
               </div>
-              
             </div>
-            <p className="text-gray-600 mt-1">
-              Monitor and manage background checks
-            </p>
           </div>
-          <button className="flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-all shadow-lg">
-            <Plus size={20} />
-            New DBS Check
-          </button>
         </div>
 
         {/* Quick Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
-          <div className="bg-white rounded-lg shadow p-4 border-l-4 border-blue-500">
-            <div className="text-sm text-gray-600 mb-1">Total Checks</div>
-            <div className="text-2xl font-bold text-gray-900">
-              {stats.total}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+          {/* Valid */}
+          <div className="flex items-center gap-4 p-5 bg-gradient-to-r from-green-600 to-green-500 rounded-lg shadow-md hover:shadow-lg transition">
+            <div className="bg-white/20 w-12 h-12 flex items-center justify-center rounded-full backdrop-blur-sm">
+              <ListChecks className="text-white text-xl" />
+            </div>
+            <div>
+              <p className="text-sm text-green-50">Active</p>
+              <h2 className="text-3xl font-bold text-white">{stats.valid}</h2>
             </div>
           </div>
-          <div className="bg-white rounded-lg shadow p-4 border-l-4 border-green-500">
-            <div className="text-sm text-gray-600 mb-1">Valid</div>
-            <div className="text-2xl font-bold text-green-600">
-              {stats.valid}
+
+          {/* Pending */}
+          <div className="flex items-center gap-4 p-5 bg-gradient-to-r from-purple-600 to-purple-500 rounded-lg shadow-md hover:shadow-lg transition">
+            <div className="bg-white/20 w-12 h-12 flex items-center justify-center rounded-full backdrop-blur-sm">
+              <Hourglass className="text-white text-xl" />
+            </div>
+            <div>
+              <p className="text-sm text-purple-50">Pending</p>
+              <h2 className="text-3xl font-bold text-white">{stats.pending}</h2>
             </div>
           </div>
-          <div className="bg-white rounded-lg shadow p-4 border-l-4 border-yellow-500">
-            <div className="text-sm text-gray-600 mb-1">Expiring Soon</div>
-            <div className="text-2xl font-bold text-yellow-600">
-              {stats.expiringSoon}
+
+          {/* Expiring Soon */}
+          <div className="flex items-center gap-4 p-5 bg-gradient-to-r from-yellow-500 to-yellow-400 rounded-lg shadow-md hover:shadow-lg transition">
+            <div className="bg-white/20 w-12 h-12 flex items-center justify-center rounded-full backdrop-blur-sm">
+              <ClockAlert className="text-white text-xl" />
+            </div>
+            <div>
+              <p className="text-sm text-yellow-50">Expiring Soon</p>
+              <h2 className="text-3xl font-bold text-white">
+                {stats.expiringSoon}
+              </h2>
             </div>
           </div>
-          <div className="bg-white rounded-lg shadow p-4 border-l-4 border-red-500">
-            <div className="text-sm text-gray-600 mb-1">Expired</div>
-            <div className="text-2xl font-bold text-red-600">
-              {stats.expired}
+
+          {/* Expired */}
+          <div className="flex items-center gap-4 p-5 bg-gradient-to-r from-red-600 to-red-500 rounded-lg shadow-md hover:shadow-lg transition">
+            <div className="bg-white/20 w-12 h-12 flex items-center justify-center rounded-full backdrop-blur-sm">
+              <ClockFading className="text-white text-xl" />
             </div>
-          </div>
-          <div className="bg-white rounded-lg shadow p-4 border-l-4 border-purple-500">
-            <div className="text-sm text-gray-600 mb-1">Pending</div>
-            <div className="text-2xl font-bold text-purple-600">
-              {stats.pending}
-            </div>
-          </div>
-          <div className="bg-white rounded-lg shadow p-4 border-l-4 border-indigo-500">
-            <div className="text-sm text-gray-600 mb-1">Compliance Rate</div>
-            <div className="text-2xl font-bold text-indigo-600">
-              {stats.complianceRate}%
+            <div>
+              <p className="text-sm text-red-50">Expired</p>
+              <h2 className="text-3xl font-bold text-white">{stats.expired}</h2>
             </div>
           </div>
         </div>
