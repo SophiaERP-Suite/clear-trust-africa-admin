@@ -1,4 +1,4 @@
-import { ChevronRightIcon, Users } from "lucide-react";
+import { ChevronRightIcon, Users, UserPlus } from "lucide-react";
 import "../../../assets2/css/choices.min.css";
 import "../../../assets2/css/flatpickr.min.css";
 import "../../../assets2/css/libs.min.css";
@@ -16,56 +16,45 @@ import "../../../assets2/js/libs.min.js";
 import "../../../assets2/js/slider-tabs.js";
 import "../../../assets2/js/sweet-alert.js";
 import "../../../assets2/js/swiper-slider.js";
-// import { ChevronRightIcon } from "lucide-react";
+import { NavLink } from "react-router-dom";
 
 function AdminApplicantsNew() {
   return (
-    <>
-      <div
-        className="text-white h-48 sub-header"
-        style={{ backgroundColor: "rgb(112 22 208 / 1)", overflow: "hidden" }}
-      >
-        <div className="w-full p-8">
-          <div className="row">
-            <div className="px-4 col-md-12">
-              <div className="flex flex-wrap items-center justify-between">
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="w-full mb-8">
+        <div className="row">
+          <div className="col-md-12">
+            <div className="flex flex-wrap items-center justify-between">
+              <div className="flex">
+                <UserPlus className="text-blue-600 mr-2" size={36} />
                 <div>
-                  <h1 className="text-white mb-2 mr-16">New Applicant</h1>
-                  <p className="mb-4 text-white mr-16">
-                    <p className="text-secondary-600 text-white">
-                      <a href="/admin/dashboard">Dashboard</a>{" "}
-                      <ChevronRightIcon size={14} />{" "}
-                      <a href="applicantsMgt">Applicants Management</a>{" "}
-                      <ChevronRightIcon size={14} /> New Applicant
-                    </p>
+                  <h3 className="mb-0 text-black">
+                    New Applicant
+                  </h3>
+                  <p className="text-secondary-600 text-black">
+                    <NavLink to="/Dashboard">Dashboard</NavLink>{" "}
+                    <ChevronRightIcon size={14} />{" "}
+                    <NavLink to="/ApplicantsMgt">Applicants</NavLink>{" "}
+                    <ChevronRightIcon size={14} />{" "}
+                    <NavLink to="ApplicantNew">New Applicant</NavLink>{" "}
                   </p>
                 </div>
-                <div>
-                  <a
-                    href="applicantsMgt"
+              </div>
+              <div className="flex justify-end">
+                <NavLink
+                    to="/ApplicantsMgt" style={{ backgroundColor: "rgb(112 22 208 / 1)" }}
                     className="text-white btn shadow-md btn-soft-light hover:shadow-xl hover:bg-glass focus:bg-gray-200"
                   >
-                    <Users size={18}  className="mr-2"/>
+                    <Users size={18} className="mr-2" />
                     All Applicants
-                  </a>
-                </div>
+                </NavLink>
               </div>
             </div>
           </div>
         </div>
-        <div
-          className="absolute top-0 h-80 img-height overflow-hidden"
-          style={{ zIndex: -1 }}
-        >
-          <img
-            src="../../assets/images/dashboard/top-header.html"
-            alt="header"
-            className="animated-scaleX object-cover w-screen h-full rounded-2xl"
-          />
-        </div>
       </div>
       <div
-        className="p-6 lg:p-8 footer-inner  mx-auto main-container  lg:py-0 py-0 "
+        className="footer-inner  mx-auto main-container  lg:py-0 py-0 "
         x-bind:class="setting.page_layout"
       >
         <div className="lg:flex lg:grid-cols-2 gap-8">
@@ -110,26 +99,23 @@ function AdminApplicantsNew() {
                     <div className="mt-4 ">
                       <div className="items-center inline-block">
                         <span className="text-secondary-600 dark:text-white">
-                          Only
+                          Only{" "}
                         </span>
-                        <a
-                          href="javascript:void();"
+                        <span
                           className="text-primary-400 hover:text-primary-500"
                         >
-                          .jpg
-                        </a>
-                        <a
-                          href="javascript:void();"
+                          .jpg{" "}
+                        </span>
+                        <span
                           className="text-primary-400 hover:text-primary-500"
                         >
-                          .png
-                        </a>
-                        <a
-                          href="javascript:void();"
+                          .png{" "}
+                        </span>
+                        <span
                           className="text-primary-400 hover:text-primary-500"
                         >
-                          .jpeg
-                        </a>
+                          .jpeg{" "}
+                        </span>
                         <span className="text-secondary-600 dark:text-white">
                           allowed
                         </span>
@@ -453,7 +439,7 @@ function AdminApplicantsNew() {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 
