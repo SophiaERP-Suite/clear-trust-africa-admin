@@ -1789,7 +1789,7 @@ function AdminDashboard() {
                         src={donald}
                         alt="profile"
                       />
-                  </div>https://github.com/SophiaERP-Suite/
+                  </div>
                   <div className="w-full">
                     <div className="flex justify-between">
                       <h6 className="mb-0 dark:text-white">Donald, Adolphus</h6>

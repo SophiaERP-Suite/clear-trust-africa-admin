@@ -2,7 +2,7 @@
 import { Outlet, NavLink } from "react-router-dom";
 import { useState, useRef, useEffect, type JSX } from "react";
 import DashboardHead from "../components/DashboardHead";
-import tcrn_image from "../assets2/img/TRCN.jpg";
+import binta from "../assets2/img/binta.jpeg";
 import femi from "../assets2/img/femi_adebayo.jpg";
 import { ArrowRight, ArrowLeft, Menu, X, Bell, Search } from "lucide-react";
 
@@ -14,9 +14,10 @@ interface NavItem {
 
 interface BaseDashboardLayoutProps {
   navItems: NavItem[];
+  title?: string;
 }
 
-function BaseDashboardLayout({ navItems }: BaseDashboardLayoutProps) {
+function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
@@ -61,43 +62,39 @@ function BaseDashboardLayout({ navItems }: BaseDashboardLayoutProps) {
         x-data="settingInit"
       >
         {/* Sidebar */}
-        <aside
+        <aside style={{ overflowY: 'auto' }}
           className={`${
             isOpen ? "w-64" : "w-20"
-          } z-50 sidebar hidden md:block shadow-lg sidebar-base sidebar-default w-60 bg-gray-800 text-white min-h-screen`}
+          } z-50 sidebar hidden md:block  shadow-lg sidebar-base sidebar-default w-60 bg-gray-800 text-white min-h-screen`}
         >
           <div className="sidebar-header relative flex items-center justify-start mb-3 border-b dark:border-gray-700 z-0">
             {isOpen ? (
               <div className="flex items-center text-black justify-between w-full">
                 <a
-                  href="/admin/dashboard"
+                  href="dashboard"
                   className="flex px-5 py-4 mr-4 rtl:ml-4 rtl:mr-0 text-xl whitespace-nowrap"
                 >
                   <div className="sidebar-logo ml-2">
                     <img
-                      src="/clear-logo.png"
-                      style={{ width: "160px" }}
+                      src="/cleartrust_logo.png"
+                      style={{ width: "170px" }}
                       alt="logo"
                       className="mr-3"
                     />
                   </div>
                 </a>
-                {/* <div>
-                  <ArrowLeft size={30} onClick={handleSideBarToggle} />
-                </div> */}
               </div>
             ) : (
-              <div className="flex items-center text-black">
+              <div className="">
                 <a
-                  href="/admin/dashboard"
-                  className="flex px-5 py-4 mr-4 rtl:ml-4 rtl:mr-0 text-xl whitespace-nowrap"
+                  href="dashboard"
+                  className="flex justify-center py-2 px-2 my-2 relative right-2 items-center"
                 >
-                  <div className="sidebar-logo ml-2">
+                  <div className="sidebar-logo">
                     <img
-                      src="/clear-logo.png"
+                      src="/cleartrust_logo_mini.png"
                       style={{ width: "160px" }}
                       alt="logo"
-                      className="mr-3"
                     />
                   </div>
                 </a>
@@ -105,53 +102,55 @@ function BaseDashboardLayout({ navItems }: BaseDashboardLayoutProps) {
             )}
           </div>
 
-          <div className="sidebar-body data-scrollbar">
-            <div className="nav-item static-item">
-              <p className="nav-link static-item disabled">
-                {isOpen ? (
-                  <a
-                    className="py-0 flex items-center p-2 ml-2 hover:text-primary-500 active:text-primary-500 focus:text-primary-500 focus"
-                    href="#"
-                  >
-                    <img
-                      src={tcrn_image}
-                      alt="User-Profile"
-                      className="h-12 w-12 rounded-full"
-                      style={{ objectFit: "cover" }}
-                      loading="lazy"
-                    />
-                    <div className="caption ml-3 d-none d-md-block ">
-                      <h6 className="mb-0 caption-title mr-4" style={{}}>
-                        Austin Robertson
-                      </h6>
-                      <p className="mb-0 caption-sub-title focusa active:text-primary-500  focus:text-primary-500 hover:text-primary-500 text-black mr-4">
-                        DBS Admin
-                      </p>
-                    </div>
-                  </a>
-                ) : (
-                  <a
-                    className="py-0 flex justify-center"
-                    href="#"
-                  >
-                    <img
-                      src={tcrn_image}
-                      alt="User-Profile"
-                      className="h-12 w-12 rounded-full"
-                      style={{ objectFit: "cover" }}
-                      loading="lazy"
-                    />
-                  </a>
-                )}
-              </p>
-            </div>
+          <div className="nav-item static-item border-b">
+            <p className="nav-link static-item disabled">
+              {isOpen ? (
+                <a
+                  className="py-0 flex items-center p-2 ml-2 hover:text-primary-500 active:text-primary-500 focus:text-primary-500 focus"
+                  href="#"
+                >
+                  <img
+                    src={femi}
+                    alt="User-Profile"
+                    className="h-12 w-12 border rounded-full"
+                    style={{ objectFit: "cover" }}
+                    loading="lazy"
+                  />
+                  <div className="caption ml-3 d-none d-md-block ">
+                    <h6 className="mb-0 caption-title mr-4" style={{}}>
+                      Olawale Adigun
+                    </h6>
+                    <p className="mb-0 text-sm caption-sub-title focusa active:text-primary-500  focus:text-primary-500 hover:text-primary-500 text-black mr-4">
+                      HR
+                    </p>
+                  </div>
+                </a>
+              ) : (
+                <a className="py-0 flex justify-center" href="#">
+                  <img
+                    src={femi}
+                    alt="User-Profile"
+                    className="h-12 w-12 rounded-full"
+                    style={{ objectFit: "cover" }}
+                    loading="lazy"
+                  />
+                </a>
+              )}
+            </p>
+          </div>
+
+          <div className="sidebar-body data-scrollbar mt-4">
             <ul className="sidebar-main-menu">
               {navItems.map((item) => (
                 <li key={item.path} className="nav-item">
                   <NavLink
                     to={item.path}
                     className={({ isActive }) =>
-                      `nav-link text-black ${isActive ? "active" : ""}`
+                      `text-black  ${
+                        isOpen
+                          ? "nav-link"
+                          : "flex justify-center items-center gap-4 my-1 py-3 nav-link-sub"
+                      } ${isActive ? "active" : ""}`
                     }
                   >
                     {item.icon}
@@ -172,56 +171,46 @@ function BaseDashboardLayout({ navItems }: BaseDashboardLayoutProps) {
         >
           <div className="sidebar-header relative flex items-center justify-start mb-3 border-b dark:border-gray-700 z-0">
             <a
-              href="/admin/dashboard"
-              className="flex px-5 py-4 mr-4 rtl:ml-4 rtl:mr-0 text-xl whitespace-nowrap"
+              href="dashboard"
+              className="flex px-2 py-4 mr-4 rtl:ml-4 rtl:mr-0 text-xl whitespace-nowrap"
             >
-              <span className="sidebar-logo ml-2" style={{ width: "170px" }}>
-                <img src="/clear-logo.png" alt="logo" />
+              <span className="sidebar-logo ml-2" style={{ width: "160px" }}>
+                <img src="/cleartrust_logo.png" alt="logo" />
               </span>
-              <div className="sidebar-logo ml-2">
-                <img
-                  src="/clear-logo.png"
-                  style={{ width: "110px" }}
-                  alt="logo"
-                  className="mr-3"
-                />
-              </div>
             </a>
             <div>
-              <X size={18} onClick={handleMobileSideBarToggle} />
+              <X
+                size={25}
+                className="text-black"
+                onClick={handleMobileSideBarToggle}
+              />
             </div>
           </div>
 
           <div className="sidebar-body data-scrollbar">
             <div className="nav-item static-item mb-2">
-              <a
-                className="py-0 flex items-center p-2 ml-2 hover:text-primary-500 active:text-primary-500 focus:text-primary-500 focus"
-                href="#"
-              >
-                <img
-                  src={femi}
-                  alt="User-Profile"
-                  className="h-12 w-12 rounded-full truncate"
-                  style={{ objectFit: "cover" }}
-                  loading="lazy"
-                />
-                <div className="caption ml-3 d-none d-md-block">
-                  <h6 className="mb-0 caption-title mr-4" style={{}}>
-                    Oluwafemi Lawal
-                  </h6>
-                  <p className="mb-0 caption-sub-title focusa active:text-primary-500  focus:text-primary-500 hover:text-primary-500 text-black mr-4">
-                    DBS Admin
-                  </p>
-                </div>
-              </a>
               <div className="nav-item static-item">
                 <p className="nav-link static-item disabled">
-                  <span className="default-icon">Admin</span>
-                  <span className="mini-icon">-</span>
-                </p>
-                <p className="nav-link static-item disabled">
-                  <span className="default-icon">Admin</span>
-                  <span className="mini-icon">-</span>
+                  <a
+                    className="py-0 flex items-center p-2 ml-2 hover:text-primary-500 active:text-primary-500 focus:text-primary-500 focus"
+                    href="#"
+                  >
+                    <img
+                      src={femi}
+                      alt="User-Profile"
+                      className="h-12 w-12 border rounded-full"
+                      style={{ objectFit: "cover" }}
+                      loading="lazy"
+                    />
+                    <div className="caption ml-3 d-none d-md-block ">
+                      <h6 className="mb-0 caption-title mr-4" style={{}}>
+                        Olawale Adigun
+                      </h6>
+                      <p className="mb-0 text-sm caption-sub-title focusa active:text-primary-500  focus:text-primary-500 hover:text-primary-500 text-black mr-4">
+                        HR
+                      </p>
+                    </div>
+                  </a>
                 </p>
               </div>
               <ul className="sidebar-main-menu">
@@ -255,23 +244,17 @@ function BaseDashboardLayout({ navItems }: BaseDashboardLayoutProps) {
               <div className="w-full px-7 py-2">
                 <div className="relative">
                   {/* Mobile menu button */}
-                  <div
-                    className="absolute flex items-center px-2 py-1 text-xl border border-secondary-500 rounded lg:hidden right-0"
-                    x-bind:className="setting.theme_scheme_direction == 'ltr' ? 'right-0' : 'left-0'"
-                  >
-                    <button
-                      type="button"
-                      className="inline-flex items-center justify-center text-xl text-black"
-                    >
-                      <Menu size={18} onClick={handleMobileSideBarToggle} />
+                  <div className="absolute flex items-center px-2 py-0 mt-4 lg:hidden right-0">
+                    <div className="inline-flex items-center justify-center cursor-pointer text-xl text-black top-5">
+                      <Menu size={30} onClick={handleMobileSideBarToggle} />
                       {/* <X size={18} /> */}
-                    </button>
+                    </div>
                   </div>
 
                   <div className="flex justify-between items-center h-16">
-                    <div className="breadcrumb-title xl:flex sm:hidden justify-between items-center lg:flex mt-3">
+                    <div className="breadcrumb-title xl:flex hidden justify-between items-center lg:flex mt-3">
                       <div className="breadcrumb-title xl:flex sm:hidden justify-center items-center lg:flex">
-                        <small className="capitalize hidden md:block mr-3 pr-3 border-r border-secondary-300 dark:border-secondary-700 dark:text-white">
+                        <small className="capitalize cursor-pointer hidden md:block mr-3 pr-3 border-r border-secondary-300 dark:border-secondary-700 dark:text-white">
                           {!isOpen ? (
                             <ArrowRight
                               size={18}
@@ -285,9 +268,9 @@ function BaseDashboardLayout({ navItems }: BaseDashboardLayoutProps) {
                           )}
                         </small>
                       </div>
-                      <h1 className="flex text-2xl font-bold text-gray-900 items-center gap-3">
-                        ADMIN PORTAL
-                      </h1>
+                      <h2 className="hidden xl:flex text-2xl font-bold text-gray-900 items-center gap-3">
+                        {title} PORTAL
+                      </h2>
                     </div>
 
                     <div className="flex mx-2 items-center">
@@ -298,7 +281,7 @@ function BaseDashboardLayout({ navItems }: BaseDashboardLayoutProps) {
                             className="flex items-center whitespace-nowrap gap-4"
                           >
                             <img
-                              src="/clear-logo.png"
+                              src="/cleartrust_logo.png"
                               style={{ width: "160px" }}
                               alt="logo"
                               className="mr-3"
@@ -756,22 +739,22 @@ function BaseDashboardLayout({ navItems }: BaseDashboardLayoutProps) {
 
                         <div className="hidden lg:flex ml-7 lg:grow transition-all duration-700 ease-in-out">
                           <ul className="flex items-center mb-2 ml-auto rtl:ml-0 rtl:mr-auto lg:mb-0">
-                            <li
-                              className="flex justify-end items-center px-1 py-1 rounded-xl border border-gray-800"
-                              x-data="{ open: false }"
-                            >
-                              <input
-                                className="h-9 hidden lg:flex rounded-l-xl w-110 p- focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-secondary-600"
-                                style={{ borderRight: "0px" }}
-                              />
-                              <a
-                                href="#"
-                                className="block group hover:text-primary-500 focusa text-secondary-600 "
-                                style={{ borderLeft: "0px" }}
-                              >
-                                <Search className="text-black" size={22} />
-                              </a>
+                            <li className="flex items-center justify-end">
+                              <div className="flex items-center border border-gray-700 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-primary-500 transition-all duration-200">
+                                <input
+                                  type="text"
+                                  placeholder="Search..."
+                                  className="hidden lg:block px-3 py-2 w-56 text-gray-800 focus:outline-none bg-transparent"
+                                />
+                                <button
+                                  type="button"
+                                  className="p-2 hover:bg-gray-700 transition-colors duration-200"
+                                >
+                                  <Search className="text-black" size={20} />
+                                </button>
+                              </div>
                             </li>
+
                             <li
                               className="flex items-center pl-2 border-r"
                               x-data="{ open: false }"
@@ -937,9 +920,9 @@ function BaseDashboardLayout({ navItems }: BaseDashboardLayoutProps) {
                                   onClick={() => setOpen(!open)}
                                 >
                                   <img
-                                    src={tcrn_image}
+                                    src={binta}
                                     alt="User-Profile"
-                                    className="h-12 w-12 rounded-full truncate"
+                                    className="h-12 w-12 rounded-full border truncate"
                                     style={{ objectFit: "cover" }}
                                     loading="lazy"
                                   />
@@ -948,29 +931,30 @@ function BaseDashboardLayout({ navItems }: BaseDashboardLayoutProps) {
                                       className="mb-0 caption-title mr-4"
                                       style={{}}
                                     >
-                                      Austin Robertson
+                                      Binta Schools
                                     </h6>
                                     <p className="mb-0 caption-sub-title focusa active:text-primary-500  focus:text-primary-500 hover:text-primary-500 text-black mr-4">
-                                      DBS Admin
+                                      Admin
                                     </p>
                                   </div>
                                 </a>
                                 {open && (
-                                  <div className="absolute right-0 z-10 mt-2 origin-top-right bg-white border border-gray-200 divide-y divide-gray-100 rounded-lg shadow-lg">
+                                  <div className="absolute right-0 z-10 mt-2 origin-top-right bg-white border border-gray-200 divide-y divide-gray-100 rounded-md shadow-lg">
                                     <div className="py-1 px-2">
-                                      <p className="w-full px-4 py-2 text-left text-md font-bold text-gray-700 hover:bg-gray-100">
+                                      <p className="w-full px-4 py-2 text-left text-md border-b font-bold text-gray-700 hover:bg-gray-100">
                                         Teachers Registration Council of Nigeria
                                       </p>
-                                      <hr />
-                                      <button className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100">
-                                        Organization Profile
-                                      </button>
-                                      <button className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100">
-                                        Settings
-                                      </button>
-                                      <button className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-100">
-                                        Logout
-                                      </button>
+                                      <ul className="py-2">
+                                        <li className="w-full px-4 py-2 text-left rounded-md text-sm text-gray-700 hover:bg-gray-100">
+                                          <a>Organization Profile</a>
+                                        </li>
+                                        <li className="w-full px-4 py-2 text-left rounded-md text-sm text-gray-700 hover:bg-gray-100">
+                                          <a>Settings</a>
+                                        </li>
+                                        <li className="w-full px-4 py-2 text-left rounded-md text-sm text-gray-700 hover:bg-gray-100">
+                                          <button>Logout</button>
+                                        </li>
+                                      </ul>
                                     </div>
                                   </div>
                                 )}
@@ -1003,13 +987,23 @@ function BaseDashboardLayout({ navItems }: BaseDashboardLayoutProps) {
               </li>
             </ul>
             <div className="footer-second text-secondary-700 flex flex-wrap dark:text-white text-sm">
-              ©<script>document.write(new Date().getFullYear())</script>
+              © {new Date().getFullYear()} Powered by{" "}
               <a
-                className="text-primary-500 dark:text-primary-500"
-                href="https://iqonic.design/"
+                className="text-primary-500 dark:text-primary-500 ml-1"
+                href="https://sophiaerp.com"
+                target="_blank"
+                rel="noopener noreferrer"
               >
-                {" "}
-                SophiaERP
+                Sophia ERP
+              </a>{" "}
+              and{" "}
+              <a
+                className="text-primary-500 dark:text-primary-500 ml-1"
+                href="https://techiefy.co.uk"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Techiefy UK
               </a>
             </div>
           </footer>
