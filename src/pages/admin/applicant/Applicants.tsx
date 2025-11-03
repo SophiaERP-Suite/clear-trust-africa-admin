@@ -15,52 +15,44 @@ import "../../../assets2/js/libs.min.js";
 import "../../../assets2/js/slider-tabs.js";
 import "../../../assets2/js/sweet-alert.js";
 import "../../../assets2/js/swiper-slider.js";
-import { ChevronRightIcon, Plus } from "lucide-react";
+import { ChevronRightIcon, Plus, Users } from "lucide-react";
+import { NavLink } from "react-router-dom";
 
 function AdminApplicants() {
   return (
-    <>
-      <div
-        className="text-white h-48 sub-header"
-        style={{ backgroundColor: "rgb(112 22 208 / 1)", overflow: "hidden" }}
-      >
-        <div className="w-full p-8">
-          <div className="row">
-            <div className="px-4 col-md-12">
-              <div className="flex flex-wrap items-center justify-between">
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="w-full mb-8">
+        <div className="row">
+          <div className="col-md-12">
+            <div className="flex flex-wrap items-center justify-between">
+              <div className="flex">
+                <Users className="text-blue-600 mr-2" size={36} />
                 <div>
-                  <h3 className="mb-0 text-white">Applicants Management</h3>
-                  <p className="text-secondary-600 text-white">
-                    Dashboard <ChevronRightIcon size={14} /> Applicants
-                    Management{" "}
+                  <h3 className="mb-0 text-black">
+                    Applicant Management
+                  </h3>
+                  <p className="text-secondary-600 text-black">
+                    <NavLink to="/Dashboard">Dashboard</NavLink>{" "}
+                    <ChevronRightIcon size={14} />{" "}
+                    <NavLink to="/ApplicantsMgt">Applicants</NavLink>{" "}
                   </p>
                 </div>
-                <div>
-                  <a
-                    href="applicantNew"
+              </div>
+              <div className="flex justify-end">
+                <NavLink
+                    to="ApplicantNew" style={{ backgroundColor: "rgb(112 22 208 / 1)" }}
                     className="text-white btn shadow-md btn-soft-light hover:shadow-xl hover:bg-glass focus:bg-gray-200"
                   >
                     <Plus size={18} className="mr-2" />
                     Add New
-                  </a>
-                </div>
+                </NavLink>
               </div>
             </div>
           </div>
         </div>
-        <div
-          className="absolute top-0 h-80 img-height overflow-hidden"
-          style={{ zIndex: -1 }}
-        >
-          <img
-            src="../../assets/images/dashboard/top-header.html"
-            alt="header"
-            className="animated-scaleX object-cover w-screen h-full rounded-2xl"
-          />
-        </div>
       </div>
       <div
-        className="p-6 lg:p-8 footer-inner mx-auto main-container container"
+        className="footer-inner mx-auto main-container container"
         x-bind:className="setting.page_layout"
       >
         <div className="flex flex-wrap contet-inner">
@@ -1696,7 +1688,7 @@ function AdminApplicants() {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 

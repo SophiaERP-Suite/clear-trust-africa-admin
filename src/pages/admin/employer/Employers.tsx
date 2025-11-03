@@ -40,7 +40,7 @@ function Employers() {
               </div>
               <div className="flex justify-end">
                 <NavLink
-                    to="employerNew" style={{ backgroundColor: "rgb(112 22 208 / 1)" }}
+                    to="EmployerNew" style={{ backgroundColor: "rgb(112 22 208 / 1)" }}
                     className="text-white btn shadow-md btn-soft-light hover:shadow-xl hover:bg-glass focus:bg-gray-200"
                   >
                     <Plus size={18} className="mr-2" />
