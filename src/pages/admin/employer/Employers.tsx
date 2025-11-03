@@ -15,8 +15,110 @@ import "../../../assets2/js/libs.min.js";
 import "../../../assets2/js/slider-tabs.js";
 import "../../../assets2/js/sweet-alert.js";
 import "../../../assets2/js/swiper-slider.js";
-import { ChevronRightIcon, Plus, Briefcase } from "lucide-react";
+import { ChevronRightIcon, Plus, Briefcase, UserPlus, PenSquare, Trash2 } from "lucide-react";
 import { NavLink } from "react-router-dom";
+
+const data = [
+  {
+    name: "Little Nest Nursery",
+    contact: "+2349089812359",
+    email: "contact@littlenestnursery.com",
+    address: "2, Osolo Way, Off Iyana Isolo, Lagos",
+    status: "verified",
+    joined: "2019-12-01",
+    reg: "RC-45219"
+  },
+  {
+    name: "Bright Future Academy",
+    contact: "+2348164729381",
+    email: "info@brightfutureacademy.com",
+    address: "14, Awolowo Road, Ikeja, Lagos",
+    status: "verified",
+    joined: "2020-03-15",
+    reg: "RC-51872"
+  },
+  {
+    name: "Royal Gate International School",
+    contact: "+2348057263145",
+    email: "admin@royalgateschool.com",
+    address: "8, Aminu Kano Crescent, Wuse 2, Abuja",
+    status: "verified",
+    joined: "2018-09-20",
+    reg: "RC-60341"
+  },
+  {
+    name: "Cedar Heights Nursery & Primary",
+    contact: "+2348137720945",
+    email: "contact@cedarheights.com",
+    address: "10, Aba Road, Port Harcourt, Rivers",
+    status: "unverified",
+    joined: "2021-02-09",
+    reg: "RC-72954"
+  },
+  {
+    name: "Prime Scholars Academy",
+    contact: "+2348075326710",
+    email: "hello@primescholarsacademy.com",
+    address: "17, Okpara Avenue, GRA, Enugu",
+    status: "verified",
+    joined: "2022-01-12",
+    reg: "RC-85162"
+  },
+  {
+    name: "Gracefield Model School",
+    contact: "+2348124439087",
+    email: "info@gracefieldmodel.com",
+    address: "9, Aka Road, Uyo, Akwa Ibom",
+    status: "verified",
+    joined: "2020-10-05",
+    reg: "RC-68217"
+  },
+  {
+    name: "Unity Comprehensive College",
+    contact: "+2347019938452",
+    email: "contact@unitycomprehensivecollege.com",
+    address: "22, Ahmadu Bello Way, Kaduna",
+    status: "unverified",
+    joined: "2021-09-10",
+    reg: "RC-55902"
+  },
+  {
+    name: "Faith Builders College",
+    contact: "+2349061182734",
+    email: "info@faithbuilderscollege.com",
+    address: "3, Fajuyi Street, Ado-Ekiti, Ekiti State",
+    status: "verified",
+    joined: "2017-08-18",
+    reg: "RC-41089"
+  },
+  {
+    name: "City Crest College",
+    contact: "+2349056348790",
+    email: "support@citycrestcollege.com",
+    address: "23, Ring Road, Ibadan, Oyo State",
+    status: "verified",
+    joined: "2019-11-30",
+    reg: "RC-69473"
+  },
+  {
+    name: "Divine Wisdom Academy",
+    contact: "+2348145623971",
+    email: "admin@divinewisdomacademy.com",
+    address: "6, High Level, Makurdi, Benue State",
+    status: "unverified",
+    joined: "2018-07-23",
+    reg: "RC-73421"
+  },
+  {
+    name: "Sunbeam International School",
+    contact: "+2348104452893",
+    email: "info@sunbeaminternationalschool.com",
+    address: "11, Opebi Road, Ikeja, Lagos",
+    status: "verified",
+    joined: "2023-05-12",
+    reg: "RC-87254"
+  }
+]
 
 function Employers() {
   return (
@@ -111,7 +213,9 @@ function Employers() {
                           <th className="px-6 py-4 text-left font-medium text-secondary-600 dark:text-white">
                             Profile
                           </th>
-                       
+                          <th className="px-6 py-4 text-left font-medium text-secondary-600 dark:text-white">
+                            Name
+                          </th>
                           <th className="px-6 py-4 text-left font-medium text-secondary-600 dark:text-white">
                             Contact
                           </th>
@@ -119,13 +223,13 @@ function Employers() {
                             Email
                           </th>
                           <th className="px-6 py-4 text-left font-medium text-secondary-600 dark:text-white">
-                            Country
+                            Address
                           </th>
                           <th className="px-6 py-4 text-left font-medium text-secondary-600 dark:text-white">
                             Status
                           </th>
                           <th className="px-6 py-4 text-left font-medium text-secondary-600 dark:text-white">
-                            Company
+                            Registration
                           </th>
                           <th className="px-6 py-4 text-left font-medium text-secondary-600 dark:text-white">
                             Join Date
@@ -136,1498 +240,90 @@ function Employers() {
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-secondary-200 dark:divide-secondary-800">
-                        <tr>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <a href="employerProfile">
-                            <img
-                              className="w-10 h-10 mr-3 text-primary-400 bg-primary-500/10 rounded-xl"
-                              src="/logo-test.png"
-                              style={{ objectFit: "cover" }}
-                              alt="profile"
-                            /></a>
-                          </td>
-                      
-                          <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
-                            (760) 756 7568
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
-                            annasthesia@gmail.com
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
-                            USA
-                          </td>
-                          <td className="px-6 py-4">
-                            <span className="inline-block whitespace-nowrap px-2 py-1 text-xs text-center font-bold leading-none text-white bg-primary-500 rounded">
-                              Active
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
-                            Acme Corporation
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
-                            2019/12/01
-                          </td>
-                          <td className="px-6 py-4">
-                            <div className="flex items-center list-user-action">
-                              <a
-                                className="btn btn-success btn-icon btn-sm mr-1"
-                                href="#"
-                                type="button"
-                                data-tp-toggle="tooltip"
-                                data-tp-placement="top"
-                                data-tp-title="Add"
-                              >
-                                <span className="btn-inner">
-                                  <svg
-                                    width="17"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <path
-                                      fill-rule="evenodd"
-                                      clip-rule="evenodd"
-                                      d="M9.87651 15.2063C6.03251 15.2063 2.74951 15.7873 2.74951 18.1153C2.74951 20.4433 6.01251 21.0453 9.87651 21.0453C13.7215 21.0453 17.0035 20.4633 17.0035 18.1363C17.0035 15.8093 13.7415 15.2063 9.87651 15.2063Z"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      fill-rule="evenodd"
-                                      clip-rule="evenodd"
-                                      d="M9.8766 11.886C12.3996 11.886 14.4446 9.841 14.4446 7.318C14.4446 4.795 12.3996 2.75 9.8766 2.75C7.3546 2.75 5.3096 4.795 5.3096 7.318C5.3006 9.832 7.3306 11.877 9.8456 11.886H9.8766Z"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      d="M19.2036 8.66919V12.6792"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      d="M21.2497 10.6741H17.1597"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                  </svg>
-                                </span>
-                              </a>
-                              <a
-                                className="btn btn-warning btn-icon btn-sm mr-1"
-                                href="#"
-                                type="button"
-                                data-tp-toggle="tooltip"
-                                data-tp-placement="top"
-                                data-tp-title="Edit"
-                              >
-                                <span className="btn-inner">
-                                  <svg
-                                    width="17"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <path
-                                      d="M11.4925 2.78906H7.75349C4.67849 2.78906 2.75049 4.96606 2.75049 8.04806V16.3621C2.75049 19.4441 4.66949 21.6211 7.75349 21.6211H16.5775C19.6625 21.6211 21.5815 19.4441 21.5815 16.3621V12.3341"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      fill-rule="evenodd"
-                                      clip-rule="evenodd"
-                                      d="M8.82812 10.921L16.3011 3.44799C17.2321 2.51799 18.7411 2.51799 19.6721 3.44799L20.8891 4.66499C21.8201 5.59599 21.8201 7.10599 20.8891 8.03599L13.3801 15.545C12.9731 15.952 12.4211 16.181 11.8451 16.181H8.09912L8.19312 12.401C8.20712 11.845 8.43412 11.315 8.82812 10.921Z"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      d="M15.1655 4.60254L19.7315 9.16854"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                  </svg>
-                                </span>
-                              </a>
-                              <a
-                                className="btn btn-danger btn-icon btn-sm mr-1"
-                                href="#"
-                                type="button"
-                                data-tp-toggle="tooltip"
-                                data-tp-placement="top"
-                                data-tp-title="Delet"
-                              >
-                                <span className="btn-inner">
-                                  <svg
-                                    width="17"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    stroke="currentColor"
-                                  >
-                                    <path
-                                      d="M19.3248 9.46826C19.3248 9.46826 18.7818 16.2033 18.4668 19.0403C18.3168 20.3953 17.4798 21.1893 16.1088 21.2143C13.4998 21.2613 10.8878 21.2643 8.27979 21.2093C6.96079 21.1823 6.13779 20.3783 5.99079 19.0473C5.67379 16.1853 5.13379 9.46826 5.13379 9.46826"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      d="M20.708 6.23975H3.75"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      d="M17.4406 6.23973C16.6556 6.23973 15.9796 5.68473 15.8256 4.91573L15.5826 3.69973C15.4326 3.13873 14.9246 2.75073 14.3456 2.75073H10.1126C9.53358 2.75073 9.02558 3.13873 8.87558 3.69973L8.63258 4.91573C8.47858 5.68473 7.80258 6.23973 7.01758 6.23973"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                  </svg>
-                                </span>
-                              </a>
-                            </div>
-                          </td>
-                        </tr>
-                        <tr className="bg-secondary-100 dark:bg-dark-bg">
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <img
-                              className="w-10 h-10 mr-3 text-primary-400 bg-primary-500/10  rounded-xl"
-                              src="/logo-test.png"
-                              style={{ objectFit: "cover" }}
-                              alt="profile"
-                            />
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
-                            +62 5689 458 658
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
-                            brocklee@gmail.com
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
-                            Indonesia
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-secondary-600">
-                            <span className="inline-block whitespace-nowrap px-2 py-1 text-xs text-center font-bold leading-none text-white bg-primary-500 rounded">
-                              Active
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
-                            Soylent Corp
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
-                            2019/12/01
-                          </td>
-                          <td className="px-6 py-4">
-                            <div className="flex items-center list-user-action">
-                              <a
-                                className="btn btn-success btn-icon btn-sm mr-1"
-                                href="#"
-                                type="button"
-                                data-tp-toggle="tooltip"
-                                data-tp-placement="top"
-                                data-tp-title="Add"
-                              >
-                                <span className="btn-inner">
-                                  <svg
-                                    width="17"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <path
-                                      fill-rule="evenodd"
-                                      clip-rule="evenodd"
-                                      d="M9.87651 15.2063C6.03251 15.2063 2.74951 15.7873 2.74951 18.1153C2.74951 20.4433 6.01251 21.0453 9.87651 21.0453C13.7215 21.0453 17.0035 20.4633 17.0035 18.1363C17.0035 15.8093 13.7415 15.2063 9.87651 15.2063Z"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      fill-rule="evenodd"
-                                      clip-rule="evenodd"
-                                      d="M9.8766 11.886C12.3996 11.886 14.4446 9.841 14.4446 7.318C14.4446 4.795 12.3996 2.75 9.8766 2.75C7.3546 2.75 5.3096 4.795 5.3096 7.318C5.3006 9.832 7.3306 11.877 9.8456 11.886H9.8766Z"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      d="M19.2036 8.66919V12.6792"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      d="M21.2497 10.6741H17.1597"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                  </svg>
-                                </span>
-                              </a>
-                              <a
-                                className="btn btn-warning btn-icon btn-sm mr-1"
-                                href="#"
-                                type="button"
-                                data-tp-toggle="tooltip"
-                                data-tp-placement="top"
-                                data-tp-title="Edit"
-                              >
-                                <span className="btn-inner">
-                                  <svg
-                                    width="17"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <path
-                                      d="M11.4925 2.78906H7.75349C4.67849 2.78906 2.75049 4.96606 2.75049 8.04806V16.3621C2.75049 19.4441 4.66949 21.6211 7.75349 21.6211H16.5775C19.6625 21.6211 21.5815 19.4441 21.5815 16.3621V12.3341"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      fill-rule="evenodd"
-                                      clip-rule="evenodd"
-                                      d="M8.82812 10.921L16.3011 3.44799C17.2321 2.51799 18.7411 2.51799 19.6721 3.44799L20.8891 4.66499C21.8201 5.59599 21.8201 7.10599 20.8891 8.03599L13.3801 15.545C12.9731 15.952 12.4211 16.181 11.8451 16.181H8.09912L8.19312 12.401C8.20712 11.845 8.43412 11.315 8.82812 10.921Z"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      d="M15.1655 4.60254L19.7315 9.16854"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                  </svg>
-                                </span>
-                              </a>
-                              <a
-                                className="btn btn-danger btn-icon btn-sm mr-1"
-                                href="#"
-                                type="button"
-                                data-tp-toggle="tooltip"
-                                data-tp-placement="top"
-                                data-tp-title="Delet"
-                              >
-                                <span className="btn-inner">
-                                  <svg
-                                    width="17"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    stroke="currentColor"
-                                  >
-                                    <path
-                                      d="M19.3248 9.46826C19.3248 9.46826 18.7818 16.2033 18.4668 19.0403C18.3168 20.3953 17.4798 21.1893 16.1088 21.2143C13.4998 21.2613 10.8878 21.2643 8.27979 21.2093C6.96079 21.1823 6.13779 20.3783 5.99079 19.0473C5.67379 16.1853 5.13379 9.46826 5.13379 9.46826"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      d="M20.708 6.23975H3.75"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      d="M17.4406 6.23973C16.6556 6.23973 15.9796 5.68473 15.8256 4.91573L15.5826 3.69973C15.4326 3.13873 14.9246 2.75073 14.3456 2.75073H10.1126C9.53358 2.75073 9.02558 3.13873 8.87558 3.69973L8.63258 4.91573C8.47858 5.68473 7.80258 6.23973 7.01758 6.23973"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                  </svg>
-                                </span>
-                              </a>
-                            </div>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <img
-                              className="w-10 h-10 mr-3 text-primary-400 bg-primary-500/10 rounded-xl"
-                              src="/logo-test.png"
-                              style={{ objectFit: "cover" }}
-                              alt="profile"
-                            />
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
-                            +55 6523 456 856
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
-                            dandruff@gmail.com
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
-                            Brazil
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-secondary-600 ">
-                            <span className="inline-block whitespace-nowrap px-2 py-1 text-xs text-center font-bold leading-none text-white bg-warning-500 rounded">
-                              Pending
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
-                            Umbrella Corporation
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
-                            2019/12/01
-                          </td>
-                          <td className="px-6 py-4">
-                            <div className="flex items-center list-user-action">
-                              <a
-                                className="btn btn-success btn-icon btn-sm mr-1"
-                                href="#"
-                                type="button"
-                                data-tp-toggle="tooltip"
-                                data-tp-placement="top"
-                                data-tp-title="Add"
-                              >
-                                <span className="btn-inner">
-                                  <svg
-                                    width="17"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <path
-                                      fill-rule="evenodd"
-                                      clip-rule="evenodd"
-                                      d="M9.87651 15.2063C6.03251 15.2063 2.74951 15.7873 2.74951 18.1153C2.74951 20.4433 6.01251 21.0453 9.87651 21.0453C13.7215 21.0453 17.0035 20.4633 17.0035 18.1363C17.0035 15.8093 13.7415 15.2063 9.87651 15.2063Z"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      fill-rule="evenodd"
-                                      clip-rule="evenodd"
-                                      d="M9.8766 11.886C12.3996 11.886 14.4446 9.841 14.4446 7.318C14.4446 4.795 12.3996 2.75 9.8766 2.75C7.3546 2.75 5.3096 4.795 5.3096 7.318C5.3006 9.832 7.3306 11.877 9.8456 11.886H9.8766Z"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      d="M19.2036 8.66919V12.6792"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      d="M21.2497 10.6741H17.1597"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                  </svg>
-                                </span>
-                              </a>
-                              <a
-                                className="btn btn-warning btn-icon btn-sm mr-1"
-                                href="#"
-                                type="button"
-                                data-tp-toggle="tooltip"
-                                data-tp-placement="top"
-                                data-tp-title="Edit"
-                              >
-                                <span className="btn-inner">
-                                  <svg
-                                    width="17"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <path
-                                      d="M11.4925 2.78906H7.75349C4.67849 2.78906 2.75049 4.96606 2.75049 8.04806V16.3621C2.75049 19.4441 4.66949 21.6211 7.75349 21.6211H16.5775C19.6625 21.6211 21.5815 19.4441 21.5815 16.3621V12.3341"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      fill-rule="evenodd"
-                                      clip-rule="evenodd"
-                                      d="M8.82812 10.921L16.3011 3.44799C17.2321 2.51799 18.7411 2.51799 19.6721 3.44799L20.8891 4.66499C21.8201 5.59599 21.8201 7.10599 20.8891 8.03599L13.3801 15.545C12.9731 15.952 12.4211 16.181 11.8451 16.181H8.09912L8.19312 12.401C8.20712 11.845 8.43412 11.315 8.82812 10.921Z"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      d="M15.1655 4.60254L19.7315 9.16854"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                  </svg>
-                                </span>
-                              </a>
-                              <a
-                                className="btn btn-danger btn-icon btn-sm mr-1"
-                                href="#"
-                                type="button"
-                                data-tp-toggle="tooltip"
-                                data-tp-placement="top"
-                                data-tp-title="Delet"
-                              >
-                                <span className="btn-inner">
-                                  <svg
-                                    width="17"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    stroke="currentColor"
-                                  >
-                                    <path
-                                      d="M19.3248 9.46826C19.3248 9.46826 18.7818 16.2033 18.4668 19.0403C18.3168 20.3953 17.4798 21.1893 16.1088 21.2143C13.4998 21.2613 10.8878 21.2643 8.27979 21.2093C6.96079 21.1823 6.13779 20.3783 5.99079 19.0473C5.67379 16.1853 5.13379 9.46826 5.13379 9.46826"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      d="M20.708 6.23975H3.75"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      d="M17.4406 6.23973C16.6556 6.23973 15.9796 5.68473 15.8256 4.91573L15.5826 3.69973C15.4326 3.13873 14.9246 2.75073 14.3456 2.75073H10.1126C9.53358 2.75073 9.02558 3.13873 8.87558 3.69973L8.63258 4.91573C8.47858 5.68473 7.80258 6.23973 7.01758 6.23973"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                  </svg>
-                                </span>
-                              </a>
-                            </div>
-                          </td>
-                        </tr>
-                        <tr className="bg-secondary-100 dark:bg-dark-bg">
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <img
-                              className="w-10 h-10 mr-3 text-primary-400 bg-primary-500/10 rounded-xl"
-                              src="/logo-test.png"
-                              style={{ objectFit: "cover" }}
-                              alt="profile"
-                            />
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
-                            +91 2586 253 125
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
-                            hansolo@gmail.com
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
-                            India
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-secondary-600">
-                            <span className="inline-block whitespace-nowrap px-2 py-1 text-xs text-center font-bold leading-none text-white bg-danger-500 rounded">
-                              Inactive
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
-                            Vehement Capital
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
-                            2019/12/01
-                          </td>
-                          <td className="px-6 py-4">
-                            <div className="flex items-center list-user-action">
-                              <a
-                                className="btn btn-success btn-icon btn-sm mr-1"
-                                href="#"
-                                type="button"
-                                data-tp-toggle="tooltip"
-                                data-tp-placement="top"
-                                data-tp-title="Add"
-                              >
-                                <span className="btn-inner">
-                                  <svg
-                                    width="17"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <path
-                                      fill-rule="evenodd"
-                                      clip-rule="evenodd"
-                                      d="M9.87651 15.2063C6.03251 15.2063 2.74951 15.7873 2.74951 18.1153C2.74951 20.4433 6.01251 21.0453 9.87651 21.0453C13.7215 21.0453 17.0035 20.4633 17.0035 18.1363C17.0035 15.8093 13.7415 15.2063 9.87651 15.2063Z"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      fill-rule="evenodd"
-                                      clip-rule="evenodd"
-                                      d="M9.8766 11.886C12.3996 11.886 14.4446 9.841 14.4446 7.318C14.4446 4.795 12.3996 2.75 9.8766 2.75C7.3546 2.75 5.3096 4.795 5.3096 7.318C5.3006 9.832 7.3306 11.877 9.8456 11.886H9.8766Z"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      d="M19.2036 8.66919V12.6792"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      d="M21.2497 10.6741H17.1597"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                  </svg>
-                                </span>
-                              </a>
-                              <a
-                                className="btn btn-warning btn-icon btn-sm mr-1"
-                                href="#"
-                                type="button"
-                                data-tp-toggle="tooltip"
-                                data-tp-placement="top"
-                                data-tp-title="Edit"
-                              >
-                                <span className="btn-inner">
-                                  <svg
-                                    width="17"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <path
-                                      d="M11.4925 2.78906H7.75349C4.67849 2.78906 2.75049 4.96606 2.75049 8.04806V16.3621C2.75049 19.4441 4.66949 21.6211 7.75349 21.6211H16.5775C19.6625 21.6211 21.5815 19.4441 21.5815 16.3621V12.3341"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      fill-rule="evenodd"
-                                      clip-rule="evenodd"
-                                      d="M8.82812 10.921L16.3011 3.44799C17.2321 2.51799 18.7411 2.51799 19.6721 3.44799L20.8891 4.66499C21.8201 5.59599 21.8201 7.10599 20.8891 8.03599L13.3801 15.545C12.9731 15.952 12.4211 16.181 11.8451 16.181H8.09912L8.19312 12.401C8.20712 11.845 8.43412 11.315 8.82812 10.921Z"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      d="M15.1655 4.60254L19.7315 9.16854"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                  </svg>
-                                </span>
-                              </a>
-                              <a
-                                className="btn btn-danger btn-icon btn-sm mr-1"
-                                href="#"
-                                type="button"
-                                data-tp-toggle="tooltip"
-                                data-tp-placement="top"
-                                data-tp-title="Delet"
-                              >
-                                <span className="btn-inner">
-                                  <svg
-                                    width="17"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    stroke="currentColor"
-                                  >
-                                    <path
-                                      d="M19.3248 9.46826C19.3248 9.46826 18.7818 16.2033 18.4668 19.0403C18.3168 20.3953 17.4798 21.1893 16.1088 21.2143C13.4998 21.2613 10.8878 21.2643 8.27979 21.2093C6.96079 21.1823 6.13779 20.3783 5.99079 19.0473C5.67379 16.1853 5.13379 9.46826 5.13379 9.46826"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      d="M20.708 6.23975H3.75"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      d="M17.4406 6.23973C16.6556 6.23973 15.9796 5.68473 15.8256 4.91573L15.5826 3.69973C15.4326 3.13873 14.9246 2.75073 14.3456 2.75073H10.1126C9.53358 2.75073 9.02558 3.13873 8.87558 3.69973L8.63258 4.91573C8.47858 5.68473 7.80258 6.23973 7.01758 6.23973"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                  </svg>
-                                </span>
-                              </a>
-                            </div>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <img
-                              className="w-10 h-10 mr-3 text-primary-400 bg-primary-500/10 rounded-xl"
-                              src="/logo-test.png"
-                              style={{ objectFit: "cover" }}
-                              alt="profile"
-                            />
-                          </td>
-                        
-                          <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
-                            +27 2563 456 589
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-secondary-600">
-                            lynnguini@gmail.com
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
-                            Africa
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-secondary-600">
-                            <span className="inline-block whitespace-nowrap px-2 py-1 text-xs text-center font-bold leading-none text-white bg-primary-500 rounded">
-                              Active
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
-                            Massive Dynamic
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
-                            2019/12/01
-                          </td>
-                          <td className="px-6 py-4">
-                            <div className="flex items-center list-user-action">
-                              <a
-                                className="btn btn-success btn-icon btn-sm mr-1"
-                                href="#"
-                                type="button"
-                                data-tp-toggle="tooltip"
-                                data-tp-placement="top"
-                                data-tp-title="Add"
-                              >
-                                <span className="btn-inner">
-                                  <svg
-                                    width="17"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <path
-                                      fill-rule="evenodd"
-                                      clip-rule="evenodd"
-                                      d="M9.87651 15.2063C6.03251 15.2063 2.74951 15.7873 2.74951 18.1153C2.74951 20.4433 6.01251 21.0453 9.87651 21.0453C13.7215 21.0453 17.0035 20.4633 17.0035 18.1363C17.0035 15.8093 13.7415 15.2063 9.87651 15.2063Z"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      fill-rule="evenodd"
-                                      clip-rule="evenodd"
-                                      d="M9.8766 11.886C12.3996 11.886 14.4446 9.841 14.4446 7.318C14.4446 4.795 12.3996 2.75 9.8766 2.75C7.3546 2.75 5.3096 4.795 5.3096 7.318C5.3006 9.832 7.3306 11.877 9.8456 11.886H9.8766Z"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      d="M19.2036 8.66919V12.6792"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      d="M21.2497 10.6741H17.1597"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                  </svg>
-                                </span>
-                              </a>
-                              <a
-                                className="btn btn-warning btn-icon btn-sm mr-1"
-                                href="#"
-                                type="button"
-                                data-tp-toggle="tooltip"
-                                data-tp-placement="top"
-                                data-tp-title="Edit"
-                              >
-                                <span className="btn-inner">
-                                  <svg
-                                    width="17"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <path
-                                      d="M11.4925 2.78906H7.75349C4.67849 2.78906 2.75049 4.96606 2.75049 8.04806V16.3621C2.75049 19.4441 4.66949 21.6211 7.75349 21.6211H16.5775C19.6625 21.6211 21.5815 19.4441 21.5815 16.3621V12.3341"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      fill-rule="evenodd"
-                                      clip-rule="evenodd"
-                                      d="M8.82812 10.921L16.3011 3.44799C17.2321 2.51799 18.7411 2.51799 19.6721 3.44799L20.8891 4.66499C21.8201 5.59599 21.8201 7.10599 20.8891 8.03599L13.3801 15.545C12.9731 15.952 12.4211 16.181 11.8451 16.181H8.09912L8.19312 12.401C8.20712 11.845 8.43412 11.315 8.82812 10.921Z"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      d="M15.1655 4.60254L19.7315 9.16854"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                  </svg>
-                                </span>
-                              </a>
-                              <a
-                                className="btn btn-danger btn-icon btn-sm mr-1"
-                                href="#"
-                                type="button"
-                                data-tp-toggle="tooltip"
-                                data-tp-placement="top"
-                                data-tp-title="Delet"
-                              >
-                                <span className="btn-inner">
-                                  <svg
-                                    width="17"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    stroke="currentColor"
-                                  >
-                                    <path
-                                      d="M19.3248 9.46826C19.3248 9.46826 18.7818 16.2033 18.4668 19.0403C18.3168 20.3953 17.4798 21.1893 16.1088 21.2143C13.4998 21.2613 10.8878 21.2643 8.27979 21.2093C6.96079 21.1823 6.13779 20.3783 5.99079 19.0473C5.67379 16.1853 5.13379 9.46826 5.13379 9.46826"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      d="M20.708 6.23975H3.75"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      d="M17.4406 6.23973C16.6556 6.23973 15.9796 5.68473 15.8256 4.91573L15.5826 3.69973C15.4326 3.13873 14.9246 2.75073 14.3456 2.75073H10.1126C9.53358 2.75073 9.02558 3.13873 8.87558 3.69973L8.63258 4.91573C8.47858 5.68473 7.80258 6.23973 7.01758 6.23973"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                  </svg>
-                                </span>
-                              </a>
-                            </div>
-                          </td>
-                        </tr>
-                        <tr className="bg-secondary-100 dark:bg-dark-bg">
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <img
-                              className="w-10 h-10 mr-3 text-primary-400 bg-primary-500/10 rounded-xl"
-                              src="/logo-test.png"
-                              style={{ objectFit: "cover" }}
-                              alt="profile"
-                            />
-                          </td>
-                       
-                          <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
-                            +55 25685 256 589
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
-                            ericshun@gmail.com
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
-                            Brazil
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-secondary-600">
-                            <span className="inline-block whitespace-nowrap px-2 py-1 text-xs text-center font-bold leading-none text-white bg-warning-500 rounded">
-                              Pending
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500 ">
-                            Globex Corporation
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
-                            2019/12/01
-                          </td>
-                          <td className="px-6 py-4">
-                            <div className="flex items-center list-user-action">
-                              <a
-                                className="btn btn-success btn-icon btn-sm mr-1"
-                                href="#"
-                                type="button"
-                                data-tp-toggle="tooltip"
-                                data-tp-placement="top"
-                                data-tp-title="Add"
-                              >
-                                <span className="btn-inner">
-                                  <svg
-                                    width="17"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <path
-                                      fill-rule="evenodd"
-                                      clip-rule="evenodd"
-                                      d="M9.87651 15.2063C6.03251 15.2063 2.74951 15.7873 2.74951 18.1153C2.74951 20.4433 6.01251 21.0453 9.87651 21.0453C13.7215 21.0453 17.0035 20.4633 17.0035 18.1363C17.0035 15.8093 13.7415 15.2063 9.87651 15.2063Z"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      fill-rule="evenodd"
-                                      clip-rule="evenodd"
-                                      d="M9.8766 11.886C12.3996 11.886 14.4446 9.841 14.4446 7.318C14.4446 4.795 12.3996 2.75 9.8766 2.75C7.3546 2.75 5.3096 4.795 5.3096 7.318C5.3006 9.832 7.3306 11.877 9.8456 11.886H9.8766Z"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      d="M19.2036 8.66919V12.6792"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      d="M21.2497 10.6741H17.1597"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                  </svg>
-                                </span>
-                              </a>
-                              <a
-                                className="btn btn-warning btn-icon btn-sm mr-1"
-                                href="#"
-                                type="button"
-                                data-tp-toggle="tooltip"
-                                data-tp-placement="top"
-                                data-tp-title="Edit"
-                              >
-                                <span className="btn-inner">
-                                  <svg
-                                    width="17"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <path
-                                      d="M11.4925 2.78906H7.75349C4.67849 2.78906 2.75049 4.96606 2.75049 8.04806V16.3621C2.75049 19.4441 4.66949 21.6211 7.75349 21.6211H16.5775C19.6625 21.6211 21.5815 19.4441 21.5815 16.3621V12.3341"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      fill-rule="evenodd"
-                                      clip-rule="evenodd"
-                                      d="M8.82812 10.921L16.3011 3.44799C17.2321 2.51799 18.7411 2.51799 19.6721 3.44799L20.8891 4.66499C21.8201 5.59599 21.8201 7.10599 20.8891 8.03599L13.3801 15.545C12.9731 15.952 12.4211 16.181 11.8451 16.181H8.09912L8.19312 12.401C8.20712 11.845 8.43412 11.315 8.82812 10.921Z"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      d="M15.1655 4.60254L19.7315 9.16854"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                  </svg>
-                                </span>
-                              </a>
-                              <a
-                                className="btn btn-danger btn-icon btn-sm mr-1"
-                                href="#"
-                                type="button"
-                                data-tp-toggle="tooltip"
-                                data-tp-placement="top"
-                                data-tp-title="Delet"
-                              >
-                                <span className="btn-inner">
-                                  <svg
-                                    width="17"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    stroke="currentColor"
-                                  >
-                                    <path
-                                      d="M19.3248 9.46826C19.3248 9.46826 18.7818 16.2033 18.4668 19.0403C18.3168 20.3953 17.4798 21.1893 16.1088 21.2143C13.4998 21.2613 10.8878 21.2643 8.27979 21.2093C6.96079 21.1823 6.13779 20.3783 5.99079 19.0473C5.67379 16.1853 5.13379 9.46826 5.13379 9.46826"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      d="M20.708 6.23975H3.75"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      d="M17.4406 6.23973C16.6556 6.23973 15.9796 5.68473 15.8256 4.91573L15.5826 3.69973C15.4326 3.13873 14.9246 2.75073 14.3456 2.75073H10.1126C9.53358 2.75073 9.02558 3.13873 8.87558 3.69973L8.63258 4.91573C8.47858 5.68473 7.80258 6.23973 7.01758 6.23973"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                  </svg>
-                                </span>
-                              </a>
-                            </div>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <img
-                              className="w-10 h-10 mr-3 text-primary-400 bg-primary-500/10 rounded-xl"
-                              src="/logo-test.png"
-                              style={{ objectFit: "cover" }}
-                              alt="profile"
-                            />
-                          </td>
-                   
-                          <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
-                            (760) 765 2658
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
-                            budwiser@ymail.com
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
-                            USA
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-secondary-600">
-                            <span className="inline-block whitespace-nowrap px-2 py-1 text-xs text-center font-bold leading-none text-white bg-info-500 rounded">
-                              Hold
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
-                            Acme Corporation
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
-                            2019/12/01
-                          </td>
-                          <td className="px-6 py-4">
-                            <div className="flex items-center list-user-action">
-                              <a
-                                className="btn btn-success btn-icon btn-sm mr-1"
-                                href="#"
-                                type="button"
-                                data-tp-toggle="tooltip"
-                                data-tp-placement="top"
-                                data-tp-title="Add"
-                              >
-                                <span className="btn-inner">
-                                  <svg
-                                    width="17"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <path
-                                      fill-rule="evenodd"
-                                      clip-rule="evenodd"
-                                      d="M9.87651 15.2063C6.03251 15.2063 2.74951 15.7873 2.74951 18.1153C2.74951 20.4433 6.01251 21.0453 9.87651 21.0453C13.7215 21.0453 17.0035 20.4633 17.0035 18.1363C17.0035 15.8093 13.7415 15.2063 9.87651 15.2063Z"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      fill-rule="evenodd"
-                                      clip-rule="evenodd"
-                                      d="M9.8766 11.886C12.3996 11.886 14.4446 9.841 14.4446 7.318C14.4446 4.795 12.3996 2.75 9.8766 2.75C7.3546 2.75 5.3096 4.795 5.3096 7.318C5.3006 9.832 7.3306 11.877 9.8456 11.886H9.8766Z"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      d="M19.2036 8.66919V12.6792"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      d="M21.2497 10.6741H17.1597"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                  </svg>
-                                </span>
-                              </a>
-                              <a
-                                className="btn btn-warning btn-icon btn-sm mr-1"
-                                href="#"
-                                type="button"
-                                data-tp-toggle="tooltip"
-                                data-tp-placement="top"
-                                data-tp-title="Edit"
-                              >
-                                <span className="btn-inner">
-                                  <svg
-                                    width="17"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <path
-                                      d="M11.4925 2.78906H7.75349C4.67849 2.78906 2.75049 4.96606 2.75049 8.04806V16.3621C2.75049 19.4441 4.66949 21.6211 7.75349 21.6211H16.5775C19.6625 21.6211 21.5815 19.4441 21.5815 16.3621V12.3341"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      fill-rule="evenodd"
-                                      clip-rule="evenodd"
-                                      d="M8.82812 10.921L16.3011 3.44799C17.2321 2.51799 18.7411 2.51799 19.6721 3.44799L20.8891 4.66499C21.8201 5.59599 21.8201 7.10599 20.8891 8.03599L13.3801 15.545C12.9731 15.952 12.4211 16.181 11.8451 16.181H8.09912L8.19312 12.401C8.20712 11.845 8.43412 11.315 8.82812 10.921Z"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      d="M15.1655 4.60254L19.7315 9.16854"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                  </svg>
-                                </span>
-                              </a>
-                              <a
-                                className="btn btn-danger btn-icon btn-sm mr-1"
-                                href="#"
-                                type="button"
-                                data-tp-toggle="tooltip"
-                                data-tp-placement="top"
-                                data-tp-title="Delet"
-                              >
-                                <span className="btn-inner">
-                                  <svg
-                                    width="17"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    stroke="currentColor"
-                                  >
-                                    <path
-                                      d="M19.3248 9.46826C19.3248 9.46826 18.7818 16.2033 18.4668 19.0403C18.3168 20.3953 17.4798 21.1893 16.1088 21.2143C13.4998 21.2613 10.8878 21.2643 8.27979 21.2093C6.96079 21.1823 6.13779 20.3783 5.99079 19.0473C5.67379 16.1853 5.13379 9.46826 5.13379 9.46826"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      d="M20.708 6.23975H3.75"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      d="M17.4406 6.23973C16.6556 6.23973 15.9796 5.68473 15.8256 4.91573L15.5826 3.69973C15.4326 3.13873 14.9246 2.75073 14.3456 2.75073H10.1126C9.53358 2.75073 9.02558 3.13873 8.87558 3.69973L8.63258 4.91573C8.47858 5.68473 7.80258 6.23973 7.01758 6.23973"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                  </svg>
-                                </span>
-                              </a>
-                            </div>
-                          </td>
-                        </tr>
-                        <tr className="bg-secondary-100 dark:bg-dark-bg">
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <img
-                              className="w-10 h-10 mr-3 text-primary-400 bg-primary-500/10 rounded-xl"
-                              src="/logo-test.png"
-                              style={{ objectFit: "cover" }}
-                              alt="profile"
-                            />
-                          </td>
-                       
-                          <td className="px-6 py-4 whitespace-nowrap text-slate-500 dark:text-secondary-500">
-                            +27 5625 456 589
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-slate-500 dark:text-secondary-500">
-                            margearita@gmail.com
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-slate-500 dark:text-secondary-500">
-                            Africa
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <span className="inline-block whitespace-nowrap px-2 py-1 text-xs text-center font-bold leading-none text-white bg-success-500 rounded">
-                              Complete
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-slate-500 dark:text-secondary-500">
-                            Vehement Capital
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-slate-500 dark:text-secondary-500">
-                            2019/12/01
-                          </td>
-                          <td className="px-6 py-4">
-                            <div className="flex items-center list-user-action">
-                              <a
-                                className="btn btn-success btn-icon btn-sm mr-1"
-                                href="#"
-                                type="button"
-                                data-tp-toggle="tooltip"
-                                data-tp-placement="top"
-                                data-tp-title="Add"
-                              >
-                                <span className="btn-inner">
-                                  <svg
-                                    width="17"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <path
-                                      fill-rule="evenodd"
-                                      clip-rule="evenodd"
-                                      d="M9.87651 15.2063C6.03251 15.2063 2.74951 15.7873 2.74951 18.1153C2.74951 20.4433 6.01251 21.0453 9.87651 21.0453C13.7215 21.0453 17.0035 20.4633 17.0035 18.1363C17.0035 15.8093 13.7415 15.2063 9.87651 15.2063Z"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      fill-rule="evenodd"
-                                      clip-rule="evenodd"
-                                      d="M9.8766 11.886C12.3996 11.886 14.4446 9.841 14.4446 7.318C14.4446 4.795 12.3996 2.75 9.8766 2.75C7.3546 2.75 5.3096 4.795 5.3096 7.318C5.3006 9.832 7.3306 11.877 9.8456 11.886H9.8766Z"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      d="M19.2036 8.66919V12.6792"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      d="M21.2497 10.6741H17.1597"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                  </svg>
-                                </span>
-                              </a>
-                              <a
-                                className="btn btn-warning btn-icon btn-sm mr-1"
-                                href="#"
-                                type="button"
-                                data-tp-toggle="tooltip"
-                                data-tp-placement="top"
-                                data-tp-title="Edit"
-                              >
-                                <span className="btn-inner">
-                                  <svg
-                                    width="17"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <path
-                                      d="M11.4925 2.78906H7.75349C4.67849 2.78906 2.75049 4.96606 2.75049 8.04806V16.3621C2.75049 19.4441 4.66949 21.6211 7.75349 21.6211H16.5775C19.6625 21.6211 21.5815 19.4441 21.5815 16.3621V12.3341"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      fill-rule="evenodd"
-                                      clip-rule="evenodd"
-                                      d="M8.82812 10.921L16.3011 3.44799C17.2321 2.51799 18.7411 2.51799 19.6721 3.44799L20.8891 4.66499C21.8201 5.59599 21.8201 7.10599 20.8891 8.03599L13.3801 15.545C12.9731 15.952 12.4211 16.181 11.8451 16.181H8.09912L8.19312 12.401C8.20712 11.845 8.43412 11.315 8.82812 10.921Z"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      d="M15.1655 4.60254L19.7315 9.16854"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                  </svg>
-                                </span>
-                              </a>
-                              <a
-                                className="btn btn-danger btn-icon btn-sm mr-1"
-                                href="#"
-                                type="button"
-                                data-tp-toggle="tooltip"
-                                data-tp-placement="top"
-                                data-tp-title="Delet"
-                              >
-                                <span className="btn-inner">
-                                  <svg
-                                    width="17"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    stroke="currentColor"
-                                  >
-                                    <path
-                                      d="M19.3248 9.46826C19.3248 9.46826 18.7818 16.2033 18.4668 19.0403C18.3168 20.3953 17.4798 21.1893 16.1088 21.2143C13.4998 21.2613 10.8878 21.2643 8.27979 21.2093C6.96079 21.1823 6.13779 20.3783 5.99079 19.0473C5.67379 16.1853 5.13379 9.46826 5.13379 9.46826"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      d="M20.708 6.23975H3.75"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      d="M17.4406 6.23973C16.6556 6.23973 15.9796 5.68473 15.8256 4.91573L15.5826 3.69973C15.4326 3.13873 14.9246 2.75073 14.3456 2.75073H10.1126C9.53358 2.75073 9.02558 3.13873 8.87558 3.69973L8.63258 4.91573C8.47858 5.68473 7.80258 6.23973 7.01758 6.23973"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                  </svg>
-                                </span>
-                              </a>
-                            </div>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <img
-                              className="w-10 h-10 mr-3 text-primary-400 bg-primary-500/10 rounded-xl"
-                              src="/logo-test.png"
-                              style={{ objectFit: "cover" }}
-                              alt="profile"
-                            />
-                          </td>
-                       
-                          <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
-                            +55 2563 456 589
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
-                            billdabear@gmail.com
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
-                            Brazil
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-secondary-600">
-                            <span className="inline-block whitespace-nowrap px-2 py-1 text-xs text-center font-bold leading-none text-white bg-primary-500 rounded">
-                              Active
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
-                            Massive Dynamic
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
-                            2019/12/01
-                          </td>
-                          <td className="px-6 py-4">
-                            <div className="flex items-center list-user-action">
-                              <a
-                                className="btn btn-success btn-icon btn-sm mr-1"
-                                href="#"
-                                type="button"
-                                data-tp-toggle="tooltip"
-                                data-tp-placement="top"
-                                data-tp-title="Add"
-                              >
-                                <span className="btn-inner">
-                                  <svg
-                                    width="17"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <path
-                                      fill-rule="evenodd"
-                                      clip-rule="evenodd"
-                                      d="M9.87651 15.2063C6.03251 15.2063 2.74951 15.7873 2.74951 18.1153C2.74951 20.4433 6.01251 21.0453 9.87651 21.0453C13.7215 21.0453 17.0035 20.4633 17.0035 18.1363C17.0035 15.8093 13.7415 15.2063 9.87651 15.2063Z"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      fill-rule="evenodd"
-                                      clip-rule="evenodd"
-                                      d="M9.8766 11.886C12.3996 11.886 14.4446 9.841 14.4446 7.318C14.4446 4.795 12.3996 2.75 9.8766 2.75C7.3546 2.75 5.3096 4.795 5.3096 7.318C5.3006 9.832 7.3306 11.877 9.8456 11.886H9.8766Z"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      d="M19.2036 8.66919V12.6792"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      d="M21.2497 10.6741H17.1597"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                  </svg>
-                                </span>
-                              </a>
-                              <a
-                                className="btn btn-warning btn-icon btn-sm mr-1"
-                                href="#"
-                                type="button"
-                                data-tp-toggle="tooltip"
-                                data-tp-placement="top"
-                                data-tp-title="Edit"
-                              >
-                                <span className="btn-inner">
-                                  <svg
-                                    width="17"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <path
-                                      d="M11.4925 2.78906H7.75349C4.67849 2.78906 2.75049 4.96606 2.75049 8.04806V16.3621C2.75049 19.4441 4.66949 21.6211 7.75349 21.6211H16.5775C19.6625 21.6211 21.5815 19.4441 21.5815 16.3621V12.3341"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      fill-rule="evenodd"
-                                      clip-rule="evenodd"
-                                      d="M8.82812 10.921L16.3011 3.44799C17.2321 2.51799 18.7411 2.51799 19.6721 3.44799L20.8891 4.66499C21.8201 5.59599 21.8201 7.10599 20.8891 8.03599L13.3801 15.545C12.9731 15.952 12.4211 16.181 11.8451 16.181H8.09912L8.19312 12.401C8.20712 11.845 8.43412 11.315 8.82812 10.921Z"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      d="M15.1655 4.60254L19.7315 9.16854"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                  </svg>
-                                </span>
-                              </a>
-                              <a
-                                className="btn btn-danger btn-icon btn-sm mr-1"
-                                href="#"
-                                type="button"
-                                data-tp-toggle="tooltip"
-                                data-tp-placement="top"
-                                data-tp-title="Delet"
-                              >
-                                <span className="btn-inner">
-                                  <svg
-                                    width="17"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    stroke="currentColor"
-                                  >
-                                    <path
-                                      d="M19.3248 9.46826C19.3248 9.46826 18.7818 16.2033 18.4668 19.0403C18.3168 20.3953 17.4798 21.1893 16.1088 21.2143C13.4998 21.2613 10.8878 21.2643 8.27979 21.2093C6.96079 21.1823 6.13779 20.3783 5.99079 19.0473C5.67379 16.1853 5.13379 9.46826 5.13379 9.46826"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      d="M20.708 6.23975H3.75"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                    <path
-                                      d="M17.4406 6.23973C16.6556 6.23973 15.9796 5.68473 15.8256 4.91573L15.5826 3.69973C15.4326 3.13873 14.9246 2.75073 14.3456 2.75073H10.1126C9.53358 2.75073 9.02558 3.13873 8.87558 3.69973L8.63258 4.91573C8.47858 5.68473 7.80258 6.23973 7.01758 6.23973"
-                                      stroke="currentColor"
-                                      stroke-width="1.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>
-                                  </svg>
-                                </span>
-                              </a>
-                            </div>
-                          </td>
-                        </tr>
+                        {
+                          data.map((schoolData) => {
+                            return (
+                              <tr>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                  <a href="employerProfile">
+                                  <img
+                                    className="w-10 h-10 mr-3 text-primary-400 bg-primary-500/10 rounded-xl"
+                                    src="/logo-test.png"
+                                    style={{ objectFit: "cover" }}
+                                    alt="profile"
+                                  /></a>
+                                </td>
+                            
+                                <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
+                                  {schoolData.name}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
+                                  { schoolData.contact }
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
+                                  { schoolData.email }
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
+                                  { schoolData.address }
+                                </td>
+                                <td className="px-6 py-4">
+                                  <span className={`
+                                    ${schoolData.status == 'verified' ? 'bg-success-500' : ''}
+                                    ${schoolData.status == 'unverified' ? 'bg-warning-500' : ''}
+                                    inline-block whitespace-nowrap px-2 py-1 text-xs text-center font-bold leading-none text-white rounded`}>
+                                    { schoolData.status }
+                                  </span>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
+                                  { schoolData.reg }
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
+                                  { schoolData.joined }
+                                </td>
+                                <td className="px-6 py-4">
+                                  <div className="flex items-center list-user-action">
+                                    <a
+                                      className="btn btn-success btn-icon btn-sm mr-1"
+                                      href="#"
+                                      type="button"
+                                      data-tp-toggle="tooltip"
+                                      data-tp-placement="top"
+                                      data-tp-title="Add"
+                                    >
+                                      <span className="btn-inner">
+                                        <UserPlus />
+                                      </span>
+                                    </a>
+                                    <a
+                                      className="btn btn-warning btn-icon btn-sm mr-1"
+                                      href="#"
+                                      type="button"
+                                      data-tp-toggle="tooltip"
+                                      data-tp-placement="top"
+                                      data-tp-title="Edit"
+                                    >
+                                      <span className="btn-inner">
+                                        <PenSquare />
+                                      </span>
+                                    </a>
+                                    <a
+                                      className="btn btn-danger btn-icon btn-sm mr-1"
+                                      href="#"
+                                      type="button"
+                                      data-tp-toggle="tooltip"
+                                      data-tp-placement="top"
+                                      data-tp-title="Delet"
+                                    >
+                                      <span className="btn-inner">
+                                        <Trash2 />
+                                      </span>
+                                    </a>
+                                  </div>
+                                </td>
+                              </tr>
+                            )
+                          })
+                        }
                       </tbody>
                     </table>
                     <div className="border dark:border-secondary-800">
