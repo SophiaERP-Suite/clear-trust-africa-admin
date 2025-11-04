@@ -19,10 +19,10 @@ function AppRoutes() {
         <Route path="Dashboard" element={<Dashboard />} />
         <Route path="ApplicantsMgt" element={<Applicants />} />
         <Route path="ApplicantsMgt/ApplicantNew" element={<ApplicantNew />} />
-        <Route path="ApplicantProfile" element={<ApplicantProfile />} />
+        <Route path="ApplicantsMgt/ApplicantProfile" element={<ApplicantProfile />} />
         <Route path="EmployersMgt" element={<Employers />} />
-        <Route path="EmployerNew" element={<EmployersNew />} />
-        <Route path="EmployerProfile" element={<EmployerProfile />} />
+        <Route path="EmployersMgt/EmployerNew" element={<EmployersNew />} />
+        <Route path="EmployersMgt/EmployerProfile" element={<EmployerProfile />} />
         <Route path="Tracker" element={<DbsTracker />} />
         <Route path="IncidentMgt" element={<Dashboard />} />
         <Route path="FinanceMgt" element={<Dashboard />} />

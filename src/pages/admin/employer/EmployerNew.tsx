@@ -1,4 +1,4 @@
-import { ChevronRightIcon, Users } from "lucide-react";
+import { ChevronRightIcon, Users, UserPlus } from "lucide-react";
 import "../../../assets2/css/choices.min.css";
 import "../../../assets2/css/flatpickr.min.css";
 import "../../../assets2/css/libs.min.css";
@@ -16,56 +16,45 @@ import "../../../assets2/js/libs.min.js";
 import "../../../assets2/js/slider-tabs.js";
 import "../../../assets2/js/sweet-alert.js";
 import "../../../assets2/js/swiper-slider.js";
-// import { ChevronRightIcon } from "lucide-react";
+import { NavLink } from "react-router-dom";
 
 function EmployersNew() {
   return (
-    <>
-      <div
-        className="text-white h-48 sub-header"
-        style={{ backgroundColor: "rgb(112 22 208 / 1)", overflow: "hidden" }}
-      >
-        <div className="w-full p-8">
-          <div className="row">
-            <div className="px-4 col-md-12">
-              <div className="flex flex-wrap items-center justify-between">
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="w-full mb-8">
+        <div className="row">
+          <div className="col-md-12">
+            <div className="flex flex-wrap items-center justify-between">
+              <div className="flex">
+                <UserPlus className="text-blue-600 mr-2" size={36} />
                 <div>
-                  <h1 className="text-white mb-2 mr-16">New Employer</h1>
-                  <p className="mb-4 text-white mr-16">
-                    <p className="text-secondary-600 text-white">
-                      <a href="/admin/dashboard">Dashboard</a>{" "}
-                      <ChevronRightIcon size={14} />{" "}
-                      <a href="EmployersMgt">Employers Management</a>{" "}
-                      <ChevronRightIcon size={14} /> New Employer
-                    </p>
+                  <h3 className="mb-0 text-black">
+                    New Employer
+                  </h3>
+                  <p className="text-secondary-600 text-black">
+                    <NavLink to="/Dashboard">Dashboard</NavLink>{" "}
+                    <ChevronRightIcon size={14} />{" "}
+                    <NavLink to="/EmployersMgt">Employers</NavLink>{" "}
+                    <ChevronRightIcon size={14} />{" "}
+                    <NavLink to="EmployerNew">New Employer</NavLink>{" "}
                   </p>
                 </div>
-                <div>
-                  <a
-                    href="EmployersMgt"
+              </div>
+              <div className="flex justify-end">
+                <NavLink
+                    to="/EmployersMgt" style={{ backgroundColor: "rgb(112 22 208 / 1)" }}
                     className="text-white btn shadow-md btn-soft-light hover:shadow-xl hover:bg-glass focus:bg-gray-200"
                   >
-                    <Users size={18}  className="mr-2"/>
+                    <Users size={18} className="mr-2" />
                     All Employers
-                  </a>
-                </div>
+                </NavLink>
               </div>
             </div>
           </div>
         </div>
-        <div
-          className="absolute top-0 h-80 img-height overflow-hidden"
-          style={{ zIndex: -1 }}
-        >
-          <img
-            src="../../assets/images/dashboard/top-header.html"
-            alt="header"
-            className="animated-scaleX object-cover w-screen h-full rounded-2xl"
-          />
-        </div>
       </div>
       <div
-        className="p-6 lg:p-8 footer-inner  mx-auto main-container  lg:py-0 py-0 "
+        className="footer-inner  mx-auto main-container  lg:py-0 py-0 "
         x-bind:class="setting.page_layout"
       >
         <div className="lg:flex lg:grid-cols-2 gap-8">
@@ -110,19 +99,19 @@ function EmployersNew() {
                     <div className="mt-4 ">
                       <div className="items-center inline-block">
                         <span className="text-secondary-600 dark:text-white">
-                          Only
+                          Only{" "}
                         </span>
                         <a
                           href="javascript:void();"
                           className="text-primary-400 hover:text-primary-500"
                         >
-                          .jpg
+                          .jpg{" "}
                         </a>
                         <a
                           href="javascript:void();"
                           className="text-primary-400 hover:text-primary-500"
                         >
-                          .png
+                          .png{" "}
                         </a>
                         <a
                           href="javascript:void();"
@@ -141,21 +130,14 @@ function EmployersNew() {
                       className="inline-block mb-2 text-secondary-600 dark:text-white"
                       htmlFor="user_role"
                     >
-                      User Role:
+                      School Website:
                     </label>
-                    <select
-                      name="type"
-                      className="block w-full px-4 py-2  dark:bg-dark-card dark:border-secondary-800 bg-white border rounded outline-none focus:border-primary-500 dark:focus:border-primary-500 focus:shadow selectpicker appearance-none"
-                      data-style="py-0"
-                      id="user_role"
-                    >
-                      <option>Select</option>
-                      <option>Web Designer</option>
-                      <option>Web Developer</option>
-                      <option>Tester</option>
-                      <option>Php Developer</option>
-                      <option>Ios Developer </option>
-                    </select>
+                    <input
+                      type="text"
+                      className="block w-full px-4 py-2 placeholder-secondary-400 dark:bg-dark-card dark:border-secondary-800 bg-white border rounded outline-none focus:border-primary-500 focus:shadow dark:focus:border-primary-500"
+                      id="furl"
+                      placeholder="Website Url"
+                    />
                   </div>
                   <div className="mb-4">
                     <label
@@ -225,32 +207,18 @@ function EmployersNew() {
               <div className="p-6 ">
                 <form>
                   <div className="grid lg:grid-cols-2 gap-x-8 gap-y-5">
-                    <div>
+                    <div className="col-span-2">
                       <label
                         className="inline-block mb-2 text-secondary-600 dark:text-white"
                         htmlFor="fname"
                       >
-                        First Name:
+                        School Name:
                       </label>
                       <input
                         type="text"
                         className="block w-full px-4 py-2 placeholder-secondary-400 dark:bg-dark-card dark:border-secondary-800 bg-white border rounded outline-none focus:border-primary-500 focus:shadow dark:focus:border-primary-500"
                         id="fname"
-                        placeholder="First Name"
-                      />
-                    </div>
-                    <div>
-                      <label
-                        className="inline-block mb-2 text-secondary-600 dark:text-white"
-                        htmlFor="lname"
-                      >
-                        Last Name:
-                      </label>
-                      <input
-                        type="text"
-                        className="block w-full px-4 py-2 placeholder-secondary-400 dark:bg-dark-card dark:border-secondary-800 bg-white border rounded outline-none focus:border-primary-500 focus:shadow dark:focus:border-primary-500"
-                        id="lname"
-                        placeholder="Last Name"
+                        placeholder="School Name"
                       />
                     </div>
                     <div>
@@ -284,20 +252,6 @@ function EmployersNew() {
                     <div className="col-span-2">
                       <label
                         className="inline-block mb-2 text-secondary-600 dark:text-white"
-                        htmlFor="cname"
-                      >
-                        Company Name:
-                      </label>
-                      <input
-                        type="text"
-                        className="block w-full px-4 py-2 placeholder-secondary-400 dark:bg-dark-card dark:border-secondary-800 bg-white border rounded outline-none focus:border-primary-500 focus:shadow dark:focus:border-primary-500"
-                        id="cname"
-                        placeholder="Company Name"
-                      />
-                    </div>
-                    <div className="col-span-2">
-                      <label
-                        className="inline-block mb-2 text-secondary-600 dark:text-white"
                         htmlFor="country"
                       >
                         Country:
@@ -309,11 +263,11 @@ function EmployersNew() {
                         id="country"
                       >
                         <option>Select Country</option>
-                        <option>Caneda</option>
-                        <option>Noida</option>
+                        <option>Nigeria</option>
+                        <option>Canada</option>
                         <option>USA</option>
                         <option>India</option>
-                        <option>Africa</option>
+                        <option>United Kingdom</option>
                       </select>
                     </div>
                     <div>
@@ -363,13 +317,13 @@ function EmployersNew() {
                         className="inline-block mb-2 text-secondary-600 dark:text-white"
                         htmlFor="pno"
                       >
-                        Pin Code:
+                        Company Registration:
                       </label>
                       <input
                         type="text"
                         className="block w-full px-4 py-2 placeholder-secondary-400 dark:bg-dark-card dark:border-secondary-800 bg-white border rounded outline-none focus:border-primary-500 focus:shadow dark:focus:border-primary-500"
                         id="pno"
-                        placeholder="Pin Code"
+                        placeholder="Company Registration"
                       />
                     </div>
                     <div className="col-span-2">
@@ -453,7 +407,7 @@ function EmployersNew() {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 
