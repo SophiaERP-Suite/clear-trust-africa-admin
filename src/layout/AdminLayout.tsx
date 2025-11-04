@@ -64,7 +64,7 @@ function AdminLayout() {
     },
 
     {
-      path: "/ControlPanel",
+      path: "/LogOut",
       icon: <LogOut size={25} />,
       label: "Logout",
     },

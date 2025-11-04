@@ -1,17 +1,18 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import Dashboard from "../pages/admin/Dashboard";
 import AdminLayout from "../layout/AdminLayout";
-import ApplicantNew from "../pages/admin/applicant/ApplicantNew";
-import Applicants from "../pages/admin/applicant/Applicants";
-import ApplicantProfile from "../pages/admin/applicant/ApplicantProfile";
-import EmployersNew from "../pages/admin/employer/EmployerNew";
-import Employers from "../pages/admin/employer/Employers";
-import EmployerProfile from "../pages/admin/employer/EmployerProfile";
+import ApplicantNew from "../pages/admin/Applicant/ApplicantNew";
+import Applicants from "../pages/admin/Applicant/Applicants";
+import ApplicantProfile from "../pages/admin/Applicant/ApplicantProfile";
+import EmployersNew from "../pages/admin/Employer/EmployerNew";
+import Employers from "../pages/admin/Employer/Employers";
+import EmployerProfile from "../pages/admin/Employer/EmployerProfile";
 import DbsTracker from "../pages/admin/Tracker/DbsTracker";
-import Incidents from "../pages/admin/incident/IncidentMgt";
-import PaymentDashboard from "../pages/admin/payment/Payment";
+import Incidents from "../pages/admin/Incident/IncidentMgt";
+import PaymentDashboard from "../pages/admin/Payment/Payment";
 import InvestigationPortal from "../pages/admin/Report/Report";
 import CommunicationsPage from "../pages/admin/Communication/Communication";
+import ControlPanel from "../pages/admin/ControlPanel/ControlPanel";
 
 function AppRoutes() {
   return (
@@ -32,7 +33,7 @@ function AppRoutes() {
         <Route path="FinanceMgt" element={<PaymentDashboard />} />
         <Route path="Reports" element={<InvestigationPortal />} />
         <Route path="Communication" element={<CommunicationsPage />} />
-        <Route path="ControlPanel" element={<Dashboard />} />
+        <Route path="ControlPanel" element={<ControlPanel />} />
 
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
