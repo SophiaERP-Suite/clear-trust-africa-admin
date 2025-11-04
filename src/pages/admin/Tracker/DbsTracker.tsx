@@ -21,15 +21,13 @@ import { NavLink } from "react-router-dom";
 
 export default function DBSTrackerModule() {
   const [activeView, setActiveView] = useState("dashboard");
-//   const [selectedCheck, setSelectedCheck] = useState(null);
   const [filterStatus, setFilterStatus] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Sample DBS checks data
   const dbsChecks = [
     {
       id: "DBS-2024-001",
-      employeeName: "Sarah Johnson",
+      employeeName: "Sarah Oriaku",
       employeeId: "EMP-1001",
       department: "Healthcare",
       position: "Senior Nurse",
@@ -48,7 +46,7 @@ export default function DBSTrackerModule() {
     },
     {
       id: "DBS-2024-002",
-      employeeName: "Michael Chen",
+      employeeName: "Michael Adebayo",
       employeeId: "EMP-1002",
       department: "Education",
       position: "Teacher",
@@ -67,7 +65,7 @@ export default function DBSTrackerModule() {
     },
     {
       id: "DBS-2024-003",
-      employeeName: "Emma Williams",
+      employeeName: "Emmanuella Williams",
       employeeId: "EMP-1003",
       department: "Social Care",
       position: "Care Worker",
@@ -86,7 +84,7 @@ export default function DBSTrackerModule() {
     },
     {
       id: "DBS-2024-004",
-      employeeName: "James Anderson",
+      employeeName: "Femi Anderson",
       employeeId: "EMP-1004",
       department: "Administration",
       position: "Office Manager",
@@ -105,7 +103,7 @@ export default function DBSTrackerModule() {
     },
     {
       id: "DBS-2024-005",
-      employeeName: "Lisa Martinez",
+      employeeName: "Lisa Abdul",
       employeeId: "EMP-1005",
       department: "Healthcare",
       position: "Junior Doctor",
@@ -143,7 +141,6 @@ export default function DBSTrackerModule() {
     },
   ];
 
-  // Dashboard statistics
   const stats = {
     total: dbsChecks.length,
     valid: dbsChecks.filter((c) => c.status === "Valid").length,
@@ -276,11 +273,6 @@ export default function DBSTrackerModule() {
             >
               <Icon size={18} />
               {tab.label}
-              {/* {tab.badge > 0 && (
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                  {tab.badge}
-                </span>
-              )} */}
             </button>
           );
         })}
