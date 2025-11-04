@@ -117,7 +117,7 @@ function EmployersNew() {
                           href="javascript:void();"
                           className="text-primary-400 hover:text-primary-500"
                         >
-                          .jpeg
+                          .jpeg{" "}
                         </a>
                         <span className="text-secondary-600 dark:text-white">
                           allowed
