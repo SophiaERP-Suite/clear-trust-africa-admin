@@ -8,6 +8,7 @@ import EmployersNew from "../pages/admin/employer/EmployerNew";
 import Employers from "../pages/admin/employer/Employers";
 import EmployerProfile from "../pages/admin/employer/EmployerProfile";
 import DbsTracker from "../pages/admin/Tracker/DbsTracker";
+import Incidents from "../pages/admin/incident/IncidentMgt";
 
 function AppRoutes() {
   return (
@@ -24,7 +25,7 @@ function AppRoutes() {
         <Route path="EmployersMgt/EmployerNew" element={<EmployersNew />} />
         <Route path="EmployersMgt/EmployerProfile" element={<EmployerProfile />} />
         <Route path="Tracker" element={<DbsTracker />} />
-        <Route path="IncidentMgt" element={<Dashboard />} />
+        <Route path="IncidentMgt" element={<Incidents />} />
         <Route path="FinanceMgt" element={<Dashboard />} />
         <Route path="Reports" element={<Dashboard />} />
         <Route path="Communication" element={<Dashboard />} />
