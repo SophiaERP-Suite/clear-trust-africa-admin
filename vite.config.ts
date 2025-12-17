@@ -3,7 +3,7 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig({
-  base: "/Admin/",
+  base: "/xt/cta_adm/",
   css: {
     lightningcss: {
       errorRecovery: true

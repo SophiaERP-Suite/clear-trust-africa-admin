@@ -4,6 +4,8 @@ import { useState, useRef, useEffect, type JSX } from "react";
 import DashboardHead from "../components/DashboardHead";
 import binta from "../assets2/img/binta.jpeg";
 import femi from "../assets2/img/femi_adebayo.jpg";
+import main_logo from "../assets2/img/cleartrust_logo.png";
+import mini_logo from "../assets2/img/cleartrust_logo_mini.png";
 import { ArrowRight, ArrowLeft, Menu, X, Bell, Search } from "lucide-react";
 
 interface NavItem {
@@ -76,7 +78,7 @@ function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
                 >
                   <div className="sidebar-logo ml-2">
                     <img
-                      src="/cleartrust_logo.png"
+                      src={main_logo}
                       style={{ width: "170px" }}
                       alt="logo"
                       className="mr-3"
@@ -92,7 +94,7 @@ function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
                 >
                   <div className="sidebar-logo">
                     <img
-                      src="/cleartrust_logo_mini.png"
+                      src={mini_logo}
                       style={{ width: "160px" }}
                       alt="logo"
                     />
@@ -175,7 +177,7 @@ function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
               className="flex px-2 py-4 mr-4 rtl:ml-4 rtl:mr-0 text-xl whitespace-nowrap"
             >
               <span className="sidebar-logo ml-2" style={{ width: "160px" }}>
-                <img src="/cleartrust_logo.png" alt="logo" />
+                <img src={main_logo} alt="logo" />
               </span>
             </a>
             <div>
@@ -281,7 +283,7 @@ function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
                             className="flex items-center whitespace-nowrap gap-4"
                           >
                             <img
-                              src="/cleartrust_logo.png"
+                              src={main_logo}
                               style={{ width: "160px" }}
                               alt="logo"
                               className="mr-3"
