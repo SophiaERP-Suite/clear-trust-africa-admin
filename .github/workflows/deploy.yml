@@ -32,5 +32,5 @@ jobs:
           username: ${{ secrets.FTP_CTA_USER }}
           password: ${{ secrets.FTP_CTA_PWD }}
           port: ${{ secrets.FTP_PORT || 21 }}
-          local-dir: ./dist
+          local-dir: ./dist/
           server-dir: ${{ secrets.FTP_CTA_ADM_PATH }}
