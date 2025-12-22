@@ -17,8 +17,86 @@ import "../../../assets2/js/slider-tabs.js";
 import "../../../assets2/js/sweet-alert.js";
 import "../../../assets2/js/swiper-slider.js";
 import { NavLink } from "react-router-dom";
+import { useState } from "react";
+import { createOrganization } from "../../../api/adminApi.js";
+import type { CreateOrganizationDto } from "../../../types/organization.js";
+import api from "../../../api/axios.js";
 
 function EmployersNew() {
+  const [name, setName] = useState("");
+  const [registrationNumber, setRegistrationNumber] = useState("");
+  const [address, setAddress] = useState("");
+  const [organizationTypeId, setOrganizationTypeId] = useState(1);
+  const [documents, setDocuments] = useState<
+    { documentType: string; filePath: string }[]
+  >([]);
+
+  const handleSubmit = async () => {
+    const dto: CreateOrganizationDto = {
+      organizationTypeId,
+      name,
+      registrationNumber,
+      address,
+      verificationDocuments: documents,
+    };
+
+    try {
+      const createdOrg = await createOrganization(dto);
+      console.log("Organization created:", createdOrg);
+    } catch (error) {
+      console.error("Error creating organization:", error);
+    }
+  };
+
+  // const addDocument = () => {
+  //   setDocuments([...documents, { documentType: "", filePath: "" }]);
+  // };
+
+  // const handleDocumentChange = (
+  //   index: number,
+  //   field: "documentType" | "filePath",
+  //   value: string
+  // ) => {
+  //   const updated = [...documents];
+  //   updated[index][field] = value;
+  //   setDocuments(updated);
+  // };
+
+  const addDocument = () => {
+    setDocuments([...documents, { documentType: "", filePath: "" }]);
+  };
+
+  // Handle document type change
+  const handleDocumentTypeChange = (index: number, value: string) => {
+    const updated = [...documents];
+    updated[index].documentType = value;
+    setDocuments(updated);
+  };
+
+  // Handle file selection and upload
+  const handleFileChange = async (index: number, file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      // Upload file to your backend or storage endpoint
+      const response = await api.post<{ fileUrl: string }>(
+        "/admin/files/upload",
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+
+      const updated = [...documents];
+      updated[index].filePath = response.data.fileUrl; // store the URL returned by backend
+      setDocuments(updated);
+    } catch (error) {
+      console.error("File upload failed:", error);
+      alert("File upload failed");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="w-full mb-8">
@@ -28,9 +106,7 @@ function EmployersNew() {
               <div className="flex">
                 <UserPlus className="text-blue-600 mr-2" size={36} />
                 <div>
-                  <h3 className="mb-0 text-black">
-                    New Employer
-                  </h3>
+                  <h3 className="mb-0 text-black">New Employer</h3>
                   <p className="text-secondary-600 text-black">
                     <NavLink to="/Dashboard">Dashboard</NavLink>{" "}
                     <ChevronRightIcon size={14} />{" "}
@@ -42,11 +118,12 @@ function EmployersNew() {
               </div>
               <div className="flex justify-end">
                 <NavLink
-                    to="/EmployersMgt" style={{ backgroundColor: "rgb(112 22 208 / 1)" }}
-                    className="text-white btn shadow-md btn-soft-light hover:shadow-xl hover:bg-glass focus:bg-gray-200"
-                  >
-                    <Users size={18} className="mr-2" />
-                    All Employers
+                  to="/EmployersMgt"
+                  style={{ backgroundColor: "rgb(112 22 208 / 1)" }}
+                  className="text-white btn shadow-md btn-soft-light hover:shadow-xl hover:bg-glass focus:bg-gray-200"
+                >
+                  <Users size={18} className="mr-2" />
+                  All Employers
                 </NavLink>
               </div>
             </div>
@@ -58,7 +135,7 @@ function EmployersNew() {
         x-bind:class="setting.page_layout"
       >
         <div className="lg:flex lg:grid-cols-2 gap-8">
-          <div className="flex-auto w-full lg:w-1/4">
+          {/* <div className="flex-auto w-full lg:w-1/4">
             <div className="relative flex flex-col mb-8 text-secondary-500 bg-white shadow rounded -mt-2 dark:bg-dark-card">
               <div className="flex justify-between flex-auto p-5 mb-4 border-b dark:border-secondary-800">
                 <div className="header-title">
@@ -198,7 +275,7 @@ function EmployersNew() {
                 </form>
               </div>
             </div>
-          </div>
+          </div> */}
           <div className="flex-auto w-full lg:w-3/4">
             <div className="relative flex flex-col mb-8 text-secondary-500 bg-white shadow rounded -mt-2 dark:bg-dark-card">
               <div className="flex justify-between flex-auto p-6 border-b dark:border-secondary-800">
@@ -212,13 +289,15 @@ function EmployersNew() {
                         className="inline-block mb-2 text-secondary-600 dark:text-white"
                         htmlFor="fname"
                       >
-                        School Name:
+                        Business Name:
                       </label>
                       <input
                         type="text"
                         className="block w-full px-4 py-2 placeholder-secondary-400 dark:bg-dark-card dark:border-secondary-800 bg-white border rounded outline-none focus:border-primary-500 focus:shadow dark:focus:border-primary-500"
                         id="fname"
-                        placeholder="School Name"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        placeholder="Business Name"
                       />
                     </div>
                     <div>
@@ -226,30 +305,18 @@ function EmployersNew() {
                         className="inline-block mb-2 text-secondary-600 dark:text-white"
                         htmlFor="add1"
                       >
-                        Street Address 1:
+                        Business Address:
                       </label>
                       <input
                         type="text"
                         className="block w-full px-4 py-2 placeholder-secondary-400 dark:bg-dark-card dark:border-secondary-800 bg-white border rounded outline-none focus:border-primary-500 focus:shadow dark:focus:border-primary-500"
                         id="add1"
+                        value={address}
+                        onChange={(e) => setAddress(e.target.value)}
                         placeholder="Street Address 1"
                       />
                     </div>
-                    <div>
-                      <label
-                        className="inline-block mb-2 text-secondary-600 dark:text-white"
-                        htmlFor="add2"
-                      >
-                        Street Address 2:
-                      </label>
-                      <input
-                        type="text"
-                        className="block w-full px-4 py-2 placeholder-secondary-400 dark:bg-dark-card dark:border-secondary-800 bg-white border rounded outline-none focus:border-primary-500 focus:shadow dark:focus:border-primary-500"
-                        id="add2"
-                        placeholder="Street Address 2"
-                      />
-                    </div>
-                    <div className="col-span-2">
+                    {/* <div className="col-span-2">
                       <label
                         className="inline-block mb-2 text-secondary-600 dark:text-white"
                         htmlFor="country"
@@ -269,50 +336,25 @@ function EmployersNew() {
                         <option>India</option>
                         <option>United Kingdom</option>
                       </select>
-                    </div>
+                    </div> */}
                     <div>
                       <label
                         className="inline-block mb-2 text-secondary-600 dark:text-white"
-                        htmlFor="mobno"
+                        htmlFor="BRegNo"
                       >
-                        Mobile Number:
+                        Business Reg Number:
                       </label>
                       <input
                         type="text"
                         className="block w-full px-4 py-2 placeholder-secondary-400 dark:bg-dark-card dark:border-secondary-800 bg-white border rounded outline-none focus:border-primary-500 focus:shadow dark:focus:border-primary-500"
-                        id="mobno"
-                        placeholder="Mobile Number"
+                        id="BRegNo"
+                        placeholder="Business Reg Number"
+                        value={registrationNumber}
+                        onChange={(e) => setRegistrationNumber(e.target.value)}
                       />
                     </div>
-                    <div>
-                      <label
-                        className="inline-block mb-2 text-secondary-600 dark:text-white"
-                        htmlFor="altconno"
-                      >
-                        Alternate Contact:
-                      </label>
-                      <input
-                        type="text"
-                        className="block w-full px-4 py-2 placeholder-secondary-400 dark:bg-dark-card dark:border-secondary-800 bg-white border rounded outline-none focus:border-primary-500 focus:shadow dark:focus:border-primary-500"
-                        id="altconno"
-                        placeholder="Alternate Contact"
-                      />
-                    </div>
-                    <div>
-                      <label
-                        className="inline-block mb-2 text-secondary-600 dark:text-white"
-                        htmlFor="email"
-                      >
-                        Email:
-                      </label>
-                      <input
-                        type="email"
-                        className="block w-full px-4 py-2 placeholder-secondary-400 dark:bg-dark-card dark:border-secondary-800 bg-white border rounded outline-none focus:border-primary-500 focus:shadow dark:focus:border-primary-500"
-                        id="email"
-                        placeholder="Email"
-                      />
-                    </div>
-                    <div>
+
+                    {/* <div>
                       <label
                         className="inline-block mb-2 text-secondary-600 dark:text-white"
                         htmlFor="pno"
@@ -339,68 +381,65 @@ function EmployersNew() {
                         id="city"
                         placeholder="Town/City"
                       />
+                    </div> */}
+
+                    <div>
+                      <h6>Verification Documents</h6>
+                      {documents.map((doc, index) => (
+                        <div key={index}>
+                          <div>
+                            <label
+                              className="inline-block mb-2 text-secondary-600 dark:text-white"
+                              htmlFor="BRegNo"
+                            >
+                              Document Type:
+                            </label>
+                            <input
+                              placeholder="Document Type"
+                              value={doc.documentType}
+                              className="block w-full px-4 py-2 placeholder-secondary-400 dark:bg-dark-card dark:border-secondary-800 bg-white border rounded outline-none focus:border-primary-500 focus:shadow dark:focus:border-primary-500"
+                              onChange={(e) =>
+                                handleDocumentTypeChange(index, e.target.value)
+                              }
+                            />
+                          </div>
+                          <div>
+                            <label
+                              className="inline-block mb-2 text-secondary-600 dark:text-white"
+                              htmlFor="BRegNo"
+                            >
+                              Upload Document:
+                            </label>
+                            <input
+                              type="file"
+                              className="form-control"
+                              onChange={(e) =>
+                                e.target.files &&
+                                handleFileChange(index, e.target.files[0])
+                              }
+                            />
+                            {doc.filePath && (
+                              <span>Uploaded: {doc.filePath}</span>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+
+                      <button
+                        type="button"
+                        className="btn btn-success"
+                        onClick={addDocument}
+                      >
+                        Add Document
+                      </button>
+                      <br />
                     </div>
                   </div>
-                  <hr className="mt-5" />
-                  <h5 className="mb-4 dark:text-white">Security</h5>
-                  <div className="grid lg:grid-cols-2 gap-x-8">
-                    <div className="w-full mb-3 col-span-2">
-                      <label
-                        className="inline-block mb-2 text-slate-400 text-secondary-600 dark:text-white"
-                        htmlFor="uname"
-                      >
-                        User Name:
-                      </label>
-                      <input
-                        type="text"
-                        className="block w-full px-4 py-2 placeholder-secondary-400 dark:bg-dark-card dark:border-secondary-800 bg-white border rounded outline-none focus:border-primary-500 focus:shadow dark:focus:border-primary-500"
-                        id="uname"
-                        placeholder="User Name"
-                      />
-                    </div>
-                    <div className="w-full mb-3">
-                      <label
-                        className="inline-block mb-2 text-slate-400 text-secondary-600 dark:text-white"
-                        htmlFor="pass"
-                      >
-                        Password:
-                      </label>
-                      <input
-                        type="password"
-                        className="block w-full px-4 py-2 placeholder-secondary-400 dark:bg-dark-card dark:border-secondary-800 bg-white border rounded outline-none focus:border-primary-500 focus:shadow dark:focus:border-primary-500"
-                        id="pass"
-                        placeholder="Password"
-                      />
-                    </div>
-                    <div className="w-full mb-3">
-                      <label
-                        className="inline-block mb-2 text-slate-400 text-secondary-600 dark:text-white"
-                        htmlFor="rpass"
-                      >
-                        Repeat Password:
-                      </label>
-                      <input
-                        type="password"
-                        className="block w-full px-4 py-2 placeholder-secondary-400 dark:bg-dark-card dark:border-secondary-800 bg-white border rounded outline-none focus:border-primary-500 focus:shadow dark:focus:border-primary-500"
-                        id="rpass"
-                        placeholder="Repeat Password "
-                      />
-                    </div>
+                  <div className="flex justify-end mt-5">
+                    <button type="submit" className="btn btn-primary">
+                      Submit
+                    </button>
                   </div>
-                  <div className="mb-3">
-                    <label className="inline-block mb-2 text-secondary-600 dark:text-white">
-                      <input
-                        className="float-left w-4 h-4 mt-1 mr-2  border border-primary-500 rounded dark:bg-dark-card rtl:float-right rtl:ml-2 rtl:mr-0 "
-                        type="checkbox"
-                        value=""
-                        id="flexCheckChecked"
-                      />
-                      Enable Two-Factor-Authentication
-                    </label>
-                  </div>
-                  <button type="submit" className="btn btn-primary">
-                    Submit
-                  </button>
                 </form>
               </div>
             </div>
