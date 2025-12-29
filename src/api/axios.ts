@@ -1,22 +1,11 @@
-// src/api/adminApi.ts
-import axios from 'axios';
-
-const API_BASE_URL = 'https://localhost:5001/api';
+import axios from "axios";
 
 const api = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: import.meta.env.VITE_API_BASE_URL,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
+  // withCredentials: true, 
 });
-
-// // Optional: attach token
-// api.interceptors.request.use((config) => {
-//   const token = localStorage.getItem('token'); // replace with your auth logic
-//   if (token) {
-//     config.headers.Authorization = `Bearer ${token}`;
-//   }
-//   return config;
-// });
 
 export default api;

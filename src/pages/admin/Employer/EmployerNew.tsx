@@ -18,35 +18,35 @@ import "../../../assets2/js/sweet-alert.js";
 import "../../../assets2/js/swiper-slider.js";
 import { NavLink } from "react-router-dom";
 import { useState } from "react";
-import { createOrganization } from "../../../api/adminApi.js";
-import type { CreateOrganizationDto } from "../../../types/organization.js";
+// import { createOrganization } from "../../../api/adminApi.js";
+// import type { CreateOrganizationDto } from "../../../types/organization.js";
 import api from "../../../api/axios.js";
 
 function EmployersNew() {
   const [name, setName] = useState("");
   const [registrationNumber, setRegistrationNumber] = useState("");
   const [address, setAddress] = useState("");
-  const [organizationTypeId, setOrganizationTypeId] = useState(1);
+  // const [organizationTypeId, setOrganizationTypeId] = useState(1);
   const [documents, setDocuments] = useState<
     { documentType: string; filePath: string }[]
   >([]);
 
-  const handleSubmit = async () => {
-    const dto: CreateOrganizationDto = {
-      organizationTypeId,
-      name,
-      registrationNumber,
-      address,
-      verificationDocuments: documents,
-    };
+  // const handleSubmit = async () => {
+  //   const dto: CreateOrganizationDto = {
+  //     organizationTypeId,
+  //     name,
+  //     registrationNumber,
+  //     address,
+  //     verificationDocuments: documents,
+  //   };
 
-    try {
-      const createdOrg = await createOrganization(dto);
-      console.log("Organization created:", createdOrg);
-    } catch (error) {
-      console.error("Error creating organization:", error);
-    }
-  };
+  //   try {
+  //     const createdOrg = await createOrganization(dto);
+  //     console.log("Organization created:", createdOrg);
+  //   } catch (error) {
+  //     console.error("Error creating organization:", error);
+  //   }
+  // };
 
   // const addDocument = () => {
   //   setDocuments([...documents, { documentType: "", filePath: "" }]);

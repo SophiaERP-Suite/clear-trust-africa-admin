@@ -18,87 +18,191 @@ import "../../../assets2/js/sweet-alert.js";
 import "../../../assets2/js/swiper-slider.js";
 import {
   ChevronRightIcon,
-  Plus,
   Briefcase,
-  UserPlus,
-  PenSquare,
-  Trash2,
+  X,
+  Check,
+  AlertCircle,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import {
   getAllOrganizations,
-  type OrganizationDto,
+  approveOrganization,
+  rejectOrganization,
+  suspendOrganization,
 } from "../../../api/adminApi.js";
+import type { OrganizationDto } from "../../../types/organization.js";
+import { ToastContainer, toast } from "react-toastify";
+import Modal from "../../utils/modal.js";
 
-const data = [
-  {
-    name: "Little Nest Nursery",
-    contact: "+2349089812359",
-    email: "contact@littlenestnursery.com",
-    address: "2, Osolo Way, Off Iyana Isolo, Lagos",
-    status: "verified",
-    joined: "2019-12-01",
-    reg: "RC-45219",
-  },
-];
+type ModalType = "suspend" | "approve" | "reject" | null;
 
 function Employers() {
   const [organizations, setOrganizations] = useState<OrganizationDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [modalType, setModalType] = useState<ModalType>(null);
+  const [selectedOrgId, setSelectedOrgId] = useState<number | null>(null);
+  const [statusFilter, setStatusFilter] = useState<string>("Active");
+
+  // pagination
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState<number>(20);
+  const [totalCount, setTotalCount] = useState(0);
+
+  const start = totalCount > 0 ? (page - 1) * pageSize + 1 : 0;
+  const end = totalCount > 0 ? Math.min(page * pageSize, totalCount) : 0;
+  const totalPages = Math.ceil(totalCount / pageSize);
 
   useEffect(() => {
-    const fetchOrganizations = async () => {
-      try {
-        setLoading(true);
-        const data = await getAllOrganizations("Pending", 1, 20);
-        setOrganizations(data);
-      } catch (err: any) {
-        console.error(err);
-        setError("Failed to fetch organizations");
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchOrganizations();
-  }, []);
+  }, [page, statusFilter, pageSize]);
 
-  // const handleActivate = async (userId: number) => {
-  //   try {
-  //     await adminApi.
-  //     alert("User activated successfully");
-  //     fetchEmployers();
-  //   } catch (err: any) {
-  //     alert("Failed to activate user: " + err.message);
-  //   }
-  // };
+  const fetchOrganizations = async () => {
+    try {
+      setLoading(true);
+      const data = await getAllOrganizations(
+        statusFilter || undefined,
+        page,
+        pageSize
+      );
+      setOrganizations(data);
+      setTotalCount(data.length);
+      console.log(data);
+    } catch (err: any) {
+      console.error(err);
+      setError("Failed to fetch organizations");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  // const handleSuspend = async (userId: number) => {
-  //   try {
-  //     await adminApi.suspendUser(userId);
-  //     alert("User suspended successfully");
-  //   } catch (err: any) {
-  //     alert("Failed to activate user: " + err.message);
-  //   }
-  // };
+  // Toast messages
+  const notifySuccess = () =>
+    toast.success("Organization activated successfully");
+  const notifyRejection = () =>
+    toast.success("Organization rejected successfully");
+  const notifySuspend = () =>
+    toast.success("Organization suspended successfully");
+  const notifyError = () => toast.error("Action Failed");
 
-  // const handleDelete = async (userId: number) => {
-  //   if (!window.confirm("Are you sure you want to delete this user?")) {
-  //     return;
-  //   }
+  // Call modals
+  const openApproveModal = (organizationId: number) => {
+    setSelectedOrgId(organizationId);
+    setModalType("approve");
+  };
 
-  //   try {
-  //     await adminApi.deleteUser(userId);
-  //     alert("User deleted successfully!");
-  //     fetchEmployers();
-  //   } catch (err: any) {
-  //     alert("Failed to delete user: " + err.message);
-  //   }
-  // };
+  const openRejectModal = (organizationId: number) => {
+    setSelectedOrgId(organizationId);
+    setModalType("reject");
+  };
+
+  const openSuspendModal = (organizationId: number) => {
+    setSelectedOrgId(organizationId);
+    setModalType("suspend");
+  };
+
+  const closeModal = () => {
+    setModalType(null);
+    setSelectedOrgId(null);
+  };
+
+  const handleApprove = async () => {
+    if (!selectedOrgId) return;
+
+    try {
+      setLoading(true);
+      const OrganizationId = selectedOrgId;
+      await approveOrganization(OrganizationId);
+      notifySuccess();
+      fetchOrganizations();
+      closeModal();
+    } catch (err: any) {
+      notifyError();
+    }
+  };
+
+  const handleReject = async (reasonInput?: string) => {
+    if (!selectedOrgId) return;
+
+    try {
+      setLoading(true);
+      const payload = {
+        organizationId: selectedOrgId,
+        reason: reasonInput || "Not meeting criteria",
+      };
+      await rejectOrganization(payload.organizationId, payload.reason);
+      notifyRejection();
+      closeModal();
+      fetchOrganizations();
+    } catch (err: any) {
+      notifyError();
+    }
+  };
+
+  const handleSuspend = async (reasonInput?: string) => {
+    if (!selectedOrgId) return;
+
+    try {
+      setLoading(true);
+      const payload = {
+        organizationId: selectedOrgId,
+        reason: reasonInput || "Not meeting criteria",
+      };
+      await suspendOrganization(payload.organizationId, payload.reason);
+      notifySuspend();
+      closeModal();
+      fetchOrganizations();
+    } catch (err: any) {
+      notifyError();
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
+      <ToastContainer />
+      <Modal
+        isOpen={modalType === "approve"}
+        title="Approve Organization"
+        message="Are you sure you want to approve this organization?"
+        confirmText="Approve"
+        confirmColor="green"
+        headerIcon={<Check />}
+        butonIcon={<Check />}
+        loading={loading}
+        onConfirm={handleApprove}
+        onCancel={closeModal}
+      />
+
+      <Modal
+        isOpen={modalType === "reject"}
+        title="Reject Organization"
+        message="Are you sure you want to reject this organization?"
+        confirmText="Reject"
+        confirmColor="green"
+        inputLabel="Reason for Rejection"
+        inputPlaceholder="Enter reason..."
+        headerIcon={<X />}
+        butonIcon={<X />}
+        loading={loading}
+        onConfirm={handleReject}
+        onCancel={closeModal}
+      />
+
+      <Modal
+        isOpen={modalType === "suspend"}
+        title="Suspend Organization"
+        message="Are you sure you want to suspend this organization?"
+        confirmText="Suspend"
+        confirmColor="yellow"
+        inputLabel="Reason for Suspension"
+        inputPlaceholder="Enter reason..."
+        headerIcon={<AlertCircle />}
+        butonIcon={<Check />}
+        loading={loading}
+        onConfirm={handleSuspend}
+        onCancel={closeModal}
+      />
+
       <div className="w-full mb-8">
         <div className="row">
           <div className="col-md-12">
@@ -107,7 +211,7 @@ function Employers() {
                 <Briefcase className="text-blue-600 mr-2" size={36} />
                 <div>
                   <h3 className="mb-0 text-black">Employers Management</h3>
-                  <p className="text-secondary-600 text-black">
+                  <p className="text-black text-black">
                     <NavLink to="/Dashboard">Dashboard</NavLink>{" "}
                     <ChevronRightIcon size={14} />{" "}
                     <NavLink to="/EmployersMgt">Employers</NavLink>{" "}
@@ -115,66 +219,121 @@ function Employers() {
                 </div>
               </div>
               <div className="flex justify-end">
-                <NavLink
+                {/* <NavLink
                   to="/EmployersMgt/EmployerNew"
                   style={{ backgroundColor: "rgb(112 22 208 / 1)" }}
                   className="text-white btn shadow-md btn-soft-light hover:shadow-xl hover:bg-glass focus:bg-gray-200"
                 >
                   <Plus size={18} className="mr-2" />
                   Add New
-                </NavLink>
+                </NavLink> */}
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {loading && <div className="loading flex justify-center text-center mt-[25%]">Loading Organizations...</div>}
-      {error && <div className="error flex justify-center text-center mt-[25%]">Error: {error}</div>}
-      {!loading && !error && (
+      {loading && (
         <div
-          className="footer-inner mx-auto main-container container"
-          x-bind:className="setting.page_layout"
+          className="loading flex items-center justify-center gap-3 text-center mt-8"
+          aria-label="Loading Organizations"
+          role="status"
         >
-          <div className="flex flex-wrap contet-inner">
-            <div className="flex-auto w-full">
-              <div className="relative flex flex-col mb-8  bg-white dark:bg-dark-card shadow rounded">
-                <div className="flex justify-between flex-auto p-5 border-b dark:border-secondary-800 rounded">
-                  <h4 className="mb-0 dark:text-secondary-200">
-                    Employers List
-                  </h4>
-                  <a href="/ApplicantNew"></a>
-                </div>
-                <div className="pb-6 pt-2 px-0">
-                  <div className="overflow-x-auto">
-                    <div className=" overflow-x-auto p-5">
-                      <div className="flex flex-wrap justify-between my-6 mx-5">
-                        <div className="flex justify-center items-center mb-1">
-                          <label
-                            className="inline-block text-secondary-600 dark:text-white"
-                            htmlFor="show"
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 44 44"
+            stroke="currentColor"
+            aria-label="Loading"
+          >
+            <g fill="none" fillRule="evenodd" strokeWidth="4">
+              <circle cx="22" cy="22" r="9" strokeOpacity="0.2" />
+              <path
+                d="M22 3 A19 19 0 0 1 41 22"
+                stroke="currentColor"
+                strokeLinecap="round"
+              >
+                <animateTransform
+                  attributeName="transform"
+                  type="rotate"
+                  from="0 22 22"
+                  to="360 22 22"
+                  dur="1s"
+                  repeatCount="indefinite"
+                />
+              </path>
+            </g>
+          </svg>
+          <span className="text-gray-700">Loading Organizations...</span>
+        </div>
+      )}
+      {error && (
+        <div className="error flex justify-center text-center mt-[25%]">
+          Error: {error}
+        </div>
+      )}
+
+      <div
+        className="footer-inner mx-auto main-container container"
+        x-bind:className="setting.page_layout"
+      >
+        <div className="flex flex-wrap contet-inner">
+          <div className="flex-auto w-full">
+            <div className="relative flex flex-col mb-8  bg-white dark:bg-dark-card shadow rounded">
+              <div className="flex justify-between flex-auto p-5 border-b dark:border-secondary-800 rounded">
+                <h4 className="mb-0 dark:text-secondary-200">Employers List</h4>
+                <a href="/ApplicantNew"></a>
+              </div>
+              <div className="pb-6 pt-2 px-0">
+                <div className="overflow-x-auto">
+                  <div className=" overflow-x-auto p-5">
+                    <div className="flex justify-between my-6 mx-0">
+                      <div className="flex justify-center items-center gap-2 mb-1">
+                        <label
+                          className="inline-block text-black text-md dark:text-white"
+                          htmlFor="status"
+                        >
+                          Status:
+                        </label>
+                        <div className="flex">
+                          <select
+                            id="status"
+                            value={statusFilter}
+                            onChange={(e) => setStatusFilter(e.target.value)}
+                            className="form-control"
                           >
-                            Show
-                          </label>
-                          <div className="flex">
-                            <select
-                              className="block w-full px-2 py-1 ml-2 text-base font-normal rounded text-secondary-500 dark:bg-dark-card dark:border-secondary-800 bg-white border outline-none focus:border-primary-500 focus:shadow"
-                              aria-label=".form-select-sm example"
-                              id="show"
-                            >
-                              <option selected={true}>10</option>
-                              <option value="1">25</option>
-                              <option value="2">50</option>
-                              <option value="3">100</option>
-                            </select>
-                            <span className="text-secondary-600 ml-1 dark:text-white">
-                              entries
-                            </span>
-                          </div>
+                            <option value="">All</option>
+                            <option value="Active">Active</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Suspended">Suspended</option>
+                          </select>
                         </div>
-                        <div className="flex justify-center items-center mb-1">
+                      </div>
+                      <div className="flex  items-center mb-1 ml-4">
+                        {/* <label
+                            className="inline-block text-black text-md dark:text-white"
+                            htmlFor="status"
+                          >
+                            Page-Size:
+                          </label> */}
+
+                        <select
+                          id="show"
+                          value={pageSize}
+                          onChange={(e) => setPageSize(Number(e.target.value))}
+                          className="form-control"
+                        >
+                          <option selected={true}>Select page size</option>
+                          <option value={10}>10</option>
+                          <option value={25}>25</option>
+                          <option value={50}>50</option>
+                          <option value={100}>100</option>
+                        </select>
+                      </div>
+
+                      {/* <div className="flex justify-center items-center mb-1">
                           <label
-                            className="inline-block mb-2 text-secondary-600 dark:text-white"
+                            className="inline-block mb-2 text-black dark:text-white"
                             htmlFor="email"
                           >
                             Search:
@@ -184,45 +343,41 @@ function Employers() {
                             className="block w-full px-4 py-1 ml-2 text-base font-normal dark:bg-dark-card dark:border-secondary-800 bg-white border rounded outline-none focus:border-primary-500 focus:shadow"
                             id="email"
                           />
-                        </div>
-                      </div>
+                        </div> */}
+                    </div>
+                    {!loading && !error && organizations.length > 0 ? (
                       <table className="min-w-full overflow-hidden divide-y divide-secondary-200 dark:divide-secondary-800 border dark:border-secondary-800">
                         <thead>
                           <tr className="bg-secondary-100 dark:bg-dark-bg">
-                            <th className="px-6 py-4 text-left font-medium text-secondary-600 dark:text-white">
-                              Profile
-                            </th>
-                            <th className="px-6 py-4 text-left font-medium text-secondary-600 dark:text-white">
+                            <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
                               Name
                             </th>
-                            <th className="px-6 py-4 text-left font-medium text-secondary-600 dark:text-white">
-                              Contact
+
+                            <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                              Org Type
                             </th>
-                            <th className="px-6 py-4 text-left font-medium text-secondary-600 dark:text-white">
-                              Email
-                            </th>
-                            <th className="px-6 py-4 text-left font-medium text-secondary-600 dark:text-white">
+                            <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
                               Address
                             </th>
-                            <th className="px-6 py-4 text-left font-medium text-secondary-600 dark:text-white">
+                            <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
                               Status
                             </th>
-                            <th className="px-6 py-4 text-left font-medium text-secondary-600 dark:text-white">
-                              Registration
+                            <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                              Reg No
                             </th>
-                            <th className="px-6 py-4 text-left font-medium text-secondary-600 dark:text-white">
+                            <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
                               Join Date
                             </th>
-                            <th className="px-6 py-4 text-left font-medium text-secondary-600 dark:text-white">
+                            <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
                               Action
                             </th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-secondary-200 dark:divide-secondary-800">
-                          {data.map((schoolData) => {
+                          {organizations.map((orgData) => {
                             return (
                               <tr>
-                                <td className="px-6 py-4 whitespace-nowrap">
+                                {/* <td className="px-6 py-4 whitespace-nowrap">
                                   <a href="employerProfile">
                                     <img
                                       className="w-10 h-10 mr-3 text-primary-400 bg-primary-500/10 rounded-xl"
@@ -231,82 +386,124 @@ function Employers() {
                                       alt="profile"
                                     />
                                   </a>
+                                </td> */}
+
+                                <td className="px-6 py-4 whitespace-nowrap text-black dark:text-black">
+                                  {orgData.name}
                                 </td>
 
-                                <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
-                                  {schoolData.name}
+                                <td className="px-6 py-4 whitespace-nowrap text-black dark:text-black">
+                                  {orgData.organizationTypeName}
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
-                                  {schoolData.contact}
+                                <td className="px-6 py-4 whitespace-nowrap text-black dark:text-black">
+                                  {orgData.address}
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
-                                  {schoolData.email}
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
-                                  {schoolData.address}
-                                </td>
+
                                 <td className="px-6 py-4">
                                   <span
                                     className={`
                                     ${
-                                      schoolData.status == "verified"
+                                      orgData.statusDisplay == "Active"
                                         ? "bg-success-500"
                                         : ""
                                     }
                                     ${
-                                      schoolData.status == "unverified"
+                                      orgData.statusDisplay == "Pending"
                                         ? "bg-warning-500"
+                                        : ""
+                                    }
+                                    ${
+                                      orgData.statusDisplay == "Suspended"
+                                        ? "bg-danger-500"
                                         : ""
                                     }
                                     inline-block whitespace-nowrap px-2 py-1 text-xs text-center font-bold leading-none text-white rounded`}
                                   >
-                                    {schoolData.status}
+                                    {orgData.statusDisplay}
                                   </span>
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
-                                  {schoolData.reg}
+                                <td className="px-6 py-4 whitespace-nowrap text-black dark:text-black">
+                                  {orgData.registrationNumber}
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
-                                  {schoolData.joined}
+                                <td className="px-6 py-4 whitespace-nowrap text-black dark:text-black">
+                                  {orgData.dateCreated.slice(0, 10)}
                                 </td>
                                 <td className="px-6 py-4">
                                   <div className="flex items-center list-user-action">
-                                    <a
-                                      className="btn btn-success btn-icon btn-sm mr-1"
-                                      href="#"
-                                      type="button"
-                                      data-tp-toggle="tooltip"
-                                      data-tp-placement="top"
-                                      data-tp-title="Add"
-                                    >
-                                      <span className="btn-inner">
-                                        <UserPlus />
-                                      </span>
-                                    </a>
-                                    <a
-                                      className="btn btn-warning btn-icon btn-sm mr-1"
-                                      href="#"
-                                      type="button"
-                                      data-tp-toggle="tooltip"
-                                      data-tp-placement="top"
-                                      data-tp-title="Edit"
-                                    >
-                                      <span className="btn-inner">
-                                        <PenSquare />
-                                      </span>
-                                    </a>
-                                    <a
-                                      className="btn btn-danger btn-icon btn-sm mr-1"
-                                      href="#"
-                                      type="button"
-                                      data-tp-toggle="tooltip"
-                                      data-tp-placement="top"
-                                      data-tp-title="Delet"
-                                    >
-                                      <span className="btn-inner">
-                                        <Trash2 />
-                                      </span>
-                                    </a>
+                                    {orgData.statusDisplay === "Pending" && (
+                                      <div>
+                                        <button
+                                          className="btn btn-success btn-icon btn-sm mr-1"
+                                          type="button"
+                                          onClick={() =>
+                                            openApproveModal(
+                                              orgData.organizationId
+                                            )
+                                          }
+                                          data-tp-toggle="tooltip"
+                                          data-tp-placement="top"
+                                          data-tp-title="Add"
+                                        >
+                                          <span className="btn-inner">
+                                            <Check />
+                                          </span>
+                                        </button>
+
+                                        <button
+                                          className="btn btn-danger btn-icon btn-sm mr-1"
+                                          type="button"
+                                          data-tp-toggle="tooltip"
+                                          data-tp-placement="top"
+                                          data-tp-title="Delete"
+                                          onClick={() =>
+                                            openRejectModal(
+                                              orgData.organizationId
+                                            )
+                                          }
+                                        >
+                                          <span className="btn-inner">
+                                            <X />
+                                          </span>
+                                        </button>
+                                      </div>
+                                    )}
+                                    {orgData.statusDisplay === "Active" && (
+                                      <button
+                                        className="btn btn-warning btn-icon btn-sm mr-1"
+                                        type="button"
+                                        data-tp-toggle="tooltip"
+                                        data-tp-placement="top"
+                                        data-tp-title="Suspend"
+                                        onClick={() =>
+                                          openSuspendModal(
+                                            orgData.organizationId
+                                          )
+                                        }
+                                      >
+                                        <span className="btn-inner">
+                                          <AlertCircle />
+                                        </span>
+                                      </button>
+                                    )}
+
+                                    {orgData.statusDisplay === "Suspended" && (
+                                      <button
+                                        className="btn btn-success btn-icon btn-sm mr-1"
+                                        type="button"
+                                        onClick={() =>
+                                          openApproveModal(
+                                            orgData.organizationId
+                                          )
+                                        }
+                                        data-tp-toggle="tooltip"
+                                        data-tp-placement="top"
+                                        data-tp-title="Add"
+                                      >
+                                        <span className="btn-inner">
+                                          <Check />
+                                        </span>
+                                      </button>
+                                    )}
                                   </div>
                                 </td>
                               </tr>
@@ -314,33 +511,49 @@ function Employers() {
                           })}
                         </tbody>
                       </table>
-                      <div className="border dark:border-secondary-800">
-                        <div className="flex flex-wrap justify-between my-6 mx-5">
-                          <div className="flex justify-center items-center mb-1">
-                            <p className="text-secondary-600">
-                              Showing 1 to 9 of 9 entries
-                            </p>
-                          </div>
-                          <div className="inline-flex flex-wrap">
-                            <a
-                              href="#"
-                              className="border-t border-b border-l text-primary-500 border-secondary-500 px-2 py-1 rounded-l dark:border-secondary-800"
+                    ) : (
+                      <div className="text-center text-black dark:text-white mt-10 mb-10">
+                        No organizations found.
+                      </div>
+                    )}
+                    <div className="border dark:border-secondary-800">
+                      <div className="flex flex-wrap justify-between my-6 mx-5">
+                        <div className="flex justify-center items-center mb-1">
+                          <p className="text-black">
+                            Showing {start} to {end} of {totalCount} entries
+                          </p>
+                        </div>
+
+                        <div className="inline-flex flex-wrap">
+                          <button
+                            disabled={page === 1}
+                            onClick={() => setPage(page - 1)}
+                            className="border-t border-b border-l px-2 py-1 rounded-l disabled:opacity-50"
+                          >
+                            Previous
+                          </button>
+
+                          {[...Array(totalPages)].map((_, i) => (
+                            <button
+                              key={i}
+                              onClick={() => setPage(i + 1)}
+                              className={`border px-4 py-1 ${
+                                page === i + 1
+                                  ? "bg-primary-500 text-white"
+                                  : "text-primary-500"
+                              }`}
                             >
-                              Previous
-                            </a>
-                            <a
-                              href="#"
-                              className="border text-white border-secondary-500 cursor-pointer bg-primary-500 px-4 py-1 dark:border-secondary-800"
-                            >
-                              1
-                            </a>
-                            <a
-                              href="#"
-                              className="border-r border-t border-b text-primary-500 border-secondary-500 px-4 py-1 rounded-r dark:border-secondary-800"
-                            >
-                              Next
-                            </a>
-                          </div>
+                              {i + 1}
+                            </button>
+                          ))}
+
+                          <button
+                            disabled={page === totalPages}
+                            onClick={() => setPage(page + 1)}
+                            className="border-t border-b border-r px-2 py-1 rounded-r disabled:opacity-50"
+                          >
+                            Next
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -350,7 +563,7 @@ function Employers() {
             </div>
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }
