@@ -76,9 +76,8 @@ const sidebarItems = [
 export default function ControlPanel() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // Keep this if YOU need it in ControlPanel
 
-  // Get current section from URL
   const getCurrentSectionId = () => {
     const currentItem = sidebarItems.find(
       (item) => item.path === location.pathname
@@ -132,7 +131,6 @@ export default function ControlPanel() {
             }
           `}
         >
-          {/* Mobile Close Button */}
           {sidebarOpen && (
             <div className="lg:hidden flex justify-between items-center mb-4 pb-4 border-b">
               <span className="font-semibold text-lg">Control Panel</span>
@@ -145,7 +143,6 @@ export default function ControlPanel() {
             </div>
           )}
 
-          {/* Navigation Links */}
           <nav className="space-y-2">
             {sidebarItems.map((item) => (
               <Link
@@ -171,7 +168,6 @@ export default function ControlPanel() {
           </nav>
         </aside>
 
-        {/* Overlay for mobile */}
         {sidebarOpen && (
           <div
             onClick={() => setSidebarOpen(false)}
@@ -188,7 +184,7 @@ export default function ControlPanel() {
                 path={item.path.replace("/ControlPanel", "")}
                 element={
                   item.component ? (
-                    <item.component navigate={navigate} />
+                    <item.component /> 
                   ) : (
                     <div className="text-center py-12">
                       <h3 className="text-xl font-semibold text-black mb-2">
@@ -200,15 +196,7 @@ export default function ControlPanel() {
                 }
               />
             ))}
-            {/* Default route for /ControlPanel */}
-            <Route
-              index
-              element={
-                <div>
-                  <Overview />
-                </div>
-              }
-            />
+            <Route index element={<Overview />} />
           </Routes>
         </main>
       </div>
