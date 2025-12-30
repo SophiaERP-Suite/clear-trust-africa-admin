@@ -1,4 +1,4 @@
-import { Pen, Tag, Check, Trash2Icon } from "lucide-react";
+import { Tag, Check, Trash2Icon } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import { getAllRoles } from "../../../api/roleApi";
@@ -10,7 +10,7 @@ import {
   deleteRolePermission,
   getAllRolePermissions,
 } from "../../../api/rolePermissionApi";
-import type { RolePermissionsDto } from "../../../types/Rolepermissions";
+import type { RolePermissionsDto } from "../../../types/rolePermissions";
 import Modal from "../../utils/modal";
 
 type ModalType = "add" | "edit" | "delete" | null;

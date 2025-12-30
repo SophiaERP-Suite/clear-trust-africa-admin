@@ -1,5 +1,5 @@
 
-import type { RolePermissionsDto, CreateRolePermissionsDto, UpdateRolePermissionsDto } from "../types/Rolepermissions";
+import type { RolePermissionsDto, CreateRolePermissionsDto, UpdateRolePermissionsDto } from "../types/rolePermissions";
 import api from "./axios";
 
 export const getAllRolePermissions = async () => {

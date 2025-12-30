@@ -28,7 +28,7 @@ function NotificationSettings() {
 
   const handleToggle = async (item: any) => {
     setTogglingId(item.notificationSettingId);
-
+    setLoading(true);
     const updatedSettings = settings.map((setting) =>
       setting.notificationSettingId === item.notificationSettingId
         ? { ...setting, isEnabled: !item.isEnabled }
@@ -42,6 +42,7 @@ function NotificationSettings() {
         isEnabled: !item.isEnabled,
       });
       loadSettings();
+      setLoading(false);
       toast.success("Notification setting updated");
     } catch (error: any) {
       const revertedSettings = settings.map((setting) =>

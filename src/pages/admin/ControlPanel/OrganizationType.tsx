@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import Modal from "../../utils/modal";
 import type { OrganizationTypeDto } from "../../../types/organizationType";
-import { Building, CheckCheck, Pen, Plus, Trash, X } from "lucide-react";
+import { Building, CheckCheck, Pen, Plus, Trash } from "lucide-react";
 import {
   createOrganizationType,
   deleteOrganizationType,
