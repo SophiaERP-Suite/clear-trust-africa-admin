@@ -1,10 +1,14 @@
-interface NotificationChannel {
-  id: number;
-  name: string;
+export interface ToggleNotificationSettingDto {
+  notificationChannelId: number;
+  isEnabled: boolean;
 }
 
-interface NotificationSettingDto {
-  eventId: number;
-  eventName: string;
-  channels: { [channelName: string]: boolean };
+export interface NotificationSettingDto {
+  notificationSettingId: number;
+  notificationEventId: number;
+  notificationChannelId: number;
+  isEnabled: boolean;
+  notificationEventName: string;
+  notificationEventCode: string;
+  notificationChannelName: string;
 }

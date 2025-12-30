@@ -1,202 +1,140 @@
 import { useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
-import Modal from "../../utils/modal";
-import Loading from "../../utils/Loading";
-import { Bell, Shield, Check, Pen, Trash2Icon } from "lucide-react";
 import {
-  createRole,
-  deleteRole,
-  getAllRoles,
-  updateRole,
-} from "../../../api/roleApi";
-import type { RolesDto } from "../../../types/roles";
-
-// Modal types
-type ModalType = "add" | "edit" | "delete" | null;
-
-// Notification types
-interface NotificationChannel {
-  id: number;
-  name: string;
-}
-
-interface NotificationSettingDto {
-  eventId: number;
-  eventName: string;
-  channels: { [channelName: string]: boolean };
-}
+  getAllNotificationSettings,
+  toggleNotificationSetting,
+} from "../../../api/notificationSettingsApi";
+import { Bell } from "lucide-react";
+import Loading from "../../utils/Loading";
 
 function NotificationSettings() {
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const channels: NotificationChannel[] = [
-    { id: 1, name: "Email" },
-    { id: 2, name: "InApp" },
-    { id: 3, name: "SMS" },
-    // { id: 4, name: "Push" },
-  ];
-
-  // Example events, replace with API fetch if needed
-  const [settings, setSettings] = useState<NotificationSettingDto[]>([
-    {
-      eventId: 1,
-      eventName: "On Registration",
-      channels: { Email: true, InApp: true, SMS: false, Push: false },
-    },
-    {
-      eventId: 2,
-      eventName: "On DBS Check Approval",
-      channels: { Email: true, InApp: true, SMS: true, Push: false },
-    },
-  ]);
+  const [settings, setSettings] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [togglingId, setTogglingId] = useState<number | null>(null);
 
   useEffect(() => {
-    // fetchRoles();
+    loadSettings();
   }, []);
 
-  // const fetchRoles = async () => {
-  //   try {
-  //     setLoading(true);
-  //     const data = await getAllRoles();
-  //     setRoles(data);
-  //   } catch (err: any) {
-  //     console.error(err);
-  //     setError("Failed to fetch Roles");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+  const loadSettings = async () => {
+    try {
+      const data = await getAllNotificationSettings();
+      setSettings(data);
+      console.log("Loaded settings:", data);
+    } catch {
+      toast.error("Failed to load notification settings");
+    }
+  };
 
-  // Toast
-  const notifySuccess = () => toast.success("Action successful");
-  const notifyError = () => toast.error("Action Failed");
+  const handleToggle = async (item: any) => {
+    setTogglingId(item.notificationSettingId);
 
-  // const openEditModal = (roleId: number) => {
-  //   setSelectedRoleId(roleId);
-  //   setSelectedRole(roles.find((r) => r.roleId === roleId) || null);
-  //   setModalType("edit");
-  // };
+    const updatedSettings = settings.map((setting) =>
+      setting.notificationSettingId === item.notificationSettingId
+        ? { ...setting, isEnabled: !item.isEnabled }
+        : setting
+    );
+    setSettings(updatedSettings);
 
-  // const handleUpdateRole = async (roleInput?: string) => {
-  //   if (!selectedRoleId || !roleInput)
-  //     return toast.error("Please fill all fields");
-  //   try {
-  //     setLoading(true);
-  //     await updateRole(selectedRoleId, { name: roleInput });
-  //     notifySuccess();
-  //     closeModal();
-  //     fetchRoles();
-  //   } catch {
-  //     notifyError();
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
-  // Fixed toggle handler
-  const handleToggle = (eventId: number, channelName: string) => {
-    setSettings((prevSettings) => {
-      return prevSettings.map((setting) => {
-        if (setting.eventId === eventId) {
-          const currentValue = setting.channels[channelName] || false;
-          const updatedChannels = {
-            ...setting.channels,
-            [channelName]: !currentValue,
-          };
-
-          console.log(
-            `Toggled: Event ${eventId}, Channel ${channelName} from ${currentValue} to ${!currentValue}`
-          );
-
-          return {
-            ...setting,
-            channels: updatedChannels,
-          };
-        }
-        return setting;
+    try {
+      await toggleNotificationSetting(item.notificationEventId, {
+        notificationChannelId: item.notificationChannelId,
+        isEnabled: !item.isEnabled,
       });
-    });
+      loadSettings();
+      toast.success("Notification setting updated");
+    } catch (error: any) {
+      const revertedSettings = settings.map((setting) =>
+        setting.notificationSettingId === item.notificationSettingId
+          ? { ...setting, isEnabled: item.isEnabled } // Revert to original
+          : setting
+      );
+      setSettings(revertedSettings);
+
+      console.error("Toggle failed:", error.response?.data || error.message);
+      toast.error(error.response?.data?.message || "Failed to update setting");
+    } finally {
+      setTogglingId(null);
+    }
   };
 
   return (
-    <div>
-      {/* <ToastContainer /> */}
-
-      <h3 className="text-xl font-semibold mb-4 text-gray-800 flex items-center gap-2">
-        <Bell /> Notification Settings
-      </h3>
-
-      {/* Notification settings table */}
-      <div className="overflow-x-auto w-full">
-        <table className="min-w-full divide-y divide-gray-200 bg-white rounded-lg shadow">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left font-medium">Event</th>
-              {channels.map((channel) => (
-                <th
-                  key={channel.id}
-                  className="px-6 py-3 text-left font-medium"
-                >
-                  {channel.name}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
-            {settings.map((setting) => (
-              <tr
-                key={setting.eventId}
-                className="hover:bg-gray-50 text-sm transition"
-              >
-                <td className="px-6 py-4 font-medium">{setting.eventName}</td>
-                {channels.map((channel) => (
-                  <td key={channel.id} className="px-6 py-4">
-                    <div className="flex items-center">
-                      <label className="relative inline-flex items-center cursor-pointer">
-                        <input
-                          type="checkbox"
-                          className="sr-only peer"
-                          checked={setting.channels[channel.name] || false}
-                          onChange={() =>
-                            handleToggle(setting.eventId, channel.name)
-                          }
-                        />
-                        {/* Background */}
-                        <div className="w-11 h-6 bg-gray-200 rounded-full peer-focus:ring-4 peer-focus:ring-blue-300 peer-checked:bg-blue-600 transition-colors duration-300"></div>
-                        {/* Knob */}
-                        <div className="absolute left-1 top-1 w-5 h-5 bg-white rounded-full shadow transform transition-transform duration-300 peer-checked:translate-x-5"></div>
-                      </label>
-                      {/* On/Off text */}
-                      <span
-                        className={`ml-3 text-sm font-medium ${
-                          setting.channels[channel.name]
-                            ? "text-blue-600"
-                            : "text-gray-900"
-                        }`}
-                      >
-                        {setting.channels[channel.name] ? "On" : "Off"}
-                      </span>
+    <div
+      className="footer-inner mx-auto main-container container"
+      x-bind:className="setting.page_layout"
+    >
+      <div className="flex flex-wrap contet-inner">
+        <div className="flex-auto w-full">
+          <div className="relative flex flex-col mb-8  bg-white dark:bg-dark-card shadow rounded">
+            <div className="flex justify-between flex-auto p-5 border-b dark:border-secondary-800 rounded">
+              <h4 className="mb-0 dark:text-secondary-200">
+                <Bell className="h-6 w-6" /> Notification Settings
+              </h4>
+            </div>
+            <div className="py-2 px-3">
+              <div className="overflow-x-auto">
+                <div className=" overflow-x-auto p-5">
+                  <ToastContainer />
+                  {loading ? (
+                    <Loading />
+                  ) : settings.length === 0 ? (
+                    <div className="text-center py-8 text-gray-500">
+                      No notification settings found.
                     </div>
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+                  ) : (
+                    <div>
+                      {settings.map((item) => (
+                        <div
+                          key={item.notificationSettingId}
+                          className="flex items-center justify-between p-4 hover:bg-gray-50 transition-colors border-b"
+                        >
+                          <div className="flex-1">
+                            <p className="font-semibold text-gray-900">
+                              {item.notificationEventName}
+                            </p>
+                            <p className="text-sm text-gray-500 mt-1">
+                              {item.notificationChannelName}
+                            </p>
+                          </div>
 
-      {/* {loading && <Loading />}
-      {error && (
-        <div className="error flex justify-center text-center mt-[25%]">
-          Error: {error}
+                          {/* Toggle Switch with loading state */}
+                          <button
+                            type="button"
+                            role="switch"
+                            aria-checked={item.isEnabled}
+                            onClick={() => handleToggle(item)}
+                            disabled={togglingId === item.notificationSettingId}
+                            className={`
+                  relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 
+                  transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+                  disabled:cursor-not-allowed disabled:opacity-50
+                  ${item.isEnabled ? "bg-green-500" : "bg-gray-200"}
+                `}
+                          >
+                            {togglingId === item.notificationSettingId ? (
+                              <span className="absolute inset-0 flex items-center justify-center">
+                                <div className="h-3 w-3 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                              </span>
+                            ) : (
+                              <span
+                                className={`
+                      pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-lg 
+                      ring-0 transition duration-200 ease-in-out
+                      ${item.isEnabled ? "translate-x-5" : "translate-x-0"}
+                    `}
+                              />
+                            )}
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      )}
-      {!loading && !error && roles.length === 0 && (
-        <div className="no-roles flex justify-center text-center mt-[25%]">
-          No Roles found.
-        </div>
-      )} */}
+      </div>
     </div>
   );
 }

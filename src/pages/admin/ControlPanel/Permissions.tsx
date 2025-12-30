@@ -1,12 +1,4 @@
-import {
-  Pen,
-  Plus,
-  Key,
-  Trash,
-  Trash2,
-  Check,
-  CheckCheck,
-} from "lucide-react";
+import { Pen, Plus, Key, Trash, Trash2, Check, CheckCheck } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import {
@@ -178,139 +170,166 @@ function Permissions() {
   };
 
   return (
-    <div>
-      <ToastContainer />
-      <Modal
-        isOpen={modalType === "add"}
-        title="Add New Permission"
-        message=""
-        confirmText="Add Permission"
-        confirmColor="green"
-        loading={loading}
-        inputLabel="New Permission Name"
-        inputPlaceholder="Enter Permission Name..."
-        inputLabel2="Permission Description"
-        inputPlaceholder2="Enter Permission Description..."
-        headerIcon={<Check width={22} />}
-        butonIcon={<CheckCheck width={22} />}
-        dropdownLabel="Organization Type"
-        dropdownOptions={organizationTypes.map((type) => ({
-          value: type.organizationTypeId,
-          label: type.name,
-        }))}
-        onConfirm={handleNewPermission}
-        onCancel={closeModal}
-      />
-
-      <Modal
-        isOpen={modalType === "delete"}
-        title="Delete Permission"
-        message="Are you sure you want to delete this Permission? This action cannot be undone."
-        confirmText="Delete Permission"
-        confirmColor="red"
-        headerIcon={<Trash2 width={22} />}
-        butonIcon={<Trash2 width={22} />}
-        loading={loading}
-        onConfirm={handleDeletePermission}
-        onCancel={closeModal}
-      />
-
-      <Modal
-        isOpen={modalType === "edit"}
-        title="Edit Permission"
-        message=""
-        confirmText="Confirm Changes"
-        confirmColor="yellow"
-        loading={loading}
-        inputLabel="New Permission Name"
-        inputPlaceholder="Enter Permission Name..."
-        inputLabel2="Permission Description"
-        inputPlaceholder2="Enter Permission Description..."
-        dropdownLabel="Organization Type"
-        dropdownOptions={organizationTypes.map((type) => ({
-          value: type.organizationTypeId,
-          label: type.name,
-        }))}
-        defaultDropdownValue=""
-        defaultInputValue=""
-        defaultInputValue2=""
-        headerIcon={<Pen width={22} />}
-        butonIcon={<Pen width={22} />}
-        onConfirm={handleUpdatePermission}
-        onCancel={closeModal}
-      />
-      <h3 className="text-xl font-semibold mb-4">
-        <Key /> Permissions Management
-      </h3>
-
-      <div>
-        {" "}
-        <h3 className="text-lg font-semibold mb-4">All Permissions</h3>
-        <div className="flex justify-end items-center flex-wrap mb-4">
-          <button
-            className="btn btn-success mb-4"
-            onClick={() => openAddModal()}
-          >
-            <Plus /> Add New Permission
-          </button>
-        </div>
-        <div className="overflow-x-auto">
-          {loading && (
-           <Loading />
-          )}
-          {error && (
-            <div className="error flex justify-center text-center mt-[25%]">
-              Error: {error}
+    <div
+      className="footer-inner mx-auto main-container container"
+      x-bind:className="setting.page_layout"
+    >
+      <div className="flex flex-wrap contet-inner">
+        <div className="flex-auto w-full">
+          <div className="relative flex flex-col mb-8  bg-white dark:bg-dark-card shadow rounded">
+            <div className="flex justify-between flex-auto p-5 border-b dark:border-secondary-800 rounded">
+              <h4 className="mb-0 dark:text-secondary-200">
+                <Key /> Permissions Management
+              </h4>
             </div>
-          )}
-          {!loading && !error && permissions.length === 0 && (
-            <div className="no-roles flex justify-center text-center mt-[25%]">
-              No Permissions found.
+            <div className="py-2 px-3">
+              <div className="overflow-x-auto">
+                <div className=" overflow-x-auto p-5">
+                  <ToastContainer />
+                  <Modal
+                    isOpen={modalType === "add"}
+                    title="Add New Permission"
+                    message=""
+                    confirmText="Add Permission"
+                    confirmColor="green"
+                    loading={loading}
+                    inputLabel="New Permission Name"
+                    inputPlaceholder="Enter Permission Name..."
+                    inputLabel2="Permission Description"
+                    inputPlaceholder2="Enter Permission Description..."
+                    headerIcon={<Check width={22} />}
+                    butonIcon={<CheckCheck width={22} />}
+                    dropdownLabel="Organization Type"
+                    dropdownOptions={organizationTypes.map((type) => ({
+                      value: type.organizationTypeId,
+                      label: type.name,
+                    }))}
+                    onConfirm={handleNewPermission}
+                    onCancel={closeModal}
+                  />
+
+                  <Modal
+                    isOpen={modalType === "delete"}
+                    title="Delete Permission"
+                    message="Are you sure you want to delete this Permission? This action cannot be undone."
+                    confirmText="Delete Permission"
+                    confirmColor="red"
+                    headerIcon={<Trash2 width={22} />}
+                    butonIcon={<Trash2 width={22} />}
+                    loading={loading}
+                    onConfirm={handleDeletePermission}
+                    onCancel={closeModal}
+                  />
+
+                  <Modal
+                    isOpen={modalType === "edit"}
+                    title="Edit Permission"
+                    message=""
+                    confirmText="Confirm Changes"
+                    confirmColor="yellow"
+                    loading={loading}
+                    inputLabel="New Permission Name"
+                    inputPlaceholder="Enter Permission Name..."
+                    inputLabel2="Permission Description"
+                    inputPlaceholder2="Enter Permission Description..."
+                    dropdownLabel="Organization Type"
+                    dropdownOptions={organizationTypes.map((type) => ({
+                      value: type.organizationTypeId,
+                      label: type.name,
+                    }))}
+                    defaultDropdownValue=""
+                    defaultInputValue=""
+                    defaultInputValue2=""
+                    headerIcon={<Pen width={22} />}
+                    butonIcon={<Pen width={22} />}
+                    onConfirm={handleUpdatePermission}
+                    onCancel={closeModal}
+                  />
+                  <h3 className="text-xl font-semibold mb-4"></h3>
+
+                  <div>
+                    {" "}
+                    <h3 className="text-lg font-semibold mb-4">
+                      All Permissions
+                    </h3>
+                    <div className="flex justify-end items-center flex-wrap mb-4">
+                      <button
+                        className="btn btn-success mb-4"
+                        onClick={() => openAddModal()}
+                      >
+                        <Plus /> Add New Permission
+                      </button>
+                    </div>
+                    <div className="overflow-x-auto">
+                      {loading && <Loading />}
+                      {error && (
+                        <div className="error flex justify-center text-center mt-[25%]">
+                          Error: {error}
+                        </div>
+                      )}
+                      {!loading && !error && permissions.length === 0 && (
+                        <div className="no-roles flex justify-center text-center mt-[25%]">
+                          No Permissions found.
+                        </div>
+                      )}
+                      {!loading && !error && permissions.length > 0 && (
+                        <table className="min-w-full overflow-hidden divide-y divide-secondary-200 dark:divide-secondary-800 border text-sm dark:border-secondary-800">
+                          <thead>
+                            <tr className="bg-gray-100 text-gray-700">
+                              <th className="p-3 text-left">Name</th>
+                              <th className="p-3 text-left">Description</th>
+                              <th className="p-3 text-left">OrgType</th>
+                              <th className="p-3 text-right">Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {permissions.map((perm) => (
+                              <tr
+                                key={perm.permissionId}
+                                className="border-b hover:bg-gray-50"
+                              >
+                                <td className="p-3">{perm.name}</td>
+                                <td className="p-3">{perm.description}</td>
+                                <td className="p-3">
+                                  {perm.organizationTypeName}
+                                </td>
+                                <td className="p-3 text-right">
+                                  <button
+                                    className="btn btn-danger btn-icon btn-sm mr-1"
+                                    type="button"
+                                    onClick={() =>
+                                      openDeleteModal(perm.permissionId)
+                                    }
+                                  >
+                                    {" "}
+                                    <span className="btn-inner">
+                                      <Trash
+                                        className=""
+                                        style={{ scale: "140%" }}
+                                      />
+                                    </span>
+                                  </button>
+                                  <button
+                                    className="btn btn-warning btn-icon btn-sm mr-1"
+                                    type="button"
+                                    onClick={() =>
+                                      openEditModal(perm.permissionId)
+                                    }
+                                  >
+                                    <Pen />
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-          )}
-          {!loading && !error && permissions.length > 0 && (
-            <table className="w-full border-collapse rounded-md table-responsive">
-              <thead>
-                <tr className="bg-gray-100 text-gray-700">
-                  <th className="p-3 text-left">Name</th>
-                  <th className="p-3 text-left">Description</th>
-                  <th className="p-3 text-left">OrgType</th>
-                  <th className="p-3 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {permissions.map((perm) => (
-                  <tr
-                    key={perm.permissionId}
-                    className="border-b hover:bg-gray-50"
-                  >
-                    <td className="p-3">{perm.name}</td>
-                    <td className="p-3">{perm.description}</td>
-                    <td className="p-3">{perm.organizationTypeName}</td>
-                    <td className="p-3 text-right">
-                      <button
-                        className="btn btn-danger btn-icon btn-sm mr-1"
-                        type="button"
-                        onClick={() => openDeleteModal(perm.permissionId)}
-                      >
-                        {" "}
-                        <span className="btn-inner">
-                          <Trash className="" style={{ scale: "140%" }} />
-                        </span>
-                      </button>
-                      <button
-                        className="btn btn-warning btn-icon btn-sm mr-1"
-                        type="button"
-                        onClick={() => openEditModal(perm.permissionId)}
-                      >
-                        <Pen />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
+          </div>
         </div>
       </div>
     </div>

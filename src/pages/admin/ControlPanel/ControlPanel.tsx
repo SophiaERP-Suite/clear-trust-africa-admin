@@ -12,97 +12,84 @@ import {
   Tag,
   Building,
 } from "lucide-react";
+import { Link, useLocation, useNavigate, Routes, Route } from "react-router-dom";
 
 import Overview from "./Overview";
 import Roles from "./Roles";
-// import SysSettings from "./SysSettings";
 import Permissions from "./Permissions";
 import OrganizationType from "./OrganizationType";
 import RolePermissions from "./RolePermissions";
-import Notifications from "./NotificationSettings";
 import NotificationSettings from "./NotificationSettings";
 
-// Flatten the structure - no groups
 const sidebarItems = [
   {
     id: "overview",
     label: "Overview",
     icon: <LayoutDashboard size={20} />,
+    path: "/ControlPanel",
     component: Overview,
   },
   {
     id: "roles",
     label: "Roles",
     icon: <Shield size={20} />,
+    path: "/ControlPanel/roles",
     component: Roles,
   },
   {
     id: "permissions",
     label: "Permissions",
     icon: <Key size={20} />,
+    path: "/ControlPanel/permissions",
     component: Permissions,
   },
   {
     id: "permissionsAssign",
     label: "Assign Permissions",
     icon: <Tag size={20} />,
+    path: "/ControlPanel/assign-permissions",
     component: RolePermissions,
   },
   {
     id: "organizationType",
     label: "Organization Type",
     icon: <Building size={20} />,
+    path: "/ControlPanel/organization-types",
     component: OrganizationType,
   },
   {
     id: "notifications",
     label: "Notifications",
     icon: <Bell size={20} />,
+    path: "/ControlPanel/notifications",
     component: NotificationSettings,
   },
   {
     id: "audit",
     label: "Audit Logs",
     icon: <Activity size={20} />,
+    path: "/ControlPanel/audit-logs",
     component: null,
   },
-  // {
-  //   id: "settings",
-  //   label: "System Settings",
-  //   icon: <Settings size={20} />,
-  //   component: SysSettings,
-  // },
 ];
 
 export default function ControlPanel() {
-  const [selectedSection, setSelectedSection] = useState("overview");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
 
-  const getCurrentComponent = () => {
-    const item = sidebarItems.find((i) => i.id === selectedSection);
-    if (item) {
-      if (item.component) {
-        const Component = item.component;
-        return <Component />;
-      }
-
-      return (
-        <div className="text-center py-12">
-          <h3 className="text-xl font-semibold text-gray-700 mb-2">
-            {item.label}
-          </h3>
-          <p className="text-black">This section is coming soon...</p>
-        </div>
-      );
-    }
-    return null;
+  // Get current section from URL
+  const getCurrentSectionId = () => {
+    const currentItem = sidebarItems.find(
+      (item) => item.path === location.pathname
+    );
+    return currentItem ? currentItem.id : "overview";
   };
 
+  const selectedSection = getCurrentSectionId();
+
   return (
-    <div
-      className="p-6 lg:p-8 footer-inner mx-auto main-container"
-      x-bind:className="setting.page_layout"
-    >
+    <div className="p-6 lg:p-8 footer-inner mx-auto main-container container">
       {/* Header */}
       <div className="flex flex-wrap mb-6 justify-between gap-4">
         <div className="flex items-center gap-4 w-full">
@@ -132,10 +119,10 @@ export default function ControlPanel() {
 
       {/* Main Layout */}
       <div className="flex gap-6 relative">
-        {/* Sidebar - Desktop & Mobile */}
+        {/* Sidebar */}
         <aside
           className={`
-            w-64 bg-white rounded-sm text-black shadow-md p-4 h-fit
+            w-64 bg-white rounded-sm text-black shadow-md p-4 lg:h-fit
             lg:sticky lg:top-6
             transition-all duration-300
             ${
@@ -158,19 +145,17 @@ export default function ControlPanel() {
             </div>
           )}
 
-          {/* Simple List Navigation - No Dropdown */}
+          {/* Navigation Links */}
           <nav className="space-y-2">
             {sidebarItems.map((item) => (
-              <button
+              <Link
                 key={item.id}
-                onClick={() => {
-                  setSelectedSection(item.id);
-                  setSidebarOpen(false);
-                }}
+                to={item.path}
+                onClick={() => window.innerWidth < 1024 && setSidebarOpen(false)}
                 className={`flex items-center gap-3 w-full px-4 py-3 rounded-sm text-sm transition-all ${
                   selectedSection === item.id
-                    ? "bg-[rgb(112_22_208/0.9)] text-black font-medium shadow-sm"
-                    : "text-gray-700 hover:bg-gray-100"
+                    ? "bg-white text-black font-medium shadow-sm"
+                    : "text-black hover:bg-gray-100"
                 }`}
               >
                 <span
@@ -181,7 +166,7 @@ export default function ControlPanel() {
                   {item.icon}
                 </span>
                 <span>{item.label}</span>
-              </button>
+              </Link>
             ))}
           </nav>
         </aside>
@@ -190,13 +175,41 @@ export default function ControlPanel() {
         {sidebarOpen && (
           <div
             onClick={() => setSidebarOpen(false)}
-            className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
           />
         )}
 
-        {/* Main Content Area */}
-        <main className="flex-1 bg-white rounded-sm shadow-md p-6 min-h-[500px]">
-          {getCurrentComponent()}
+        {/* Main Content Area with Routes */}
+        <main className="flex-1 min-h-[500px]">
+          <Routes>
+            {sidebarItems.map((item) => (
+              <Route
+                key={item.id}
+                path={item.path.replace("/ControlPanel", "")}
+                element={
+                  item.component ? (
+                    <item.component navigate={navigate} />
+                  ) : (
+                    <div className="text-center py-12">
+                      <h3 className="text-xl font-semibold text-black mb-2">
+                        {item.label}
+                      </h3>
+                      <p className="text-black">This section is coming soon...</p>
+                    </div>
+                  )
+                }
+              />
+            ))}
+            {/* Default route for /ControlPanel */}
+            <Route
+              index
+              element={
+                <div>
+                  <Overview />
+                </div>
+              }
+            />
+          </Routes>
         </main>
       </div>
     </div>
