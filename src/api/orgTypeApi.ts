@@ -1,5 +1,5 @@
 
-import type { OrganizationTypeDto, CreateOrganizationTypeDto, UpdateOrganizationTypeDto } from "../types/organizationType";
+import type { OrganizationTypeDto, CreateOrganizationTypeDto, UpdateOrganizationTypeDto } from "../types/controlPanel/organizationType";
 import api from "./axios";
 
 export const getAllOrganizationTypes = async () => {

@@ -149,7 +149,7 @@ function ControlPanelOverview() {
               <div className="overflow-x-auto">
                 <div className=" overflow-x-auto p-5">
                   {/* Stats Cards */}
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 gap-4">
+                  <div className="grid sm:grid-cols-3 md:grid-cols-3 gap-4">
                     {stats.map((stat, idx) => (
                       <div
                         key={idx}

@@ -1,5 +1,5 @@
-import type { CreateRolesDto, RolesDto } from "../types/roles";
-import type { UpdateRoleDto } from "../types/roles";
+import type { CreateRolesDto, RolesDto } from "../types/controlPanel/roles";
+import type { UpdateRoleDto } from "../types/controlPanel/roles";
 import api from "./axios";
 
 export const getAllRoles = async () => {

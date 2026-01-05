@@ -2,15 +2,15 @@ import { Tag, Check, Trash2Icon } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import { getAllRoles } from "../../../api/roleApi";
-import type { RolesDto } from "../../../types/roles";
+import type { RolesDto } from "../../../types/controlPanel/roles";
 import { getAllPermissions } from "../../../api/permissionApi";
-import type { PermissionsDto } from "../../../types/permissions";
+import type { PermissionsDto } from "../../../types/controlPanel/permissions";
 import {
   createRolePermission,
   deleteRolePermission,
   getAllRolePermissions,
 } from "../../../api/rolePermissionApi";
-import type { RolePermissionsDto } from "../../../types/rolePermissions";
+import type { RolePermissionsDto } from "../../../types/controlPanel/rolePermissions";
 import Modal from "../../utils/modal";
 
 type ModalType = "add" | "edit" | "delete" | null;

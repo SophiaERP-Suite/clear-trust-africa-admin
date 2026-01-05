@@ -11,8 +11,9 @@ import {
   Key,
   Tag,
   Building,
+  MapPin,
 } from "lucide-react";
-import { Link, useLocation, useNavigate, Routes, Route } from "react-router-dom";
+import { Link, useLocation, Routes, Route } from "react-router-dom";
 
 import Overview from "./Overview";
 import Roles from "./Roles";
@@ -20,6 +21,7 @@ import Permissions from "./Permissions";
 import OrganizationType from "./OrganizationType";
 import RolePermissions from "./RolePermissions";
 import NotificationSettings from "./NotificationSettings";
+import LocationManagement from "./LocationManagement";
 
 const sidebarItems = [
   {
@@ -65,6 +67,20 @@ const sidebarItems = [
     component: NotificationSettings,
   },
   {
+    id: "location",
+    label: "Location",
+    icon: <MapPin size={20} />,
+    path: "/ControlPanel/locationMgt",
+    component: LocationManagement,
+  },
+  // {
+  //   id: "n",
+  //   label: "Notifications",
+  //   icon: <Bell size={20} />,
+  //   path: "/ControlPanel/notifications",
+  //   component: NotificationSettings,
+  // },
+  {
     id: "audit",
     label: "Audit Logs",
     icon: <Activity size={20} />,
@@ -76,7 +92,7 @@ const sidebarItems = [
 export default function ControlPanel() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
-  const navigate = useNavigate(); // Keep this if YOU need it in ControlPanel
+  // const navigate = useNavigate(); 
 
   const getCurrentSectionId = () => {
     const currentItem = sidebarItems.find(

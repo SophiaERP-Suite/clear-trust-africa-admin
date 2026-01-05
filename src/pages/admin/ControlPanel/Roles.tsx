@@ -7,7 +7,7 @@ import {
   getAllRoles,
   updateRole,
 } from "../../../api/roleApi";
-import type { RolesDto } from "../../../types/roles";
+import type { RolesDto } from "../../../types/controlPanel/roles";
 import { Check, Pen, Plus, Shield, Trash, Trash2Icon } from "lucide-react";
 
 type ModalType = "add" | "edit" | "delete" | null;

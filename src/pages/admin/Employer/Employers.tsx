@@ -30,7 +30,7 @@ import {
   rejectOrganization,
   suspendOrganization,
 } from "../../../api/adminApi.js";
-import type { OrganizationDto } from "../../../types/organization.js";
+import type { OrganizationDto } from "../../../types/controlPanel/organization.js";
 import { ToastContainer, toast } from "react-toastify";
 import Modal from "../../utils/modal.js";
 

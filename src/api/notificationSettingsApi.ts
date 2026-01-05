@@ -1,5 +1,5 @@
 
-import type { ToggleNotificationSettingDto } from "../types/notification";
+import type { ToggleNotificationSettingDto } from "../types/controlPanel/notification";
 import api from "./axios";
 
 export const getAllNotificationSettings = async () => {

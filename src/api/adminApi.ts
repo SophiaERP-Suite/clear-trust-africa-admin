@@ -1,4 +1,4 @@
-import type { CreateOrganizationDto, OrganizationDto } from "../types/organization";
+import type { CreateOrganizationDto, OrganizationDto } from "../types/controlPanel/organization";
 import api from "./axios";
 
 export interface OrganizationApprovalDto {

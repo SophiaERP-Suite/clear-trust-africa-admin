@@ -7,10 +7,10 @@ import {
   getAllPermissions,
   updatePermission,
 } from "../../../api/permissionApi";
-import type { PermissionsDto } from "../../../types/permissions";
+import type { PermissionsDto } from "../../../types/controlPanel/permissions";
 import Modal from "../../utils/modal";
 import { getAllOrganizationTypes } from "../../../api/orgTypeApi";
-import type { OrganizationTypeDto } from "../../../types/organizationType";
+import type { OrganizationTypeDto } from "../../../types/controlPanel/organizationType";
 import Loading from "../../utils/Loading";
 
 type ModalType = "add" | "edit" | "delete" | null;

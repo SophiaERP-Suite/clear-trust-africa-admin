@@ -1,8 +1,8 @@
 import type {
   CreatePermissionsDto,
   PermissionsDto,
-} from "../types/permissions";
-import type { UpdatePermissionsDto } from "../types/permissions";
+} from "../types/controlPanel/permissions";
+import type { UpdatePermissionsDto } from "../types/controlPanel/permissions";
 import api from "./axios";
 
 export const getAllPermissions = async () => {
