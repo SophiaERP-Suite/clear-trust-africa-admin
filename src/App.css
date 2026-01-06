@@ -64,3 +64,10 @@
     transform: scaleY(1.5);
   }
 }
+
+.error-msg {
+  color: red;
+  font-size: 12px;
+  margin-bottom: 10px;
+  padding-left: 5px;
+}

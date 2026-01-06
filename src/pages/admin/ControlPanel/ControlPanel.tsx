@@ -13,6 +13,8 @@ import {
   Building,
   MapPin,
   BookKey,
+  FolderKey,
+  IdCard,
 } from "lucide-react";
 import { Link, useLocation, Routes, Route } from "react-router-dom";
 
@@ -24,6 +26,8 @@ import RolePermissions from "./RolePermissions";
 import NotificationSettings from "./NotificationSettings";
 import LocationManagement from "./LocationManagement";
 import DBSStatus from "./DBSStatus";
+import DBSType from "./DBSTypes";
+import DBSStages from "./DBSStages";
 
 const sidebarItems = [
   {
@@ -81,6 +85,20 @@ const sidebarItems = [
     icon: <BookKey size={20} />,
     path: "/ControlPanel/DBSStatus",
     component: DBSStatus,
+  },
+  {
+    id: "dbsType",
+    label: "DBS Type",
+    icon: <FolderKey size={20} />,
+    path: "/ControlPanel/DBSType",
+    component: DBSType,
+  },
+  {
+    id: "dbsStage",
+    label: "DBS Stage & SLA",
+    icon: <IdCard size={20} />,
+    path: "/ControlPanel/DBSStage",
+    component: DBSStages,
   },
   {
     id: "audit",

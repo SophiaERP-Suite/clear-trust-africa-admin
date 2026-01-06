@@ -69,7 +69,7 @@ export default function DBSStatus() {
       
     } catch (err) {
       console.error(err);
-      setError("Failed to fetch Roles");
+      setError("Failed to fetch DBS Status");
     } finally {
       setLoading(false);
     }
@@ -97,7 +97,7 @@ export default function DBSStatus() {
   }
   
   const updateStatus = async (data: DBSStatusFormValues) =>{
-    if (!errors.StatusName && dbsStatusEdit){
+    if (!editErrors.StatusName && dbsStatusEdit){
       const loader = document.getElementById('query-loader');
       const text = document.getElementById('query-text');
       if (loader) {
@@ -141,7 +141,7 @@ export default function DBSStatus() {
       }}
       >
         
-          <div className="h-fit w-100 lg:w-fit">
+          <div className="h-fit w-100">
             <div className="flex justify-start">
               <p className="font-semibold text-black py-1 text-lg"><BookKey size={20} className="mr-2" /> Add New DBS Status</p>
             </div>
@@ -212,9 +212,9 @@ export default function DBSStatus() {
       >
         {
             dbsStatusEdit && (
-                <div className="h-fit w-100 lg:w-fit">
+                <div className="h-fit w-100">
                     <div className="flex justify-start">
-                    <p className="font-semibold text-black py-1 text-lg"><BookKey size={20} className="mr-2" /> Add New DBS Status</p>
+                    <p className="font-semibold text-black py-1 text-lg"><BookKey size={20} className="mr-2" /> Update DBS Status</p>
                     </div>
                     <form
                         onSubmit={submitEdit(updateStatus)}

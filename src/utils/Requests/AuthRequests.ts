@@ -9,3 +9,14 @@ export const fetchUser = async (token: string) => {
   })
   return response
 }
+
+export const fetchOrgMembers = async () => {
+  const token = localStorage.getItem('accessToken');
+  const response = await fetch(`${BaseURL}/api/admin/Organisations/users`, {
+    method: 'GET',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  })
+  return response
+}

@@ -11,6 +11,30 @@ export const fetchDbsTypes = async () => {
   return response
 }
 
+export const submitDbsType = async (data: FormData) => {
+  const token = localStorage.getItem('accessToken');
+  const response = await fetch(`${BaseURL}/dbs-types`, {
+    method: 'POST',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    },
+    body: data
+  })
+  return response
+}
+
+export const updateDbsType = async (data: FormData, typeId: number) => {
+  const token = localStorage.getItem('accessToken');
+  const response = await fetch(`${BaseURL}/dbs-types/${typeId}`, {
+    method: 'PATCH',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    },
+    body: data
+  })
+  return response
+}
+
 export const fetchDbsStatus = async () => {
   const token = localStorage.getItem('accessToken');
   const response = await fetch(`${BaseURL}/dbs-status`, {
@@ -57,6 +81,29 @@ export const updateDbsStatus = async (data: FormData, statusId: number) => {
   const token = localStorage.getItem('accessToken');
   const response = await fetch(`${BaseURL}/dbs-status/${statusId}`, {
     method: 'PATCH',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    },
+    body: data
+  })
+  return response
+}
+
+export const fetchDbsStages = async () => {
+  const token = localStorage.getItem('accessToken');
+  const response = await fetch(`${BaseURL}/dbs-stages`, {
+    method: 'GET',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  })
+  return response
+}
+
+export const submitDbsStage = async (data: FormData) => {
+  const token = localStorage.getItem('accessToken');
+  const response = await fetch(`${BaseURL}/dbs-stages`, {
+    method: 'POST',
     headers: {
       "Authorization": `Bearer ${token}`
     },

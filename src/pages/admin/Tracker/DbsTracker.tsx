@@ -46,9 +46,11 @@ export interface DBSStatus {
   statusName: string;
 }
 
-interface DBSTypes {
+export interface DBSTypes {
   dbsTypeId: number;
   typeName: string;
+  typeCost: number;
+  description: string;
 }
 
 const statusStyles: Record<string, string> = {
