@@ -6,6 +6,7 @@ import main_logo from "../assets2/img/cleartrust_logo.png";
 import mini_logo from "../assets2/img/cleartrust_logo_mini.png";
 import { ArrowRight, ArrowLeft, Menu, X, Bell, Search } from "lucide-react";
 import { useAuth } from "../utils/useAuth";
+import Modal from 'react-modal';
 
 interface NavItem {
   path: string;
@@ -38,6 +39,10 @@ function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
 
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenMobile, setIsOpenMobile] = useState(false);
+
+  useEffect(() => {
+    Modal.setAppElement('#cta-full-body');
+  }, [])
 
   function handleSideBarToggle() {
     setIsOpen(!isOpen);
@@ -956,7 +961,7 @@ function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
             </nav>
           </div>
           {/* Page Content */}
-          <div className="">
+          <div className=""  id='cta-full-body'>
             <Outlet />
           </div>
 

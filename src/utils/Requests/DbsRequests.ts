@@ -40,3 +40,27 @@ export const fetchDbsChecks = async (filterData: object) => {
   })
   return response
 }
+
+export const submitDbsStatus = async (data: FormData) => {
+  const token = localStorage.getItem('accessToken');
+  const response = await fetch(`${BaseURL}/dbs-status`, {
+    method: 'POST',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    },
+    body: data
+  })
+  return response
+}
+
+export const updateDbsStatus = async (data: FormData, statusId: number) => {
+  const token = localStorage.getItem('accessToken');
+  const response = await fetch(`${BaseURL}/dbs-status/${statusId}`, {
+    method: 'PATCH',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    },
+    body: data
+  })
+  return response
+}

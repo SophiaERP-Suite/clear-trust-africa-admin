@@ -41,7 +41,7 @@ type FilterForm = {
   Type: number;
 }
 
-interface DBSStatus {
+export interface DBSStatus {
   statusId: number;
   statusName: string;
 }

@@ -12,6 +12,7 @@ import {
   Tag,
   Building,
   MapPin,
+  BookKey,
 } from "lucide-react";
 import { Link, useLocation, Routes, Route } from "react-router-dom";
 
@@ -22,6 +23,7 @@ import OrganisationType from "./OrganisationType";
 import RolePermissions from "./RolePermissions";
 import NotificationSettings from "./NotificationSettings";
 import LocationManagement from "./LocationManagement";
+import DBSStatus from "./DBSStatus";
 
 const sidebarItems = [
   {
@@ -73,13 +75,13 @@ const sidebarItems = [
     path: "/ControlPanel/locationMgt",
     component: LocationManagement,
   },
-  // {
-  //   id: "n",
-  //   label: "Notifications",
-  //   icon: <Bell size={20} />,
-  //   path: "/ControlPanel/notifications",
-  //   component: NotificationSettings,
-  // },
+  {
+    id: "dbsStatus",
+    label: "DBS Status",
+    icon: <BookKey size={20} />,
+    path: "/ControlPanel/DBSStatus",
+    component: DBSStatus,
+  },
   {
     id: "audit",
     label: "Audit Logs",
