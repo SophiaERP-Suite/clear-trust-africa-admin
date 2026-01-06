@@ -18,7 +18,7 @@ import { Link, useLocation, Routes, Route } from "react-router-dom";
 import Overview from "./Overview";
 import Roles from "./Roles";
 import Permissions from "./Permissions";
-import OrganizationType from "./OrganizationType";
+import OrganisationType from "./OrganisationType";
 import RolePermissions from "./RolePermissions";
 import NotificationSettings from "./NotificationSettings";
 import LocationManagement from "./LocationManagement";
@@ -53,11 +53,11 @@ const sidebarItems = [
     component: RolePermissions,
   },
   {
-    id: "organizationType",
-    label: "Organization Type",
+    id: "organisationType",
+    label: "Organisation Type",
     icon: <Building size={20} />,
-    path: "/ControlPanel/organization-types",
-    component: OrganizationType,
+    path: "/ControlPanel/organisation-types",
+    component: OrganisationType,
   },
   {
     id: "notifications",

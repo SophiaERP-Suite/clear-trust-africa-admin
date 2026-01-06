@@ -21,22 +21,22 @@ interface DbsChecks {
   dbsApplicationId: number;
   userId: number
   requestedById: number
-  dbsApplicationTypeId: number
+  dbsTypeId: number
   status: string
   submittedAt: string
   completedAt: string
   dateCreated: string
   userFirstName: string;
   userLastName: string;
-  organizationName: string;
+  organisationName: string;
   requestedBy: string;
-  dbsApplicationType: string;
-  dbsApplicationTypeCost: number;
+  dbsType: string;
+  dbsTypeCost: number;
 }
 
 type FilterForm = {
   UserName: string;
-  OrganizationName: string;
+  OrganisationName: string;
   Status: number;
 }
 
@@ -168,7 +168,7 @@ export default function DBSTrackerModule() {
   ];
 
   useEffect(() => {
-      fetchDbsChecks({ page: dbsPage, limit: dbsLimit, ...filters })
+      fetchDbsChecks({ pageNumber: dbsPage, limit: dbsLimit, ...filters })
       .then(res => {
         if (res.status === 200) {
           res.json()
@@ -467,8 +467,8 @@ export default function DBSTrackerModule() {
                   />
                   <input
                     type="text"
-                    placeholder="Search by organization name..."
-                    {...register('OrganizationName')}
+                    placeholder="Search by organisation name..."
+                    {...register('OrganisationName')}
                     className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
@@ -545,7 +545,7 @@ export default function DBSTrackerModule() {
                           {data.requestedBy}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
-                          {data.organizationName}
+                          {data.organisationName}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
                           {
@@ -565,7 +565,7 @@ export default function DBSTrackerModule() {
                           }
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
-                          {data.dbsApplicationType}
+                          {data.dbsType}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
                           {(new Date(data.dateCreated)).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}

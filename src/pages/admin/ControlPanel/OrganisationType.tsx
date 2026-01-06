@@ -1,43 +1,43 @@
 import { useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import Modal from "../../utils/modal";
-import type { OrganizationTypeDto } from "../../../types/controlPanel/organizationType";
+import type { OrganisationTypeDto } from "../../../types/controlPanel/organisationType";
 import { Building, CheckCheck, Pen, Plus, Trash } from "lucide-react";
 import {
-  createOrganizationType,
-  deleteOrganizationType,
-  getAllOrganizationTypes,
-  updateOrganizationType,
+  createOrganisationType,
+  deleteOrganisationType,
+  getAllOrganisationTypes,
+  updateOrganisationType,
 } from "../../../api/orgTypeApi";
 
 type ModalType = "add" | "edit" | "delete" | null;
 
-function OrganizationTypes() {
+function OrganisationTypes() {
   const [loading, setLoading] = useState(true);
-  const [OrganizationTypes, setOrganizationTypes] = useState<
-    OrganizationTypeDto[]
+  const [OrganisationTypes, setOrganisationTypes] = useState<
+    OrganisationTypeDto[]
   >([]);
   const [error, setError] = useState<string | null>(null);
   const [modalType, setModalType] = useState<ModalType>(null);
-  const [selectedOrganizationTypeId, setSelectedOrganizationTypeId] = useState<
+  const [selectedOrganisationTypeId, setSelectedOrganisationTypeId] = useState<
     number | null
   >(null);
-  const [selectedOrganizationType, setSelectedOrganizationType] =
-    useState<OrganizationTypeDto | null>(null);
+  const [selectedOrganisationType, setSelectedOrganisationType] =
+    useState<OrganisationTypeDto | null>(null);
 
   useEffect(() => {
-    fetchOrganizationTypes();
+    fetchOrganisationTypes();
   }, []);
 
-  const fetchOrganizationTypes = async () => {
+  const fetchOrganisationTypes = async () => {
     try {
       setLoading(true);
-      const data = await getAllOrganizationTypes();
-      setOrganizationTypes(data);
+      const data = await getAllOrganisationTypes();
+      setOrganisationTypes(data);
       console.log(data);
     } catch (err: any) {
       console.error(err);
-      setError("Failed to fetch OrganizationTypes");
+      setError("Failed to fetch OrganisationTypes");
     } finally {
       setLoading(false);
     }
@@ -50,49 +50,49 @@ function OrganizationTypes() {
   // Call modals
   const openAddModal = () => {
     setModalType("add");
-    setSelectedOrganizationType(null);
+    setSelectedOrganisationType(null);
   };
 
-  const openDeleteModal = (OrganizationTypeId: number) => {
-    const organizationType = OrganizationTypes.find(
-      (r) => r.organizationTypeId === OrganizationTypeId
+  const openDeleteModal = (OrganisationTypeId: number) => {
+    const organisationType = OrganisationTypes.find(
+      (r) => r.organisationTypeId === OrganisationTypeId
     );
-    setSelectedOrganizationTypeId(OrganizationTypeId);
-    setSelectedOrganizationType(organizationType || null);
+    setSelectedOrganisationTypeId(OrganisationTypeId);
+    setSelectedOrganisationType(organisationType || null);
     setModalType("delete");
   };
 
-  const openEditModal = (OrganizationTypeId: number) => {
-    const organizationType = OrganizationTypes.find(
-      (r) => r.organizationTypeId === OrganizationTypeId
+  const openEditModal = (OrganisationTypeId: number) => {
+    const organisationType = OrganisationTypes.find(
+      (r) => r.organisationTypeId === OrganisationTypeId
     );
-    setSelectedOrganizationTypeId(OrganizationTypeId);
-    setSelectedOrganizationType(organizationType || null);
+    setSelectedOrganisationTypeId(OrganisationTypeId);
+    setSelectedOrganisationType(organisationType || null);
     setModalType("edit");
   };
 
   const closeModal = () => {
     setModalType(null);
-    setSelectedOrganizationTypeId(null);
-    setSelectedOrganizationType(null);
+    setSelectedOrganisationTypeId(null);
+    setSelectedOrganisationType(null);
   };
 
-  const handleNewOrganizationType = async (OrganizationTypeInput?: string) => {
+  const handleNewOrganisationType = async (OrganisationTypeInput?: string) => {
     try {
       setLoading(true);
-      if (!OrganizationTypeInput) {
+      if (!OrganisationTypeInput) {
         toast.error("Please fill all fields");
         setLoading(false);
         return;
       }
 
       const payload = {
-        name: OrganizationTypeInput || "No OrganizationType input provided",
+        name: OrganisationTypeInput || "No OrganisationType input provided",
       };
-      await createOrganizationType(payload);
+      await createOrganisationType(payload);
       notifySuccess();
       closeModal();
-      fetchOrganizationTypes();
+      fetchOrganisationTypes();
     } catch (err: any) {
       notifyError();
     } finally {
@@ -100,25 +100,25 @@ function OrganizationTypes() {
     }
   };
 
-  const handleUpdateOrganizationType = async (
-    OrganizationTypeInput?: string
+  const handleUpdateOrganisationType = async (
+    OrganisationTypeInput?: string
   ) => {
     try {
       setLoading(true);
-      if (!OrganizationTypeInput) {
+      if (!OrganisationTypeInput) {
         toast.error("Please fill all fields");
         setLoading(false);
         return;
       }
-      if (!selectedOrganizationTypeId) return;
-      const OrganizationTypeId = selectedOrganizationTypeId;
+      if (!selectedOrganisationTypeId) return;
+      const OrganisationTypeId = selectedOrganisationTypeId;
       const payload = {
-        name: OrganizationTypeInput || "No OrganizationType input provided",
+        name: OrganisationTypeInput || "No OrganisationType input provided",
       };
-      await updateOrganizationType(OrganizationTypeId, payload);
+      await updateOrganisationType(OrganisationTypeId, payload);
       notifySuccess();
       closeModal();
-      fetchOrganizationTypes();
+      fetchOrganisationTypes();
     } catch (err: any) {
       notifyError();
     } finally {
@@ -126,15 +126,15 @@ function OrganizationTypes() {
     }
   };
 
-  const handleDeleteOrganizationType = async () => {
+  const handleDeleteOrganisationType = async () => {
     try {
       setLoading(true);
-      if (!selectedOrganizationTypeId) return;
-      const OrganizationTypeId = selectedOrganizationTypeId;
-      await deleteOrganizationType(OrganizationTypeId);
+      if (!selectedOrganisationTypeId) return;
+      const OrganisationTypeId = selectedOrganisationTypeId;
+      await deleteOrganisationType(OrganisationTypeId);
       notifySuccess();
       closeModal();
-      fetchOrganizationTypes();
+      fetchOrganisationTypes();
     } catch (err: any) {
       notifyError();
     } finally {
@@ -152,7 +152,7 @@ function OrganizationTypes() {
           <div className="relative flex flex-col mb-8  bg-white dark:bg-dark-card shadow rounded">
             <div className="flex justify-between flex-auto p-5 border-b dark:border-secondary-800 rounded">
               <h4 className="mb-0 dark:text-secondary-200">
-                <Building /> Organization Type Settings
+                <Building /> Organisation Type Settings
               </h4>
             </div>
             <div className="py-2 px-3">
@@ -161,45 +161,45 @@ function OrganizationTypes() {
                   <ToastContainer />
                   <Modal
                     isOpen={modalType === "add"}
-                    title="Add New OrganizationType"
+                    title="Add New OrganisationType"
                     message=""
-                    confirmText="Add OrganizationType"
+                    confirmText="Add OrganisationType"
                     confirmColor="green"
                     loading={loading}
                     headerIcon={<Building />}
                     butonIcon={<CheckCheck />}
-                    inputLabel="New OrganizationType Name"
-                    inputPlaceholder="Enter OrganizationType Name..."
-                    onConfirm={handleNewOrganizationType}
+                    inputLabel="New OrganisationType Name"
+                    inputPlaceholder="Enter OrganisationType Name..."
+                    onConfirm={handleNewOrganisationType}
                     onCancel={closeModal}
                   />
 
                   <Modal
                     isOpen={modalType === "delete"}
-                    title="Delete OrganizationType"
-                    message="Are you sure you want to delete this OrganizationType? This action cannot be undone."
-                    confirmText="Delete OrganizationType"
+                    title="Delete OrganisationType"
+                    message="Are you sure you want to delete this OrganisationType? This action cannot be undone."
+                    confirmText="Delete OrganisationType"
                     confirmColor="red"
                     loading={loading}
                     headerIcon={<Building />}
                     butonIcon={<Trash />}
-                    onConfirm={handleDeleteOrganizationType}
+                    onConfirm={handleDeleteOrganisationType}
                     onCancel={closeModal}
                   />
 
                   <Modal
                     isOpen={modalType === "edit"}
-                    title="Edit OrganizationType"
+                    title="Edit OrganisationType"
                     message=""
                     confirmText="Confirm Changes"
                     confirmColor="yellow"
                     loading={loading}
-                    inputLabel="New OrganizationType Name"
-                    inputPlaceholder="Enter OrganizationType Name..."
+                    inputLabel="New OrganisationType Name"
+                    inputPlaceholder="Enter OrganisationType Name..."
                     headerIcon={<Building />}
                     butonIcon={<Pen />}
-                    defaultInputValue={selectedOrganizationType?.name || ""}
-                    onConfirm={handleUpdateOrganizationType}
+                    defaultInputValue={selectedOrganisationType?.name || ""}
+                    onConfirm={handleUpdateOrganisationType}
                     onCancel={closeModal}
                   />
 
@@ -209,15 +209,15 @@ function OrganizationTypes() {
                         className="btn btn-success"
                         onClick={() => openAddModal()}
                       >
-                        <Plus /> Add New OrganizationType
+                        <Plus /> Add New OrganisationType
                       </button>
                     </div>
                   </div>
                   {loading && (
                     <div
                       className="loading flex items-center justify-center gap-3 text-center mt-8"
-                      aria-label="Loading OrganizationTypes"
-                      // OrganizationType="status"
+                      aria-label="Loading OrganisationTypes"
+                      // OrganisationType="status"
                     >
                       <svg
                         width="24"
@@ -252,26 +252,26 @@ function OrganizationTypes() {
                       Error: {error}
                     </div>
                   )}
-                  {!loading && !error && OrganizationTypes.length === 0 && (
-                    <div className="no-OrganizationTypes flex justify-center text-center mt-[25%]">
-                      No OrganizationTypes found.
+                  {!loading && !error && OrganisationTypes.length === 0 && (
+                    <div className="no-OrganisationTypes flex justify-center text-center mt-[25%]">
+                      No OrganisationTypes found.
                     </div>
                   )}
-                  {!loading && !error && OrganizationTypes.length > 0 && (
+                  {!loading && !error && OrganisationTypes.length > 0 && (
                     <ul className="space-y-3">
-                      {OrganizationTypes.map((OrganizationType) => (
+                      {OrganisationTypes.map((OrganisationType) => (
                         <li
-                          key={OrganizationType.organizationTypeId}
+                          key={OrganisationType.organisationTypeId}
                           className="flex items-center justify-between bg-gray-50 p-3 rounded-lg"
                         >
-                          <span>{OrganizationType.name}</span>
+                          <span>{OrganisationType.name}</span>
                           <div>
                             <button
                               className="btn btn-danger btn-icon btn-sm mr-1"
                               type="button"
                               onClick={() =>
                                 openDeleteModal(
-                                  OrganizationType.organizationTypeId
+                                  OrganisationType.organisationTypeId
                                 )
                               }
                             >
@@ -285,7 +285,7 @@ function OrganizationTypes() {
                               type="button"
                               onClick={() =>
                                 openEditModal(
-                                  OrganizationType.organizationTypeId
+                                  OrganisationType.organisationTypeId
                                 )
                               }
                             >
@@ -306,4 +306,4 @@ function OrganizationTypes() {
   );
 }
 
-export default OrganizationTypes;
+export default OrganisationTypes;

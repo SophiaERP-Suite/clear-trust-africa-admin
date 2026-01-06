@@ -1,13 +1,13 @@
-export interface OrganizationTypeDto {
-  organizationTypeId: number;
+export interface OrganisationTypeDto {
+  organisationTypeId: number;
   name: string;
   dateCreated: string;
 }
 
-export interface CreateOrganizationTypeDto {
+export interface CreateOrganisationTypeDto {
   name: string;
 }
 
-export interface UpdateOrganizationTypeDto {
+export interface UpdateOrganisationTypeDto {
   name: string;
 }

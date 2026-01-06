@@ -3,18 +3,18 @@ export interface VerificationDocumentDto {
   filePath: string;
 }
 
-export interface CreateOrganizationDto {
-  organizationTypeId: number;
+export interface CreateOrganisationDto {
+  organisationTypeId: number;
   name: string;
   registrationNumber: string;
   address: string;
   verificationDocuments: VerificationDocumentDto[];
 }
 
-export interface OrganizationDto {
-  organizationId: number;
-  organizationTypeId: number;
-  organizationTypeName: string;
+export interface OrganisationDto {
+  organisationId: number;
+  organisationTypeId: number;
+  organisationTypeName: string;
   name: string;
   statusDisplay: string;
   status: number;

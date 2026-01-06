@@ -25,19 +25,19 @@ import {
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import {
-  getAllOrganizations,
-  approveOrganization,
-  rejectOrganization,
-  suspendOrganization,
+  getAllOrganisations,
+  approveOrganisation,
+  rejectOrganisation,
+  suspendOrganisation,
 } from "../../../api/adminApi.js";
-import type { OrganizationDto } from "../../../types/controlPanel/organization.js";
+import type { OrganisationDto } from "../../../types/controlPanel/organisation.js";
 import { ToastContainer, toast } from "react-toastify";
 import Modal from "../../utils/modal.js";
 
 type ModalType = "suspend" | "approve" | "reject" | null;
 
 function Employers() {
-  const [organizations, setOrganizations] = useState<OrganizationDto[]>([]);
+  const [organisations, setOrganisations] = useState<OrganisationDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [modalType, setModalType] = useState<ModalType>(null);
@@ -54,23 +54,23 @@ function Employers() {
   const totalPages = Math.ceil(totalCount / pageSize);
 
   useEffect(() => {
-    fetchOrganizations();
+    fetchOrganisations();
   }, [page, statusFilter, pageSize]);
 
-  const fetchOrganizations = async () => {
+  const fetchOrganisations = async () => {
     try {
       setLoading(true);
-      const data = await getAllOrganizations(
+      const data = await getAllOrganisations(
         statusFilter || undefined,
         page,
         pageSize
       );
-      setOrganizations(data);
+      setOrganisations(data);
       setTotalCount(data.length);
       console.log(data);
     } catch (err: any) {
       console.error(err);
-      setError("Failed to fetch organizations");
+      setError("Failed to fetch organisations");
     } finally {
       setLoading(false);
     }
@@ -78,26 +78,26 @@ function Employers() {
 
   // Toast messages
   const notifySuccess = () =>
-    toast.success("Organization activated successfully");
+    toast.success("Organisation activated successfully");
   const notifyRejection = () =>
-    toast.success("Organization rejected successfully");
+    toast.success("Organisation rejected successfully");
   const notifySuspend = () =>
-    toast.success("Organization suspended successfully");
+    toast.success("Organisation suspended successfully");
   const notifyError = () => toast.error("Action Failed");
 
   // Call modals
-  const openApproveModal = (organizationId: number) => {
-    setSelectedOrgId(organizationId);
+  const openApproveModal = (organisationId: number) => {
+    setSelectedOrgId(organisationId);
     setModalType("approve");
   };
 
-  const openRejectModal = (organizationId: number) => {
-    setSelectedOrgId(organizationId);
+  const openRejectModal = (organisationId: number) => {
+    setSelectedOrgId(organisationId);
     setModalType("reject");
   };
 
-  const openSuspendModal = (organizationId: number) => {
-    setSelectedOrgId(organizationId);
+  const openSuspendModal = (organisationId: number) => {
+    setSelectedOrgId(organisationId);
     setModalType("suspend");
   };
 
@@ -111,10 +111,10 @@ function Employers() {
 
     try {
       setLoading(true);
-      const OrganizationId = selectedOrgId;
-      await approveOrganization(OrganizationId);
+      const OrganisationId = selectedOrgId;
+      await approveOrganisation(OrganisationId);
       notifySuccess();
-      fetchOrganizations();
+      fetchOrganisations();
       closeModal();
     } catch (err: any) {
       notifyError();
@@ -127,13 +127,13 @@ function Employers() {
     try {
       setLoading(true);
       const payload = {
-        organizationId: selectedOrgId,
+        organisationId: selectedOrgId,
         reason: reasonInput || "Not meeting criteria",
       };
-      await rejectOrganization(payload.organizationId, payload.reason);
+      await rejectOrganisation(payload.organisationId, payload.reason);
       notifyRejection();
       closeModal();
-      fetchOrganizations();
+      fetchOrganisations();
     } catch (err: any) {
       notifyError();
     }
@@ -145,13 +145,13 @@ function Employers() {
     try {
       setLoading(true);
       const payload = {
-        organizationId: selectedOrgId,
+        organisationId: selectedOrgId,
         reason: reasonInput || "Not meeting criteria",
       };
-      await suspendOrganization(payload.organizationId, payload.reason);
+      await suspendOrganisation(payload.organisationId, payload.reason);
       notifySuspend();
       closeModal();
-      fetchOrganizations();
+      fetchOrganisations();
     } catch (err: any) {
       notifyError();
     }
@@ -162,8 +162,8 @@ function Employers() {
       <ToastContainer />
       <Modal
         isOpen={modalType === "approve"}
-        title="Approve Organization"
-        message="Are you sure you want to approve this organization?"
+        title="Approve Organisation"
+        message="Are you sure you want to approve this organisation?"
         confirmText="Approve"
         confirmColor="green"
         headerIcon={<Check />}
@@ -175,8 +175,8 @@ function Employers() {
 
       <Modal
         isOpen={modalType === "reject"}
-        title="Reject Organization"
-        message="Are you sure you want to reject this organization?"
+        title="Reject Organisation"
+        message="Are you sure you want to reject this organisation?"
         confirmText="Reject"
         confirmColor="green"
         inputLabel="Reason for Rejection"
@@ -190,8 +190,8 @@ function Employers() {
 
       <Modal
         isOpen={modalType === "suspend"}
-        title="Suspend Organization"
-        message="Are you sure you want to suspend this organization?"
+        title="Suspend Organisation"
+        message="Are you sure you want to suspend this organisation?"
         confirmText="Suspend"
         confirmColor="yellow"
         inputLabel="Reason for Suspension"
@@ -230,7 +230,7 @@ function Employers() {
         {loading && (
           <div
             className="loading flex items-center justify-center gap-3 text-center mt-8"
-            aria-label="Loading Organizations"
+            aria-label="Loading Organisations"
             role="status"
           >
             <svg
@@ -258,7 +258,7 @@ function Employers() {
                 </path>
               </g>
             </svg>
-            <span className="text-gray-700">Loading Organizations...</span>
+            <span className="text-gray-700">Loading Organisations...</span>
           </div>
         )}
         {error && (
@@ -343,7 +343,7 @@ function Employers() {
                           />
                         </div> */}
                       </div>
-                      {!loading && !error && organizations.length > 0 ? (
+                      {!loading && !error && organisations.length > 0 ? (
                         <table className="min-w-full overflow-hidden divide-y divide-secondary-200 dark:divide-secondary-800 border text-sm dark:border-secondary-800">
                           <thead>
                             <tr className="bg-secondary-100 dark:bg-dark-bg">
@@ -372,7 +372,7 @@ function Employers() {
                             </tr>
                           </thead>
                           <tbody className="divide-y divide-secondary-200 dark:divide-secondary-800">
-                            {organizations.map((orgData) => {
+                            {organisations.map((orgData) => {
                               return (
                                 <tr>
                                   {/* <td className="px-6 py-4 whitespace-nowrap">
@@ -391,7 +391,7 @@ function Employers() {
                                   </td>
 
                                   <td className="px-6 py-4 whitespace-nowrap text-black dark:text-black">
-                                    {orgData.organizationTypeName}
+                                    {orgData.organisationTypeName}
                                   </td>
                                   <td className="px-6 py-4 whitespace-nowrap text-black dark:text-black">
                                     {orgData.address}
@@ -435,7 +435,7 @@ function Employers() {
                                             type="button"
                                             onClick={() =>
                                               openApproveModal(
-                                                orgData.organizationId
+                                                orgData.organisationId
                                               )
                                             }
                                             data-tp-toggle="tooltip"
@@ -455,7 +455,7 @@ function Employers() {
                                             data-tp-title="Delete"
                                             onClick={() =>
                                               openRejectModal(
-                                                orgData.organizationId
+                                                orgData.organisationId
                                               )
                                             }
                                           >
@@ -474,7 +474,7 @@ function Employers() {
                                           data-tp-title="Suspend"
                                           onClick={() =>
                                             openSuspendModal(
-                                              orgData.organizationId
+                                              orgData.organisationId
                                             )
                                           }
                                         >
@@ -491,7 +491,7 @@ function Employers() {
                                           type="button"
                                           onClick={() =>
                                             openApproveModal(
-                                              orgData.organizationId
+                                              orgData.organisationId
                                             )
                                           }
                                           data-tp-toggle="tooltip"
@@ -512,7 +512,7 @@ function Employers() {
                         </table>
                       ) : (
                         <div className="text-center text-black dark:text-white mt-10 mb-10">
-                          No organizations found.
+                          No organisations found.
                         </div>
                       )}
                       <div className="border dark:border-secondary-800">

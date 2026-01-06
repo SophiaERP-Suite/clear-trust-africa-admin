@@ -1,23 +1,23 @@
 
-import type { OrganizationTypeDto, CreateOrganizationTypeDto, UpdateOrganizationTypeDto } from "../types/controlPanel/organizationType";
+import type { OrganisationTypeDto, CreateOrganisationTypeDto, UpdateOrganisationTypeDto } from "../types/controlPanel/organisationType";
 import api from "./axios";
 
-export const getAllOrganizationTypes = async () => {
-  const response = await api.get<OrganizationTypeDto[]>(`/api/admin/OrganizationType/GetAll`);
+export const getAllOrganisationTypes = async () => {
+  const response = await api.get<OrganisationTypeDto[]>(`/api/admin/OrganisationType/GetAll`);
   return response.data;
 };
 
-export const createOrganizationType = async (data: CreateOrganizationTypeDto) => {
-  const response = await api.post("/api/admin/OrganizationType/register", data);
+export const createOrganisationType = async (data: CreateOrganisationTypeDto) => {
+  const response = await api.post("/api/admin/OrganisationType/register", data);
   return response.data;
 };
 
-export const deleteOrganizationType = async (id: number) => {
-  const response = await api.put(`/api/admin/OrganizationType/${id}/delete`);
+export const deleteOrganisationType = async (id: number) => {
+  const response = await api.put(`/api/admin/OrganisationType/${id}/delete`);
   return response.data;
 };
 
-export const updateOrganizationType = async (id: number, data: UpdateOrganizationTypeDto) => {
-  const response = await api.put(`/api/admin/OrganizationType/${id}/update`, data);
+export const updateOrganisationType = async (id: number, data: UpdateOrganisationTypeDto) => {
+  const response = await api.put(`/api/admin/OrganisationType/${id}/update`, data);
   return response.data;
 };
