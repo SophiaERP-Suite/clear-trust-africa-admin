@@ -14,7 +14,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
-import { fetchDbsChecks } from "../../../utils/Requests/DbsRequests";
+import { fetchDbsChecks, fetchDbsStatus, fetchDbsTypes } from "../../../utils/Requests/DbsRequests";
 import { useForm, useWatch } from "react-hook-form";
 
 interface DbsChecks {
@@ -38,11 +38,32 @@ type FilterForm = {
   UserName: string;
   OrganisationName: string;
   Status: number;
+  Type: number;
 }
+
+interface DBSStatus {
+  statusId: number;
+  statusName: string;
+}
+
+interface DBSTypes {
+  dbsTypeId: number;
+  typeName: string;
+}
+
+const statusStyles: Record<string, string> = {
+  Draft: 'bg-orange-200',
+  Submitted: 'bg-blue-200',
+  'In Review': 'bg-purple-200',
+  Completed: 'bg-green-200',
+  Rejected: 'bg-red-200',
+};
 
 export default function DBSTrackerModule() {
   const [activeView, setActiveView] = useState("dashboard");
   const [dbsChecks1, setDbsChecks1] = useState<DbsChecks[]>([]);
+  const [dbsStatus, setDbsStatus] = useState<DBSStatus[]>([]);
+  const [dbsType, setDbsType] = useState<DBSTypes[]>([]);
   const [dbsPage, setDbsPage] = useState(1);
   const dbsLimit = 5;
   const [totalDbsChecks, setTotalDbsChecks] = useState(0);
@@ -186,6 +207,42 @@ export default function DBSTrackerModule() {
       })
       .catch((err) => console.log(err))
   }, [dbsPage, dbsLimit, filters]);
+
+  useEffect(() => {
+    fetchDbsTypes()
+    .then(res => {
+      if (res.status === 200) {
+        res.json()
+        .then(data => {
+          console.log(data.data);
+          setDbsType(data.data);
+        })
+      } else {
+        res.text()
+        .then(data => {
+          console.log(JSON.parse(data));
+        })
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    fetchDbsStatus()
+    .then(res => {
+      if (res.status === 200) {
+        res.json()
+        .then(data => {
+          console.log(data);
+          setDbsStatus(data.data);
+        })
+      } else {
+        res.text()
+        .then(data => {
+          console.log(JSON.parse(data));
+        })
+      }
+    });
+  }, []);
 
   const stats = {
     total: dbsChecks.length,
@@ -445,7 +502,7 @@ export default function DBSTrackerModule() {
           {/* Filters */}
           <div className="p-6 border-b">
             <div className="flex flex-wrap gap-4">
-              <div className="flex-1 min-w-[300px]">
+              <div className="flex-1 min-w-[250px]">
                 <div className="relative">
                   <Search
                     className="absolute left-3 top-7 transform -translate-y-1/2 text-gray-400"
@@ -459,7 +516,7 @@ export default function DBSTrackerModule() {
                   />
                 </div>
               </div>
-              <div className="flex-1 min-w-[300px]">
+              <div className="flex-1 min-w-[250px]">
                 <div className="relative">
                   <Search
                     className="absolute left-3 top-7 transform -translate-y-1/2 text-gray-400"
@@ -478,11 +535,22 @@ export default function DBSTrackerModule() {
                 className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 <option value="">All Status</option>
-                <option value="1">Draft</option>
-                <option value="2">Submitted</option>
-                <option value="3">In Review</option>
-                <option value="4">Completed</option>
-                <option value="5">Rejected</option>
+                {
+                  dbsStatus.map((data, index) => (
+                    <option value={data.statusId} key={index}>{data.statusName}</option>
+                  ))
+                }
+              </select>
+              <select
+                {...register('Type')}
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="">All Types</option>
+                {
+                  dbsType.map((data, index) => (
+                    <option value={data.dbsTypeId} key={index}>{ data.typeName }</option>
+                  ))
+                }
               </select>
             </div>
           </div>
@@ -547,22 +615,14 @@ export default function DBSTrackerModule() {
                         <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
                           {data.organisationName}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
-                          {
-                            Number(data.status) === 1 && <p className="p-1 bg-orange-200 text-center rounded-lg">Draft</p>
-                          }
-                          {
-                            Number(data.status) === 2 && <p className="p-1 bg-blue-200 text-center rounded-lg">Submitted</p>
-                          }
-                          {
-                            Number(data.status) === 3 && <p className="p-1 bg-purple-200 text-center rounded-lg">In Review</p>
-                          }
-                          {
-                            Number(data.status) === 4 && <p className="p-1 bg-green-200 text-center rounded-lg">Completed</p>
-                          }
-                          {
-                            Number(data.status) === 5 && <p className="p-1 bg-red-200 text-center rounded-lg">Rejected</p>
-                          }
+                        <td className="px-6 py-4 whitespace-nowrap text-gray-900">
+                          <p
+                            className={`p-1 text-center rounded-lg ${
+                              statusStyles[data.status] ?? 'bg-gray-200'
+                            }`}
+                          >
+                            {data.status}
+                          </p>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
                           {data.dbsType}

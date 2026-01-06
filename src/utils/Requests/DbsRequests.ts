@@ -11,6 +11,17 @@ export const fetchDbsTypes = async () => {
   return response
 }
 
+export const fetchDbsStatus = async () => {
+  const token = localStorage.getItem('accessToken');
+  const response = await fetch(`${BaseURL}/dbs-status`, {
+    method: 'GET',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  })
+  return response
+}
+
 export const fetchDbsChecks = async (filterData: object) => {
   const token = localStorage.getItem('accessToken');
   const params = new URLSearchParams();
