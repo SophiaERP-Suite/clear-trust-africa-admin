@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { toast, ToastContainer } from 'react-toastify';
 import Modal from 'react-modal';
-import { IdCard, CheckCheck, Pen, Plus, X,} from "lucide-react";
+import { IdCard, CheckCheck, Pen, Plus, X, Search,} from "lucide-react";
 import { fetchDbsStages, fetchDbsTypes, submitDbsStage } from "../../../utils/Requests/DbsRequests";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { handleCreateEmployee } from "../../../utils/ResponseHandlers/EmployeeResponse";
 import Tippy from "@tippyjs/react";
 import { fetchOrgMembers } from "../../../utils/Requests/AuthRequests";
@@ -41,12 +41,26 @@ interface UserData {
     lastName: string;
 }
 
+type FilterForm = {
+  StageName: string;
+  DBSTypeId: number;
+  StageAdmin: string;
+}
+
 export default function DBSStages() {
   const [loading, setLoading] = useState(true);
   const [orgMembers, setOrgMembers] = useState<UserData[]>([]);
-  const [dbsStage, setDbsStage] = useState<DBSStagesData[]>([]);
+  const [dbsStages, setDbsStages] = useState<DBSStagesData[]>([]);
   const [dbsType, setDbsType] = useState<DBSTypes[]>([]);
   const { register, reset, handleSubmit, formState } = useForm<DBSStagesFormValues>();
+  const {
+    register: filterReg,
+    control,
+  } = useForm<FilterForm>();
+  const filters = useWatch({ control });
+  const [dbsPage, setDbsPage] = useState(1);
+  const [totalDbsStages, setTotalDbsStages] = useState(0);
+  const dbsLimit = 4;
   const [error, setError] = useState<string | null>(null);
   const [addModalState, setAddModalState] = useState(false);
   const { errors } = formState;
@@ -88,13 +102,14 @@ export default function DBSStages() {
 }, []);
 
   useEffect(() => {
-    fetchDbsStages()
+    fetchDbsStages({ pageNumber: dbsPage, limit: dbsLimit, ...filters })
     .then(res => {
       if (res.status === 200) {
         res.json()
         .then(data => {
           console.log(data);
-          setDbsStage(data.data.stages);
+          setTotalDbsStages(data.data.count);
+          setDbsStages(data.data.stages);
         })
       } else {
         res.text()
@@ -104,21 +119,21 @@ export default function DBSStages() {
       }
     })
     .finally(() => setLoading(false))
-  }, []);
+  }, [dbsPage, dbsLimit, filters]);
 
   const refetchDbsStages = async () => {
     try {
       setLoading(true);
-      const res = await fetchDbsStages();
+      const res = await fetchDbsStages({ pageNumber: dbsPage, limit: dbsLimit, ...filters });
       if (res.status === 200) {
         const data = await res.json()
         console.log(data);
-        setDbsStage(data.data.stages);
+        setDbsStages(data.data.stages);
+        setTotalDbsStages(data.data.count);
       } else {
         const resText = await res.text();
         console.log(JSON.parse(resText));
       }
-      
     } catch (err) {
       console.error(err);
       setError("Failed to fetch DBS Types");
@@ -157,7 +172,6 @@ export default function DBSStages() {
       });
     }
   }
-  
 
   return (
     <div
@@ -185,7 +199,7 @@ export default function DBSStages() {
         
           <div className="h-fit max-h-[70vh] overflow-y-auto w-100">
             <div className="flex justify-start">
-              <p className="font-semibold text-black py-1 text-lg"><IdCard size={20} className="mr-2" /> Add New DBS Type</p>
+              <p className="font-semibold text-black py-1 text-lg"><IdCard size={20} className="mr-2" /> Add New DBS Stage</p>
             </div>
             <form
                   onSubmit={handleSubmit(addNewStage)}
@@ -385,8 +399,8 @@ export default function DBSStages() {
             </form>
           </div>
       </Modal>
-      <div className="flex flex-wrap contet-inner">
-        <div className="flex-auto w-full">
+      <div className="flex flex-wrap content-inner">
+        <div className="flex-auto w-50">
           <div className="relative flex flex-col mb-8  bg-white dark:bg-dark-card shadow rounded">
             <div className="flex justify-between flex-auto p-5 border-b dark:border-secondary-800 rounded">
               <h4 className="mb-0 dark:text-secondary-200">
@@ -446,102 +460,182 @@ export default function DBSStages() {
                       Error: {error}
                     </div>
                   )}
-                  {!loading && !error && dbsType.length === 0 && (
+                  {!loading && !error && dbsStages.length === 0 && (
                     <div className="no-roles flex justify-center text-center mt-[25%]">
                       No DBS Stage found.
                     </div>
                   )}
-                  {!loading && !error && dbsType.length > 0 && (
-                    <div className="overflow-x-auto">
-                        <div className="flex flex-wrap justify-between overflow-x-auto">
-                            <table className="min-w-full divide-y divide-secondary-200 dark:divide-secondary-800 border dark:border-secondary-800">
-                                <thead>
-                                    <tr className="bg-secondary-100 dark:bg-dark-bg">
-                                        <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
-                                            S/N
-                                        </th>
-                                        <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
-                                            Name
-                                        </th>
-                                        <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
-                                            Level
-                                        </th>
-                                        <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
-                                            Description
-                                        </th>
-                                        <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
-                                            DBS Type
-                                        </th>
-                                        <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
-                                            Stage Admin
-                                        </th>
-                                        <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
-                                            Duration
-                                        </th>
-                                        <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
-                                            Action
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-secondary-200 dark:divide-secondary-800">
-                                {
-                                    dbsStage.map((data, index) => (
-                                    <tr key={data.dbsTypeId ?? index}>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className="iq-media-group iq-media-group-1">
-                                            <h6 className="font-bold dark:text-white">
-                                            {" "}
-                                            #{index + 1}
-                                            </h6>
-                                        </div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
-                                        {data.stageName}
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
-                                        {data.stageLevel}
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
-                                        {data.stageDescription}
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
-                                        {data.dbsTypeName}
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
-                                        {`${data.stageAdminFirstName} ${data.stageAdminLastName}`}
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
-                                        {data.duration}
-                                            {data.durationUnit === 1 ? 'Hour(s)' : ''}
-                                            {data.durationUnit === 2 ? 'Day(s)' : ''}
-                                            {data.durationUnit === 3 ? 'Week(s)' : ''}
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center list-user-action">
-                                            <Tippy content='Edit DBS Stage'>
-                                                <button
-                                                    className="btn btn-warning btn-icon btn-sm mr-1"
-                                                    type="button"
-                                                    >
-                                                    <Pen />
-                                                </button>
-                                            </Tippy>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    ))
-                                }
-                                
-                            </tbody>
-                            </table>
+                  {!loading && !error && dbsStages.length > 0 && (
+                    <>
+                    <div className="flex flex-wrap justify-between overflow-x-auto">
+                      <div className="pb-5">
+                        <div className="flex flex-wrap gap-4">
+                          <div className="flex-1 min-w-[330px]">
+                            <div className="relative">
+                              <Search
+                                className="absolute left-3 top-7 transform -translate-y-1/2 text-gray-400"
+                                size={20}
+                              />
+                              <input
+                                type="text"
+                                placeholder="Search by stage name..."
+                                {...filterReg('StageName')}
+                                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              />
+                            </div>
+                          </div>
+                          <div className="flex-1 min-w-[330px]">
+                            <div className="relative">
+                              <Search
+                                className="absolute left-3 top-7 transform -translate-y-1/2 text-gray-400"
+                                size={20}
+                              />
+                              <input
+                                type="text"
+                                placeholder="Search by stage admin name..."
+                                {...filterReg('StageAdmin')}
+                                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              />
+                            </div>
+                          </div>
+                          <select
+                            {...filterReg('DBSTypeId')}
+                            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          >
+                            <option value="">All DBS Type</option>
                             {
-                            dbsStage.length === 0 ?
-                                <div className="py-4 whitespace-nowrap w-full">
-                                    <span className="px-6 py-4 text-left font-medium text-black dark:text-white">There hasn't been any dbs stage added</span>
-                                </div> : <></>
+                              dbsType.map((data, index) => (
+                                <option value={data.dbsTypeId} key={index}>{data.typeName}</option>
+                              ))
                             }
+                          </select>
                         </div>
+                      </div>
+                      <div className="overflow-x-auto">
+                        <table className="min-w-full divide-y divide-secondary-200 dark:divide-secondary-800 border dark:border-secondary-800">
+                          <thead>
+                              <tr className="bg-secondary-100 dark:bg-dark-bg">
+                                  <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                                      S/N
+                                  </th>
+                                  <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                                      Name
+                                  </th>
+                                  <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                                      Level
+                                  </th>
+                                  <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                                      Description
+                                  </th>
+                                  <th className="px-6 py-4 min-w-30 text-left font-medium text-black dark:text-white">
+                                      DBS Type
+                                  </th>
+                                  <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                                      Stage Admin
+                                  </th>
+                                  <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                                      Duration
+                                  </th>
+                                  <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                                      Action
+                                  </th>
+                              </tr>
+                          </thead>
+                          <tbody className="divide-y divide-secondary-200 dark:divide-secondary-800">
+                            {
+                              dbsStages.map((data, index) => (
+                              <tr key={data.dbsTypeId ?? index}>
+                                  <td className="px-6 py-4 whitespace-nowrap">
+                                  <div className="iq-media-group iq-media-group-1">
+                                      <h6 className="font-bold dark:text-white">
+                                      {" "}
+                                      #{(index + (dbsLimit * (dbsPage - 1))) + 1}
+                                      </h6>
+                                  </div>
+                                  </td>
+                                  <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
+                                  {data.stageName}
+                                  </td>
+                                  <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
+                                  {data.stageLevel}
+                                  </td>
+                                  <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
+                                  {data.stageDescription}
+                                  </td>
+                                  <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
+                                  {data.dbsTypeName}
+                                  </td>
+                                  <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
+                                  {`${data.stageAdminFirstName} ${data.stageAdminLastName}`}
+                                  </td>
+                                  <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
+                                  {data.duration}
+                                      {data.durationUnit === 1 ? (data.duration > 1 ? ' Hours' : ' Hour') : ''}
+                                      {data.durationUnit === 2 ? (data.duration > 1 ? ' Days' : ' Day') : ''}
+                                      {data.durationUnit === 3 ? (data.duration > 1 ? ' Weeks' : ' Week') : ''}
+                                  </td>
+                                  <td className="px-6 py-4">
+                                      <div className="flex items-center list-user-action">
+                                      <Tippy content='Edit DBS Stage'>
+                                          <button
+                                              className="btn btn-warning btn-icon btn-sm mr-1"
+                                              type="button"
+                                              >
+                                              <Pen />
+                                          </button>
+                                      </Tippy>
+                                      </div>
+                                  </td>
+                              </tr>
+                              ))
+                            }
+                              
+                          </tbody>
+                        </table>
+                      </div>
+                        
+                        {
+                        dbsStages.length === 0 ?
+                            <div className="py-4 whitespace-nowrap w-full">
+                                <span className="px-6 py-4 text-left font-medium text-black dark:text-white">There hasn't been any dbs stage added</span>
+                            </div> : <></>
+                        }
                     </div>
+                    <div className="flex flex-wrap justify-between my-6">
+                      <div className="flex justify-center items-center mb-1">
+                        <p className="text-black">
+                          Showing { dbsStages.length > 0 ? ((dbsPage * dbsLimit) - dbsLimit) + 1 : 0 } to { dbsStages.length > 0 ? (((dbsPage * dbsLimit) - dbsLimit) + 1) + (dbsStages.length - 1) : 0 } of { totalDbsStages } entries
+                        </p>
+                      </div>
+                      <div className="inline-flex flex-wrap">
+                        {
+                          dbsPage > 1 && <a
+                          href="#"
+                          onClick={() => { if (dbsPage > 1) {setDbsPage(dbsPage - 1);} }}
+                          className="border-t border-b border-l text-primary-500 border-secondary-500 px-2 py-1 rounded-l dark:border-secondary-800"
+                        >
+                          Previous
+                        </a>
+                        }
+                        <a
+                          href="#"
+                          className="border text-white border-secondary-500 cursor-pointer bg-primary-500 px-4 py-1 dark:border-secondary-800"
+                        >
+                          { dbsPage }
+                        </a>
+                        {
+                          (dbsPage * dbsLimit) < totalDbsStages && <a
+                          href="#"
+                          onClick={() => { setDbsPage(dbsPage + 1); }}
+                          className="border-r border-t border-b text-primary-500 border-secondary-500 px-4 py-1 rounded-r dark:border-secondary-800"
+                        >
+                          Next
+                        </a>
+                        }
+                        
+                      </div>
+                    </div>
+                    </>
                   )}
                 </div>
               </div>
