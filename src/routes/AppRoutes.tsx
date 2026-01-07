@@ -13,6 +13,7 @@ import PaymentDashboard from "../pages/admin/Payment/Payment";
 import InvestigationPortal from "../pages/admin/Report/Report";
 import CommunicationsPage from "../pages/admin/Communication/Communication";
 import ControlPanel from "../pages/admin/ControlPanel/ControlPanel";
+import TrackerDetails from "../pages/admin/Tracker/TrackerDetails";
 
 function AppRoutes() {
   return (
@@ -33,6 +34,7 @@ function AppRoutes() {
           element={<EmployerProfile />}
         />
         <Route path="Tracker" element={<DbsTracker />} />
+        <Route path="Tracker/:id" element={<TrackerDetails />} />
         <Route path="IncidentMgt" element={<Incidents />} />
         <Route path="FinanceMgt" element={<PaymentDashboard />} />
         <Route path="Reports" element={<InvestigationPortal />} />

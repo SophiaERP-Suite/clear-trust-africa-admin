@@ -584,7 +584,7 @@ export default function DBSTrackerModule() {
                         Requested By
                       </th>
                       <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
-                        Orgnaization
+                        Organisation
                       </th>
                       <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
                         Status
