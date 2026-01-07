@@ -183,7 +183,7 @@ export default function DBSStages() {
       }}
       >
         
-          <div className="h-fit w-100">
+          <div className="h-fit max-h-[70vh] overflow-y-auto w-100">
             <div className="flex justify-start">
               <p className="font-semibold text-black py-1 text-lg"><IdCard size={20} className="mr-2" /> Add New DBS Type</p>
             </div>
