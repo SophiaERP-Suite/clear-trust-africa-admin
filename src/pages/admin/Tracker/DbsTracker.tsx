@@ -12,10 +12,13 @@ import {
   FileText,
   Bell,
   XCircle,
+  Eye,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { fetchDbsChecks, fetchDbsStatus, fetchDbsTypes } from "../../../utils/Requests/DbsRequests";
 import { useForm, useWatch } from "react-hook-form";
+import Hashids from "hashids";
+import Tippy from "@tippyjs/react";
 
 interface DbsChecks {
   dbsApplicationId: number;
@@ -78,6 +81,7 @@ export default function DBSTrackerModule() {
   const colors = ["#5d009bff", "#ff8800ff", "#ff0000", "#003000ff", "#00006dff"];
   const { register, control } = useForm<FilterForm>();
   const filters = useWatch({ control });
+  const hashIds = new Hashids('ClearTrustAfricaEncode', 10);
 
   const dbsChecks = [
     {
@@ -597,6 +601,9 @@ export default function DBSTrackerModule() {
                       <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
                         Request Date
                       </th>
+                      <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                        Action
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-secondary-200 dark:divide-secondary-800">
@@ -649,6 +656,19 @@ export default function DBSTrackerModule() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
                           {(new Date(data.dateCreated)).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
+                          <div className="flex items-center list-user-action">
+                            <Tippy content='Preview Application'>
+                              <NavLink  to={`/Tracker/${hashIds.encode(String(data.dbsApplicationId))}`}
+                                className="btn btn-info btn-icon btn-sm mr-1"
+                              >
+                                <span className="btn-inner">
+                                  <Eye />
+                                </span>
+                              </NavLink>
+                            </Tippy>
+                          </div>
                         </td>
                       </tr>
                       ))
