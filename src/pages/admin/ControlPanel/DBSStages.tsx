@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { toast, ToastContainer } from 'react-toastify';
 import Modal from 'react-modal';
 import { IdCard, CheckCheck, Pen, Plus, X, Search,} from "lucide-react";
-import { fetchDbsStages, fetchDbsTypes, submitDbsStage } from "../../../utils/Requests/DbsRequests";
+import { fetchDbsStages, fetchDbsTypes, submitDbsStage, updateDbsStage } from "../../../utils/Requests/DbsRequests";
 import { useForm, useWatch } from "react-hook-form";
 import { handleCreateEmployee } from "../../../utils/ResponseHandlers/EmployeeResponse";
 import Tippy from "@tippyjs/react";
@@ -57,13 +57,35 @@ export default function DBSStages() {
     register: filterReg,
     control,
   } = useForm<FilterForm>();
+  const {
+    register: editReg,
+    setValue,
+    reset: resetEdit,
+    handleSubmit: submitEdit,
+    formState: editFormState,
+  } = useForm<DBSStagesFormValues>();
+  const { errors: editErrors } = editFormState;
   const filters = useWatch({ control });
   const [dbsPage, setDbsPage] = useState(1);
   const [totalDbsStages, setTotalDbsStages] = useState(0);
   const dbsLimit = 4;
   const [error, setError] = useState<string | null>(null);
   const [addModalState, setAddModalState] = useState(false);
+  const [editModalState, setEditModalState] = useState(false);
   const { errors } = formState;
+  const [editStage, setEditStage] = useState<DBSStagesData | null>(null);
+
+  useEffect(() => {
+    if (editStage) {
+      setValue('StageName', editStage.stageName);
+      setValue('StageDescription', editStage.stageDescription);
+      setValue('StageLevel', editStage.stageLevel);
+      setValue('DBSTypeId', editStage.dbsTypeId);
+      setValue('StageAdminId', editStage.stageAdminId);
+      setValue('Duration', editStage.duration);
+      setValue('DurationUnit', editStage.durationUnit);
+    }
+  }, [editStage, setValue])
   
   useEffect(() => {
     fetchOrgMembers()
@@ -102,6 +124,7 @@ export default function DBSStages() {
 }, []);
 
   useEffect(() => {
+    setDbsStages([]);
     fetchDbsStages({ pageNumber: dbsPage, limit: dbsLimit, ...filters })
     .then(res => {
       if (res.status === 200) {
@@ -172,6 +195,37 @@ export default function DBSStages() {
       });
     }
   }
+
+  const updateStage = async (data: DBSStagesFormValues) =>{
+      if (!editErrors.StageName && !editErrors.StageDescription &&
+        !editErrors.StageLevel && !editErrors.DBSTypeId &&
+        !editErrors.Duration && !editErrors.DurationUnit &&
+        !editErrors.StageAdminId && editStage
+    ) {
+        const loader = document.getElementById('query-loader');
+        const text = document.getElementById('query-text');
+        if (loader) {
+          loader.style.display = 'flex';
+        }
+        if (text) {
+          text.style.display = 'none';
+        }
+        const formData = new FormData();
+        formData.append("StageName", data.StageName);
+        formData.append("StageDescription", data.StageDescription);
+        formData.append("StageLevel", String(data.StageLevel));
+        formData.append("DBSTypeId", String(data.DBSTypeId));
+        formData.append("Duration", String(data.Duration));
+        formData.append("DurationUnit", String(data.DurationUnit));
+        formData.append("StageAdminId", String(data.StageAdminId));
+        const res = await updateDbsStage(formData, editStage.dbsStageId);
+        handleCreateEmployee(res, loader, text, { toast }, resetEdit)
+        .finally(async () => {
+          setEditModalState(false);
+          await refetchDbsStages();
+        });
+      }
+    }
 
   return (
     <div
@@ -399,6 +453,229 @@ export default function DBSStages() {
             </form>
           </div>
       </Modal>
+      <Modal isOpen={editModalState} onRequestClose={() => { setEditModalState(false); }}
+        style={{
+        content: {
+          width: 'fit-content',
+          height: 'fit-content',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          backgroundColor: 'rgb(255 255 255)',
+          borderRadius: '0.5rem',
+          boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)'
+        },
+        overlay: {
+          backgroundColor: 'rgba(255, 255, 255, 0.7)'
+        }
+      }}
+      >
+        {
+            editStage && (
+                <div className="h-fit max-h-[70vh] overflow-y-auto w-100">
+                    <div className="flex justify-start">
+                    <p className="font-semibold text-black py-1 text-lg"><IdCard size={20} className="mr-2" /> Update DBS Stage</p>
+                    </div>
+                    <form
+                  onSubmit={submitEdit(updateStage)}
+                  noValidate
+                >
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-5 mt-2">
+                <div className="lg:col-span-2">
+                  <label
+                    className="inline-block mb-2 text-secondary-600 dark:text-white"
+                    htmlFor="email"
+                  >
+                    Stage Name
+                  </label>
+                  <div>
+                    <input
+                      type="text"
+                      className="w-full h-12 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-black placeholder-secondary-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                        {
+                        ...editReg('StageName', {
+                          required: 'Required'
+                        })
+                      }
+                      required
+                    />
+                    <p className='error-msg'>{editErrors.StageName?.message}</p>
+                  </div>
+                </div>
+                <div>
+                  <label
+                    className="inline-block mb-2 text-secondary-600 dark:text-white"
+                    htmlFor="email"
+                  >
+                    Stage Level
+                  </label>
+                  <div>
+                    <input
+                      type="number"
+                      className="w-full h-12 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-black placeholder-secondary-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                        {
+                        ...editReg('StageLevel', {
+                          required: 'Required'
+                        })
+                      }
+                      required
+                    />
+                    <p className='error-msg'>{editErrors.StageLevel?.message}</p>
+                  </div>
+                </div>
+                <div>
+                  <label
+                    className="inline-block mb-2 text-secondary-600 dark:text-white"
+                    htmlFor="email"
+                  >
+                    DBS Type
+                  </label>
+                  <div>
+                    <select
+                      className="w-full h-12 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-black placeholder-secondary-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                      {
+                        ...editReg('DBSTypeId', {
+                          required: 'Required',
+                          pattern: {
+                            value: /^(?!default$).+$/,
+                            message: 'Required'
+                          }
+                        })
+                      }
+                    >
+                      <option value="default">Select DBS Type</option>
+                      {
+                        dbsType.map((data, index) => (
+                            <option value={data.dbsTypeId} key={index}>{data.typeName}</option>
+                        ))
+                      }
+                    </select>
+                    <p className='error-msg'>{editErrors.DBSTypeId?.message}</p>
+                  </div>
+                </div>
+                <div className="lg:col-span-2">
+                  <label
+                    className="inline-block mb-2 text-secondary-600 dark:text-white"
+                    htmlFor="email"
+                  >
+                    Description
+                  </label>
+                  <div>
+                    <textarea
+                      className="w-full h-30 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-black placeholder-secondary-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                        {
+                        ...editReg('StageDescription', {
+                          required: 'Required'
+                        })
+                      }
+                      required
+                    />
+                    <p className='error-msg'>{editErrors.StageDescription?.message}</p>
+                  </div>
+                </div>
+                <div className="lg:col-span-2">
+                  <label
+                    className="inline-block mb-2 text-secondary-600 dark:text-white"
+                    htmlFor="email"
+                  >
+                    Stage Admin
+                  </label>
+                  <div>
+                    <select
+                      className="w-full h-12 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-black placeholder-secondary-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                      {
+                        ...editReg('StageAdminId', {
+                          required: 'Required',
+                          pattern: {
+                            value: /^(?!default$).+$/,
+                            message: 'Required'
+                          }
+                        })
+                      }
+                    >
+                      <option value="default">Select Stage Admin</option>
+                      {
+                        orgMembers.map((data, index) => (
+                            <option value={data.userId} key={index}>{`${data.firstName} ${data.lastName}`}</option>
+                        ))
+                      }
+                    </select>
+                    <p className='error-msg'>{editErrors.StageAdminId?.message}</p>
+                  </div>
+                </div>
+                <div>
+                  <label
+                    className="inline-block mb-2 text-secondary-600 dark:text-white"
+                    htmlFor="email"
+                  >
+                    Duration
+                  </label>
+                  <div>
+                    <input
+                      type="number"
+                      className="w-full h-12 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-black placeholder-secondary-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                        {
+                        ...editReg('Duration', {
+                          required: 'Required'
+                        })
+                      }
+                      required
+                    />
+                    <p className='error-msg'>{editErrors.Duration?.message}</p>
+                  </div>
+                </div>
+                <div>
+                  <label
+                    className="inline-block mb-2 text-secondary-600 dark:text-white"
+                    htmlFor="email"
+                  >
+                    Unit
+                  </label>
+                  <div>
+                    <select
+                      className="w-full h-12 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-black placeholder-secondary-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                      {
+                        ...editReg('DurationUnit', {
+                          required: 'Required',
+                          pattern: {
+                            value: /^(?!default$).+$/,
+                            message: 'Required'
+                          }
+                        })
+                      }
+                    >
+                      <option value="default">Select Duration Unit</option>
+                      <option value="1">Hours</option>
+                      <option value="2">Days</option>
+                      <option value="3">Weeks</option>
+                    </select>
+                    <p className='error-msg'>{editErrors.DurationUnit?.message}</p>
+                  </div>
+                </div>
+              </div>
+              <hr className="mt-5" />
+              <div className="flex justify-end my-2 gap-2">
+                <button className="btn text-white bg-black" onClick={() => setEditModalState(false) }>
+                  <X size={18} className="mr-2" />
+                  Cancel
+                </button>
+                <button className="btn btn-warning">
+                  <div className="dots hidden" id="query-loader">
+                    <div className="dot"></div>
+                    <div className="dot"></div>
+                    <div className="dot"></div>
+                  </div>
+                  <span id="query-text">
+                    <Pen size={18} className="mr-2" />
+                    Update Stage
+                  </span>
+                </button>
+              </div>
+            </form>
+                </div>       
+            )
+        }
+      </Modal>
       <div className="flex flex-wrap content-inner">
         <div className="flex-auto w-50">
           <div className="relative flex flex-col mb-8  bg-white dark:bg-dark-card shadow rounded">
@@ -460,12 +737,7 @@ export default function DBSStages() {
                       Error: {error}
                     </div>
                   )}
-                  {!loading && !error && dbsStages.length === 0 && (
-                    <div className="no-roles flex justify-center text-center mt-[25%]">
-                      No DBS Stage found.
-                    </div>
-                  )}
-                  {!loading && !error && dbsStages.length > 0 && (
+                  {!loading && !error && (
                     <>
                     <div className="flex flex-wrap justify-between overflow-x-auto">
                       <div className="pb-5">
@@ -580,6 +852,10 @@ export default function DBSStages() {
                                           <button
                                               className="btn btn-warning btn-icon btn-sm mr-1"
                                               type="button"
+                                          onClick={() => {
+                                                setEditStage(data);
+                                                setEditModalState(true);
+                                              }}
                                               >
                                               <Pen />
                                           </button>
@@ -601,7 +877,7 @@ export default function DBSStages() {
                             </div> : <></>
                         }
                     </div>
-                    <div className="flex flex-wrap justify-between my-6">
+                    <div className="flex flex-wrap justify-between mt-6">
                       <div className="flex justify-center items-center mb-1">
                         <p className="text-black">
                           Showing { dbsStages.length > 0 ? ((dbsPage * dbsLimit) - dbsLimit) + 1 : 0 } to { dbsStages.length > 0 ? (((dbsPage * dbsLimit) - dbsLimit) + 1) + (dbsStages.length - 1) : 0 } of { totalDbsStages } entries

@@ -119,3 +119,15 @@ export const submitDbsStage = async (data: FormData) => {
   })
   return response
 }
+
+export const updateDbsStage = async (data: FormData, stageId: number) => {
+  const token = localStorage.getItem('accessToken');
+  const response = await fetch(`${BaseURL}/dbs-stages/${stageId}`, {
+    method: 'PATCH',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    },
+    body: data
+  })
+  return response
+}

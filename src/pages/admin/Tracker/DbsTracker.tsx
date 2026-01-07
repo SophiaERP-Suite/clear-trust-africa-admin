@@ -30,6 +30,12 @@ interface DbsChecks {
   userLastName: string;
   organisationName: string;
   requestedBy: string;
+  staffInChargeId: number;
+  staffInChargeFirstName: string;
+  staffInChargeLastName: string;
+  adminId: number;
+  adminFirstName: string;
+  adminLastName: string;
   dbsType: string;
   dbsTypeCost: number;
 }
@@ -583,6 +589,12 @@ export default function DBSTrackerModule() {
                         Request Type
                       </th>
                       <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                        Staff In Charge
+                      </th>
+                      <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                        Admin
+                      </th>
+                      <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
                         Request Date
                       </th>
                     </tr>
@@ -628,6 +640,12 @@ export default function DBSTrackerModule() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
                           {data.dbsType}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
+                          {data.staffInChargeId ? `${data.staffInChargeFirstName} ${data.staffInChargeLastName}` : 'None Assigned'}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
+                          {data.adminId ? `${data.adminFirstName} ${data.adminLastName}` : 'None Assigned'}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
                           {(new Date(data.dateCreated)).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
