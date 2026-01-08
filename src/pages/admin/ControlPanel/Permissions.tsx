@@ -124,8 +124,7 @@ function Permissions() {
   ) => {
     try {
       setLoading(true);
-      setLoading(true);
-
+      
       if (!permissionInput || !permissionInput2 || !orgTypeId) {
         toast.error("Please fill all fields");
         setLoading(false);

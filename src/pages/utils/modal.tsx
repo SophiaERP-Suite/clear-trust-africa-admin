@@ -87,7 +87,7 @@ const Modal: React.FC<ModalProps> = ({
       />
 
       {/* Modal */}
-      <div className="relative z-10 w-5/6 md:max-w-md rounded-lg bg-white p-6 shadow-lg">
+      <div className="relative z-10 w-5/6 md:max-w-md rounded-md bg-white p-6 shadow-lg">
         <h2 className="text-lg font-semibold text-gray-800">
           {headerIcon} {title}
         </h2>
