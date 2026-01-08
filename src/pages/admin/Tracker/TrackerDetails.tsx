@@ -133,7 +133,6 @@ const statusStyles: Record<string, string> = {
 type ActivityFilterForm = {
   StaffName: string;
   StageLevel: number;
-  Status: number;
 }
 
 export default function TrackerDetails() {
@@ -250,7 +249,7 @@ export default function TrackerDetails() {
     if (!birthdayPassed) {
       age--;
     }
-    return age;
+    return age > 1 ? `${age} Years` : `${age} Year`;
   }
     
   useEffect(() => {
@@ -924,15 +923,6 @@ export default function TrackerDetails() {
                               ))
                             }
                           </select>
-                          <select
-                            {...activityFilterReg('Status')}
-                            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          >
-                            <option value="">All Status</option>
-                            <option value="1">Pending</option>
-                            <option value="2">Approved</option>
-                            <option value="3">Rejected</option>
-                          </select>
                         </div>
                       </div>
                       <div className="p-5">
@@ -954,12 +944,6 @@ export default function TrackerDetails() {
                                 </th>
                                 <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
                                   Log Date
-                                </th>
-                                <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
-                                  Status
-                                </th>
-                                <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
-                                  Action
                                 </th>
                               </tr>
                             </thead>
@@ -995,46 +979,6 @@ export default function TrackerDetails() {
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
                                       {(new Date(data.dateCreated)).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
-                                      {
-                                        Number(data.status) === 1 && <p className="w-15 text-sm font-light p-1 bg-orange-200 text-center rounded-lg">Pending</p>
-                                      }
-                                      {
-                                        Number(data.status) === 2 && <p className="w-15 text-sm font-light p-1 bg-green-200 text-center rounded-lg">Verified</p>
-                                      }
-                                      {
-                                        Number(data.status) === 3 && <p className="w-15 text-sm font-light p-1 bg-red-200 text-center rounded-lg">Rejected</p>
-                                      }
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
-                                      {
-                                        Number(data.status) === 1 && user?.roleScope === 1 &&
-                                        ( user?.userRole === 'SuperAdmin' ||
-                                          user?.userId === dbsDetails.adminId ||
-                                          user?.userId === dbsDetails.staffInChargeId
-                                        ) && (
-                                          <div className="flex justify-end items-center gap-3 my-1">
-                                            <Tippy content="Mark As Rejected">
-                                              <button className="btn text-white btn-danger py-1 px-2">
-                                                <X size={18} />
-                                              </button>
-                                            </Tippy>
-                                            <Tippy content="Mark As Approved">
-                                              <button className="btn btn-success py-1 px-2">
-                                                <div className="dots hidden" id="query-loader-4">
-                                                  <div className="dot"></div>
-                                                  <div className="dot"></div>
-                                                  <div className="dot"></div>
-                                                </div>
-                                                <span id="query-text-4">
-                                                  <CheckCheck size={18} />
-                                                </span>
-                                            </button>
-                                            </Tippy>
-                                          </div>
-                                        )
-                                      }
                                     </td>
                                 </tr>
                                 ))
