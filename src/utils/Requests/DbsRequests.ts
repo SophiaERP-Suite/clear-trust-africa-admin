@@ -119,6 +119,37 @@ export const fetchDbsStages = async (filterData: object) => {
   return response
 }
 
+export const fetchDbsLogsByApplication = async (applicationId: number, filterData: object) => {
+  const token = localStorage.getItem('accessToken');
+  const params = new URLSearchParams();
+  Object.entries(filterData).forEach(([key, value]) => {
+    if (value !== null && value !== undefined && value !== "") {
+      params.append(key, value);
+    }
+  })
+  const url = `${BaseURL}/dbs-activity-log/${applicationId}?${params}`;
+  console.log(url);
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  })
+  return response
+}
+
+export const submitDbsActivityLog = async (applicationId: number, data: FormData) => {
+  const token = localStorage.getItem('accessToken');
+  const response = await fetch(`${BaseURL}/dbs-activity-log/${applicationId}`, {
+    method: 'POST',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    },
+    body: data
+  })
+  return response
+}
+
 export const submitDbsStage = async (data: FormData) => {
   const token = localStorage.getItem('accessToken');
   const response = await fetch(`${BaseURL}/dbs-stages`, {

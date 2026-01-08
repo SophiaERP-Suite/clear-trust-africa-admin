@@ -13,6 +13,7 @@ import {
   MessageSquareShare,
   Phone,
   Plus,
+  Search,
   Shield,
   ShieldCheck,
   User,
@@ -27,14 +28,15 @@ import { NavLink, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { fetchApplicantDocsById } from "../../../utils/Requests/EmployeeRequests.js";
 import Hashids from "hashids";
-import { fetchDbsCheckById, updateDbsApplications } from "../../../utils/Requests/DbsRequests.js";
+import { fetchDbsCheckById, fetchDbsLogsByApplication, fetchDbsStages, submitDbsActivityLog, updateDbsApplications } from "../../../utils/Requests/DbsRequests.js";
 import { toast, ToastContainer } from "react-toastify";
 import Modal from 'react-modal';
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { fetchOrgMembers } from "../../../utils/Requests/AuthRequests.js";
 import { useAuth } from "../../../utils/useAuth.js";
 import { handleCreateEmployee } from "../../../utils/ResponseHandlers/EmployeeResponse.js";
 import Tippy from "@tippyjs/react";
+import type { DBSStagesData } from "../ControlPanel/DBSStages.js";
 
 interface EmployeeData {
   userId: number;
@@ -88,18 +90,36 @@ interface UserDocumentValues {
   dateCreated: string;
 }
 
+interface ActivityLogData {
+  activityLogId: number;
+  action: string;
+  dbsApplicationId: number;
+  dbsStageId: number;
+  dbsStageName: string;
+  dbsStageAdminId: number;
+  staffId: number;
+  staffFistName: string;
+  status: number;
+  staffLastName: string;
+  dateCreated: string;
+}
+
+interface ActivityLogForm {
+  Action: string;
+}
+
 interface AdminFormValues {
-    AdminId: number;
+  AdminId: number;
 }
 
 interface StaffFormValues {
-    StaffInChargeId: number;
+  StaffInChargeId: number;
 }
 
 interface UserData {
-    userId: number;
-    firstName: string;
-    lastName: string;
+  userId: number;
+  firstName: string;
+  lastName: string;
 }
 
 const statusStyles: Record<string, string> = {
@@ -110,11 +130,27 @@ const statusStyles: Record<string, string> = {
   Rejected: 'bg-red-200',
 };
 
+type ActivityFilterForm = {
+  StaffName: string;
+  StageLevel: number;
+  Status: number;
+}
+
 export default function TrackerDetails() {
   const { id } = useParams();
   const { user } = useAuth();
   const [dbsDetails, setDbsDetails] = useState<DbsChecks | null>(null);
   const [orgMembers, setOrgMembers] = useState<UserData[]>([]);
+  const [activityLog, setActivityLog] = useState<ActivityLogData[]>([]);
+  const [totalActivityLog, setTotalActivityLog] = useState(0);
+  const [activityPage, setActivityPage] = useState(1);
+  const activityLimit = 5;
+  const {
+    register: activityFilterReg,
+    control,
+  } = useForm<ActivityFilterForm>();
+  const activityFilters = useWatch({ control });
+  const [dbsStages, setDbsStages] = useState<DBSStagesData[]>([]);
   const hashIds = new Hashids('ClearTrustAfricaEncode', 10);
   const hashedId = id ? Number(hashIds.decode(id)[0]) : 0;
   const [userDocuments, setUserDocuments] = useState<UserDocumentValues[]>([]);
@@ -122,6 +158,8 @@ export default function TrackerDetails() {
   const userId: number = dbsDetails?.userId ? dbsDetails.userId : 0;
   const [adminModalState, setAdminModalState] = useState(false);
   const [staffModalState, setStaffModalState] = useState(false);
+  const [activityModalState, setActivityModalState] = useState(false);
+  const colors = ["#5d009bff", "#ff8800ff", "#ff0000", "#003000ff", "#00006dff"];
   const { register, handleSubmit, reset, formState } = useForm<AdminFormValues>();
   const { errors } = formState;
   const {
@@ -131,6 +169,13 @@ export default function TrackerDetails() {
     formState: staffForm
   } = useForm<StaffFormValues>();
   const { errors: staffErrors } = staffForm;
+  const {
+    register: activityReg,
+    handleSubmit: submitActivity,
+    reset: resetActivity,
+    formState: activityForm
+  } = useForm<ActivityLogForm>();
+  const { errors: activityErrors } = activityForm;
 
   useEffect(() => {
       fetchDbsCheckById(hashedId)
@@ -157,6 +202,38 @@ export default function TrackerDetails() {
       const data = await res.json()
       console.log(data);
       setDbsDetails(data.data)
+    } else {
+      const resText = await res.text();
+      console.log(JSON.parse(resText));
+    }
+  }
+
+  useEffect(() => {
+    fetchDbsLogsByApplication(hashedId, { pageNumber: activityPage, limit: activityLimit, ...activityFilters })
+    .then(res => {
+      if (res.status === 200) {
+        res.json()
+        .then(data => {
+          console.log(data);
+          setTotalActivityLog(data.data.totalCount);
+          setActivityLog(data.data.logs);
+        })
+      } else {
+        res.text()
+        .then(data => {
+          console.log(JSON.parse(data));
+        })
+      }
+    })
+  }, [activityPage, activityLimit, activityFilters, hashedId]);
+
+  const refetchActivityLog = async () => {
+    const res = await fetchDbsLogsByApplication(hashedId, { pageNumber: activityPage, limit: activityLimit, ...activityFilters });
+    if (res.status === 200) {
+      const data = await res.json()
+      console.log(data);
+      setTotalActivityLog(data.data.totalCount);
+      setActivityLog(data.data.logs);
     } else {
       const resText = await res.text();
       console.log(JSON.parse(resText));
@@ -212,6 +289,25 @@ export default function TrackerDetails() {
     })
     .catch((err) => console.log(err))
   }, [userId]);
+
+  useEffect(() => {
+      setDbsStages([]);
+      fetchDbsStages({ PageNumber: 1, Limit: 20, DBSTypeId: dbsDetails?.dbsTypeId })
+      .then(res => {
+        if (res.status === 200) {
+          res.json()
+          .then(data => {
+            console.log(data);
+            setDbsStages(data.data.stages);
+          })
+        } else {
+          res.text()
+          .then(data => {
+            console.log(JSON.parse(data));
+          })
+        }
+      })
+    }, [dbsDetails]);
     
   const assignAdmin = async (data: AdminFormValues) => {
     if (!errors.AdminId) {
@@ -230,6 +326,28 @@ export default function TrackerDetails() {
       .finally(async () => {
         setAdminModalState(false);
         await refetchDbsDetails();
+      });
+    }
+  };
+
+  const logActivity = async (data: ActivityLogForm) => {
+    if (!activityErrors.Action && dbsDetails) {
+      const loader = document.getElementById('query-loader-3');
+      const text = document.getElementById('query-text-3');
+      if (loader) {
+        loader.style.display = 'flex';
+      }
+      if (text) {
+        text.style.display = 'none';
+      }
+      const formData = new FormData();
+      formData.append('Action', String(data.Action));
+      formData.append('DBSStageId', String(dbsDetails.dbsStageId));
+      const res = await submitDbsActivityLog(hashedId, formData);
+      handleCreateEmployee(res, loader, text, { toast }, resetActivity)
+      .finally(async () => {
+        setActivityModalState(false);
+        await refetchActivityLog();
       });
     }
   };
@@ -416,6 +534,74 @@ export default function TrackerDetails() {
                       <span id="query-text-1">
                         <CheckCheck size={18} className="mr-2" />
                         Assign
+                      </span>
+                   </button>
+                  </div>
+              </form>
+          </div>
+      </Modal>
+      <Modal isOpen={activityModalState} onRequestClose={() => { setActivityModalState(false); }}
+          style={{
+          content: {
+          width: 'fit-content',
+          height: 'fit-content',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          backgroundColor: 'rgb(255 255 255)',
+          borderRadius: '0.5rem',
+          boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)'
+          },
+          overlay: {
+          backgroundColor: 'rgba(255, 255, 255, 0.7)'
+          }
+      }}
+      >
+          <div className="h-fit max-h-[70vh] overflow-y-auto w-100">
+              <div className="flex justify-start">
+              <p className="font-semibold text-black py-1 text-lg"><ClipboardClock size={20} className="mr-2" /> Log New Activity</p>
+              </div>
+              <form
+                  onSubmit={submitActivity(logActivity)}
+                  noValidate
+              >
+                  <div className="grid grid-cols-1 gap-x-8 gap-y-5 mt-2">
+                  <div>
+                    <label
+                    className="inline-block mb-2 text-secondary-600 dark:text-white"
+                    htmlFor="email"
+                    >
+                     Action Taken
+                    </label>
+                    <div>
+                      <textarea
+                        className="w-full h-30 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-black placeholder-secondary-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                        {
+                          ...activityReg('Action', {
+                            required: 'Required',
+                          })
+                        }
+                      >
+                      </textarea>
+                      <p className='error-msg'>{activityErrors.Action?.message}</p>
+                    </div>
+                  </div>
+                  </div>
+                  <hr className="mt-5" />
+                  <div className="flex justify-end my-2 gap-2">
+                    <button className="btn text-white bg-black" onClick={() => setActivityModalState(false) }>
+                      <X size={18} className="mr-2" />
+                      Cancel
+                    </button>
+                    <button className="btn btn-success">
+                      <div className="dots hidden" id="query-loader-3">
+                        <div className="dot"></div>
+                        <div className="dot"></div>
+                        <div className="dot"></div>
+                      </div>
+                      <span id="query-text-3">
+                        <CheckCheck size={18} className="mr-2" />
+                        Log Activity
                       </span>
                    </button>
                   </div>
@@ -705,13 +891,51 @@ export default function TrackerDetails() {
                             user?.userId === dbsDetails.adminId ||
                             user?.userId === dbsDetails.staffInChargeId
                           ) &&
-                          (<button className="btn btn-success mr-2 mb-2">
+                          (<button className="btn btn-success mr-2 mb-2" onClick={() => setActivityModalState(true)}>
                             <Plus size={18} className="mr-2" />
                             Log New Activity
                           </button>)
                         }
                       </div>
-                      <div className="p-6">
+                      <div className="p-5">
+                        <div className="flex flex-wrap gap-4">
+                          <div className="flex-1 min-w-[330px]">
+                            <div className="relative">
+                              <Search
+                                className="absolute left-3 top-7 transform -translate-y-1/2 text-gray-400"
+                                size={20}
+                              />
+                              <input
+                                type="text"
+                                placeholder="Search by staff name..."
+                                {...activityFilterReg('StaffName')}
+                                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              />
+                            </div>
+                          </div>
+                          <select
+                            {...activityFilterReg('StageLevel')}
+                            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          >
+                            <option value="">All Stage Levels</option>
+                            {
+                              dbsStages.map((data, index) => (
+                                <option value={data.dbsStageId} key={index}>{data.stageName}</option>
+                              ))
+                            }
+                          </select>
+                          <select
+                            {...activityFilterReg('Status')}
+                            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          >
+                            <option value="">All Status</option>
+                            <option value="1">Pending</option>
+                            <option value="2">Approved</option>
+                            <option value="3">Rejected</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div className="p-5">
                         <div className="flex flex-wrap justify-between overflow-x-auto h-fit">
                           <table className="min-w-full divide-y divide-secondary-200 dark:divide-secondary-800 border dark:border-secondary-800">
                             <thead>
@@ -732,15 +956,132 @@ export default function TrackerDetails() {
                                   Log Date
                                 </th>
                                 <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
-                                  Approval Status
+                                  Status
+                                </th>
+                                <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                                  Action
                                 </th>
                               </tr>
                             </thead>
+                            <tbody className="divide-y divide-secondary-200 dark:divide-secondary-800">
+                              {
+                                activityLog.map((data, index) => (
+                                <tr key={data.activityLogId ?? index}>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                    <div className="iq-media-group iq-media-group-1">
+                                        <h6 className="font-bold dark:text-white">
+                                          {" "}
+                                          #{(index + (activityLimit * (activityPage - 1))) + 1}
+                                        </h6>
+                                    </div>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
+                                      <div className="flex w-50 items-center gap-3">
+                                        <div className="h-12 w-12 border rounded-full" style={{ backgroundColor: colors[index % 4], display: "flex", justifyContent: "center", alignItems: "center", color: "#ffffff"}}>
+                                          { `${data.staffFistName[0]} ${data.staffLastName[0]}` }
+                                        </div>
+                                        <div>
+                                          <div className="font-semibold text-gray-900">
+                                            {`${data.staffFistName} ${data.staffLastName}`}
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
+                                      {data.action}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
+                                    {data.dbsStageName}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
+                                      {(new Date(data.dateCreated)).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
+                                      {
+                                        Number(data.status) === 1 && <p className="w-15 text-sm font-light p-1 bg-orange-200 text-center rounded-lg">Pending</p>
+                                      }
+                                      {
+                                        Number(data.status) === 2 && <p className="w-15 text-sm font-light p-1 bg-green-200 text-center rounded-lg">Verified</p>
+                                      }
+                                      {
+                                        Number(data.status) === 3 && <p className="w-15 text-sm font-light p-1 bg-red-200 text-center rounded-lg">Rejected</p>
+                                      }
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
+                                      {
+                                        Number(data.status) === 1 && user?.roleScope === 1 &&
+                                        ( user?.userRole === 'SuperAdmin' ||
+                                          user?.userId === dbsDetails.adminId ||
+                                          user?.userId === dbsDetails.staffInChargeId
+                                        ) && (
+                                          <div className="flex justify-end items-center gap-3 my-1">
+                                            <Tippy content="Mark As Rejected">
+                                              <button className="btn text-white btn-danger py-1 px-2">
+                                                <X size={18} />
+                                              </button>
+                                            </Tippy>
+                                            <Tippy content="Mark As Approved">
+                                              <button className="btn btn-success py-1 px-2">
+                                                <div className="dots hidden" id="query-loader-4">
+                                                  <div className="dot"></div>
+                                                  <div className="dot"></div>
+                                                  <div className="dot"></div>
+                                                </div>
+                                                <span id="query-text-4">
+                                                  <CheckCheck size={18} />
+                                                </span>
+                                            </button>
+                                            </Tippy>
+                                          </div>
+                                        )
+                                      }
+                                    </td>
+                                </tr>
+                                ))
+                              }
+                            </tbody>
                           </table>
-                          <div className="py-4 whitespace-nowrap w-full">
-                            <span className="px-6 py-4 text-left font-medium text-black dark:text-white">There hasn't been any activity logged for this application</span>
-                          </div> 
+                          {
+                            activityLog.length === 0 ?
+                              <div className="py-4 whitespace-nowrap w-full">
+                                  <span className="px-6 py-4 text-left font-medium text-black dark:text-white">There hasn't been any activity logged for this application</span>
+                              </div> : <></>
+                          } 
                         </div>
+                        <div className="flex flex-wrap justify-between mt-6">
+                      <div className="flex justify-center items-center mb-1">
+                        <p className="text-black">
+                          Showing { activityLog.length > 0 ? ((activityPage * activityLimit) - activityLimit) + 1 : 0 } to { activityLog.length > 0 ? (((activityPage * activityLimit) - activityLimit) + 1) + (activityLog.length - 1) : 0 } of { totalActivityLog } entries
+                        </p>
+                      </div>
+                      <div className="inline-flex flex-wrap">
+                        {
+                          activityPage > 1 && <a
+                          href="#"
+                          onClick={() => { if (activityPage > 1) {setActivityPage(activityPage - 1);} }}
+                          className="border-t border-b border-l text-primary-500 border-secondary-500 px-2 py-1 rounded-l dark:border-secondary-800"
+                        >
+                          Previous
+                        </a>
+                        }
+                        <a
+                          href="#"
+                          className="border text-white border-secondary-500 cursor-pointer bg-primary-500 px-4 py-1 dark:border-secondary-800"
+                        >
+                          { activityPage }
+                        </a>
+                        {
+                          (activityPage * activityLimit) < totalActivityLog && <a
+                          href="#"
+                          onClick={() => { setActivityPage(activityPage + 1); }}
+                          className="border-r border-t border-b text-primary-500 border-secondary-500 px-4 py-1 rounded-r dark:border-secondary-800"
+                        >
+                          Next
+                        </a>
+                        }
+                        
+                      </div>
+                    </div>
                       </div>
                     </div>
                     <div className="relative flex flex-col mb-8 bg-white shadow rounded-xl dark:bg-dark-card">
