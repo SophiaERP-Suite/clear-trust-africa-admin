@@ -142,3 +142,15 @@ export const updateDbsStage = async (data: FormData, stageId: number) => {
   })
   return response
 }
+
+export const updateDbsApplications = async (data: FormData, applicationId: number) => {
+  const token = localStorage.getItem('accessToken');
+  const response = await fetch(`${BaseURL}/dbs-applications/${applicationId}`, {
+    method: 'PATCH',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    },
+    body: data
+  })
+  return response
+}
