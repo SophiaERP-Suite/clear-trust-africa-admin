@@ -2,11 +2,12 @@
 import { Outlet, NavLink } from "react-router-dom";
 import { useState, useRef, useEffect, type JSX } from "react";
 import DashboardHead from "../components/DashboardHead";
-import binta from "../assets2/img/binta.jpeg";
-import femi from "../assets2/img/femi_adebayo.jpg";
 import main_logo from "../assets2/img/cleartrust_logo.png";
 import mini_logo from "../assets2/img/cleartrust_logo_mini.png";
 import { ArrowRight, ArrowLeft, Menu, X, Bell, Search } from "lucide-react";
+import { useAuth } from "../utils/useAuth";
+import Modal from 'react-modal';
+import Tippy from "@tippyjs/react";
 
 interface NavItem {
   path: string;
@@ -21,6 +22,7 @@ interface BaseDashboardLayoutProps {
 
 function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
   const [open, setOpen] = useState(false);
+  const { logout, user } = useAuth();
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -38,6 +40,10 @@ function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
 
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenMobile, setIsOpenMobile] = useState(false);
+
+  useEffect(() => {
+    Modal.setAppElement('#cta-full-body');
+  }, [])
 
   function handleSideBarToggle() {
     setIsOpen(!isOpen);
@@ -111,31 +117,23 @@ function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
                   className="py-0 flex items-center p-2 ml-2 hover:text-primary-500 active:text-primary-500 focus:text-primary-500 focus"
                   href="#"
                 >
-                  <img
-                    src={femi}
-                    alt="User-Profile"
-                    className="h-12 w-12 border rounded-full"
-                    style={{ objectFit: "cover" }}
-                    loading="lazy"
-                  />
+                  <div className="h-12 w-12 border rounded-full" style={{ backgroundColor: "#0000ff2f", display: "flex", justifyContent: "center", alignItems: "center", color: "#000000", borderWidth: "1px", borderColor: "#000"}}>
+                      { user && `${user.firstName[0]} ${user.lastName[0]}` }
+                  </div>
                   <div className="caption ml-3 d-none d-md-block ">
                     <h6 className="mb-0 caption-title mr-4" style={{}}>
-                      Olamide Adigun
+                      { user && `${user.firstName} ${user.lastName}` }
                     </h6>
-                    <p className="mb-0 text-sm caption-sub-title focusa active:text-primary-500  focus:text-primary-500 hover:text-primary-500 text-black mr-4">
-                      HR
+                    <p className="mb-0 text-sm font-bold caption-sub-title focusa active:text-primary-500  focus:text-primary-500 hover:text-primary-500 text-black mr-4">
+                      { user && user.userRole }
                     </p>
                   </div>
                 </a>
               ) : (
                 <a className="py-0 flex justify-center" href="#">
-                  <img
-                    src={femi}
-                    alt="User-Profile"
-                    className="h-12 w-12 rounded-full"
-                    style={{ objectFit: "cover" }}
-                    loading="lazy"
-                  />
+                  <span className="h-12 w-12 border rounded-full" style={{ backgroundColor: "#0000ff2f", display: "flex", justifyContent: "center", alignItems: "center", color: "#000000", borderWidth: "1px", borderColor: "#000"}}>
+                      { user && `${user.firstName[0]} ${user.lastName[0]}` }
+                  </span>
                 </a>
               )}
             </p>
@@ -145,21 +143,31 @@ function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
             <ul className="sidebar-main-menu">
               {navItems.map((item) => (
                 <li key={item.path} className="nav-item">
-                  <NavLink
-                    to={item.path}
-                    className={({ isActive }) =>
-                      `text-black  ${
-                        isOpen
-                          ? "nav-link"
-                          : "flex justify-center items-center gap-4 my-1 py-3 nav-link-sub"
-                      } ${isActive ? "active" : ""}`
-                    }
-                  >
-                    {item.icon}
-                    {isOpen ? (
-                      <span className="item-name">{item.label}</span>
-                    ) : null}
-                  </NavLink>
+                  {
+                    isOpen ? (
+                      <NavLink
+                        to={item.path}
+                        className={({ isActive }) =>
+                          `text-black  ${"nav-link"
+                          } ${isActive ? "active" : ""}`
+                        }
+                      >
+                        {item.icon}
+                        <span className="item-name">{item.label}</span>
+                      </NavLink>
+                    ) : (
+                        <Tippy content={item.label}>
+                          <NavLink
+                            to={item.path}
+                            className={({ isActive }) =>
+                              `text-black flex justify-center items-center gap-4 my-1 py-3 nav-link-sub" ${isActive ? "active" : ""}`
+                            }
+                          >
+                            {item.icon}
+                          </NavLink>
+                        </Tippy>
+                    )
+                  }
                 </li>
               ))}
             </ul>
@@ -197,20 +205,16 @@ function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
                     className="py-0 flex items-center p-2 ml-2 hover:text-primary-500 active:text-primary-500 focus:text-primary-500 focus"
                     href="#"
                   >
-                    <img
-                      src={femi}
-                      alt="User-Profile"
-                      className="h-12 w-12 border rounded-full"
-                      style={{ objectFit: "cover" }}
-                      loading="lazy"
-                    />
+                    <span className="h-12 w-12 border rounded-full" style={{ backgroundColor: "#0000ff2f", display: "flex", justifyContent: "center", alignItems: "center", color: "#000000", borderWidth: "1px", borderColor: "#000"}}>
+                      { user && `${user.firstName[0]} ${user.lastName[0]}` }
+                    </span>
                     <div className="caption ml-3 d-none d-md-block ">
-                      <h6 className="mb-0 caption-title mr-4" style={{}}>
-                        Olamide Adigun
-                      </h6>
-                      <p className="mb-0 text-sm caption-sub-title focusa active:text-primary-500  focus:text-primary-500 hover:text-primary-500 text-black mr-4">
-                        HR
-                      </p>
+                      <span className="mb-0 caption-title mr-4" style={{}}>
+                        { user && `${user.firstName} ${user.lastName}` }
+                      </span>
+                      <span className="mb-0 text-sm font-bold caption-sub-title focusa active:text-primary-500  focus:text-primary-500 hover:text-primary-500 text-black mr-4">
+                        { user && user.userRole }
+                      </span>
                     </div>
                   </a>
                 </p>
@@ -921,22 +925,18 @@ function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
                                   href="#"
                                   onClick={() => setOpen(!open)}
                                 >
-                                  <img
-                                    src={binta}
-                                    alt="User-Profile"
-                                    className="h-12 w-12 rounded-full border truncate"
-                                    style={{ objectFit: "cover" }}
-                                    loading="lazy"
-                                  />
+                                  <div className="h-12 w-12 border rounded-full" style={{ backgroundColor: "#ff7b002f", display: "flex", justifyContent: "center", alignItems: "center", color: "#000000", borderWidth: "1px", borderColor: "#000"}}>
+                                    { user && user.organisationName[0] }
+                                  </div>
                                   <div className="caption ml-3 d-none d-md-block ">
                                     <h6
                                       className="mb-0 caption-title mr-4"
                                       style={{}}
                                     >
-                                      Binta Schools
+                                      { user && user.organisationName }
                                     </h6>
-                                    <p className="mb-0 caption-sub-title focusa active:text-primary-500  focus:text-primary-500 hover:text-primary-500 text-black mr-4">
-                                      Admin
+                                    <p className="mb-0 font-bold caption-sub-title focusa active:text-primary-500  focus:text-primary-500 hover:text-primary-500 text-black mr-4">
+                                      { user && user.organisationType }
                                     </p>
                                   </div>
                                 </a>
@@ -948,13 +948,13 @@ function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
                                       </p>
                                       <ul className="py-2">
                                         <li className="w-full px-4 py-2 text-left rounded-md text-sm text-gray-700 hover:bg-gray-100">
-                                          <a>Organization Profile</a>
+                                          <a>Organisation Profile</a>
                                         </li>
                                         <li className="w-full px-4 py-2 text-left rounded-md text-sm text-gray-700 hover:bg-gray-100">
                                           <a>Settings</a>
                                         </li>
                                         <li className="w-full px-4 py-2 text-left rounded-md text-sm text-gray-700 hover:bg-gray-100">
-                                          <button>Logout</button>
+                                          <button onClick={logout}>Logout</button>
                                         </li>
                                       </ul>
                                     </div>
@@ -972,7 +972,7 @@ function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
             </nav>
           </div>
           {/* Page Content */}
-          <div className="">
+          <div className=""  id='cta-full-body'>
             <Outlet />
           </div>
 

@@ -12,17 +12,22 @@ import {
   Tag,
   Building,
   MapPin,
-  Clipboard,
+  BookKey,
+  FolderKey,
+  IdCard,
 } from "lucide-react";
 import { Link, useLocation, Routes, Route } from "react-router-dom";
 
 import Overview from "./Overview";
 import Roles from "./Roles";
 import Permissions from "./Permissions";
-import OrganizationType from "./OrganizationType";
+import OrganisationType from "./OrganisationType";
 import RolePermissions from "./RolePermissions";
 import NotificationSettings from "./NotificationSettings";
 import LocationManagement from "./LocationManagement";
+import DBSStatus from "./DBSStatus";
+import DBSType from "./DBSTypes";
+import DBSStages from "./DBSStages";
 
 const sidebarItems = [
   {
@@ -54,11 +59,11 @@ const sidebarItems = [
     component: RolePermissions,
   },
   {
-    id: "organizationType",
-    label: "Organization Type",
+    id: "organisationType",
+    label: "Organisation Type",
     icon: <Building size={20} />,
-    path: "/ControlPanel/organization-types",
-    component: OrganizationType,
+    path: "/ControlPanel/organisation-types",
+    component: OrganisationType,
   },
   {
     id: "notifications",
@@ -75,11 +80,25 @@ const sidebarItems = [
     component: LocationManagement,
   },
   {
-    id: "dbsApplication",
-    label: "DBS Application",
-    icon: <Clipboard size={20} />,
-    path: "/ControlPanel/dbsApplication",
-    component: NotificationSettings,
+    id: "dbsStatus",
+    label: "DBS Status",
+    icon: <BookKey size={20} />,
+    path: "/ControlPanel/DBSStatus",
+    component: DBSStatus,
+  },
+  {
+    id: "dbsType",
+    label: "DBS Type",
+    icon: <FolderKey size={20} />,
+    path: "/ControlPanel/DBSType",
+    component: DBSType,
+  },
+  {
+    id: "dbsStage",
+    label: "DBS Stage & SLA",
+    icon: <IdCard size={20} />,
+    path: "/ControlPanel/DBSStage",
+    component: DBSStages,
   },
   {
     id: "audit",

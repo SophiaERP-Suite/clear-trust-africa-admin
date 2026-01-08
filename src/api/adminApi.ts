@@ -1,52 +1,52 @@
-import type { CreateOrganizationDto, OrganizationDto } from "../types/controlPanel/organization";
+import type { CreateOrganisationDto, OrganisationDto } from "../types/controlPanel/organisation";
 import api from "./axios";
 
-export interface OrganizationApprovalDto {
+export interface OrganisationApprovalDto {
   reason: string;
 }
 
-export const getAllOrganizations = async (status?: string, page = 1, pageSize = 20) => {
+export const getAllOrganisations = async (status?: string, page = 1, pageSize = 20) => {
   const params = new URLSearchParams();
   if (status) params.append('status', status);
   params.append('page', page.toString());
   params.append('pageSize', pageSize.toString());
 
-  const response = await api.get<OrganizationDto[]>(`/api/admin/organizations?${params.toString()}`);
+  const response = await api.get<OrganisationDto[]>(`/api/admin/organisations?${params.toString()}`);
   return response.data;
 };
 
-export const getPendingOrganizations = async () => {
-  const response = await api.get<OrganizationDto[]>('/api/admin/organizations/pending');
+export const getPendingOrganisations = async () => {
+  const response = await api.get<OrganisationDto[]>('/api/admin/organisations/pending');
   return response.data;
 };
 
-export const getOrganizationById = async (id: number) => {
-  const response = await api.get<OrganizationDto>(`/api/admin/organizations/${id}`);
+export const getOrganisationById = async (id: number) => {
+  const response = await api.get<OrganisationDto>(`/api/admin/organisations/${id}`);
   return response.data;
 };
 
-export const createOrganization = async (data: CreateOrganizationDto) => {
-  const response = await api.post('/api/admin/organizations/register', data);
+export const createOrganisation = async (data: CreateOrganisationDto) => {
+  const response = await api.post('/api/admin/organisations/register', data);
   return response.data;
 };
 
-export const approveOrganization = async (id: number) => {
-  const response = await api.put(`/api/admin/organizations/${id}/approve`);
+export const approveOrganisation = async (id: number) => {
+  const response = await api.put(`/api/admin/organisations/${id}/approve`);
   return response.data;
 };
 
-export const rejectOrganization = async (id: number, reason: string) => {
-  const response = await api.put(`/api/admin/organizations/${id}/reject`, { reason });
+export const rejectOrganisation = async (id: number, reason: string) => {
+  const response = await api.put(`/api/admin/organisations/${id}/reject`, { reason });
   return response.data;
 };
 
-export const suspendOrganization = async (id: number, reason: string) => {
-  const response = await api.put(`/api/admin/organizations/${id}/suspend`, { reason });
+export const suspendOrganisation = async (id: number, reason: string) => {
+  const response = await api.put(`/api/admin/organisations/${id}/suspend`, { reason });
   return response.data;
 };
 
-export const activateOrganization = async (id: number) => {
-  const response = await api.put(`/api/admin/organizations/${id}/activate`);
+export const activateOrganisation = async (id: number) => {
+  const response = await api.put(`/api/admin/organisations/${id}/activate`);
   return response.data;
 };
 

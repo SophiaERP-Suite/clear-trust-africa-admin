@@ -9,16 +9,16 @@ import {
 } from "../../../api/permissionApi";
 import type { PermissionsDto } from "../../../types/controlPanel/permissions";
 import Modal from "../../utils/modal";
-import { getAllOrganizationTypes } from "../../../api/orgTypeApi";
-import type { OrganizationTypeDto } from "../../../types/controlPanel/organizationType";
+import { getAllOrganisationTypes } from "../../../api/orgTypeApi";
+import type { OrganisationTypeDto } from "../../../types/controlPanel/organisationType";
 import Loading from "../../utils/Loading";
 
 type ModalType = "add" | "edit" | "delete" | null;
 
 function Permissions() {
   const [permissions, setPermissions] = useState<PermissionsDto[]>([]);
-  const [organizationTypes, setOrganizationTypes] = useState<
-    OrganizationTypeDto[]
+  const [organisationTypes, setOrganisationTypes] = useState<
+    OrganisationTypeDto[]
   >([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -48,8 +48,8 @@ function Permissions() {
   const fetchOrgType = async () => {
     try {
       // setLoading(true);
-      const data = await getAllOrganizationTypes();
-      setOrganizationTypes(data);
+      const data = await getAllOrganisationTypes();
+      setOrganisationTypes(data);
       console.log(data);
     } catch (err: any) {
       console.error(err);
@@ -101,7 +101,7 @@ function Permissions() {
       const payload = {
         name: permissionInput,
         description: permissionInput2,
-        organizationTypeId: parseInt(orgTypeId),
+        organisationTypeId: parseInt(orgTypeId),
       };
 
       await createPermission(payload);
@@ -139,7 +139,7 @@ function Permissions() {
       const payload = {
         name: permissionInput,
         description: permissionInput2,
-        organizationTypeId: parseInt(orgTypeId),
+        organisationTypeId: parseInt(orgTypeId),
       };
 
       await updatePermission(permissionId, payload);
@@ -199,9 +199,9 @@ function Permissions() {
                     inputPlaceholder2="Enter Permission Description..."
                     headerIcon={<Check width={22} />}
                     butonIcon={<CheckCheck width={22} />}
-                    dropdownLabel="Organization Type"
-                    dropdownOptions={organizationTypes.map((type) => ({
-                      value: type.organizationTypeId,
+                    dropdownLabel="Organisation Type"
+                    dropdownOptions={organisationTypes.map((type) => ({
+                      value: type.organisationTypeId,
                       label: type.name,
                     }))}
                     onConfirm={handleNewPermission}
@@ -232,9 +232,9 @@ function Permissions() {
                     inputPlaceholder="Enter Permission Name..."
                     inputLabel2="Permission Description"
                     inputPlaceholder2="Enter Permission Description..."
-                    dropdownLabel="Organization Type"
-                    dropdownOptions={organizationTypes.map((type) => ({
-                      value: type.organizationTypeId,
+                    dropdownLabel="Organisation Type"
+                    dropdownOptions={organisationTypes.map((type) => ({
+                      value: type.organisationTypeId,
                       label: type.name,
                     }))}
                     defaultDropdownValue=""
@@ -291,7 +291,7 @@ function Permissions() {
                                 <td className="p-3">{perm.name}</td>
                                 <td className="p-3">{perm.description}</td>
                                 <td className="p-3">
-                                  {perm.organizationTypeName}
+                                  {perm.organisationTypeName}
                                 </td>
                                 <td className="p-3 text-right">
                                   <button
