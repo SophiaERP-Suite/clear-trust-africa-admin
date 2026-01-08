@@ -112,7 +112,7 @@ const sidebarItems = [
 export default function ControlPanel() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
-  // const navigate = useNavigate(); 
+  // const navigate = useNavigate();
 
   const getCurrentSectionId = () => {
     const currentItem = sidebarItems.find(
@@ -184,7 +184,9 @@ export default function ControlPanel() {
               <Link
                 key={item.id}
                 to={item.path}
-                onClick={() => window.innerWidth < 1024 && setSidebarOpen(false)}
+                onClick={() =>
+                  window.innerWidth < 1024 && setSidebarOpen(false)
+                }
                 className={`flex items-center gap-3 w-full px-4 py-3 rounded-sm text-sm transition-all ${
                   selectedSection === item.id
                     ? "bg-white text-black font-medium shadow-sm"
@@ -220,13 +222,15 @@ export default function ControlPanel() {
                 path={item.path.replace("/ControlPanel", "")}
                 element={
                   item.component ? (
-                    <item.component /> 
+                    <item.component />
                   ) : (
                     <div className="text-center py-12">
                       <h3 className="text-xl font-semibold text-black mb-2">
                         {item.label}
                       </h3>
-                      <p className="text-black">This section is coming soon...</p>
+                      <p className="text-black">
+                        This section is coming soon...
+                      </p>
                     </div>
                   )
                 }
