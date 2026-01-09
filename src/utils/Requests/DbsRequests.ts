@@ -185,3 +185,50 @@ export const updateDbsApplications = async (data: FormData, applicationId: numbe
   })
   return response
 }
+
+export const updateDocStatus = async (data: FormData, UserDocumentId: number) => {
+  const token = localStorage.getItem('accessToken');
+  const response = await fetch(`${BaseURL}/applicants/docs/${UserDocumentId}/status`, {
+    method: 'PATCH',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    },
+    body: data
+  })
+  return response
+}
+
+export const markStageAsCompleted = async (data: FormData, applicationId: number) => {
+  const token = localStorage.getItem('accessToken');
+  const response = await fetch(`${BaseURL}/dbs-stage-status/application/${applicationId}/complete`, {
+    method: 'PATCH',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    },
+    body: data
+  })
+  return response
+}
+
+export const markStageAsApproved = async (data: FormData, applicationId: number) => {
+  const token = localStorage.getItem('accessToken');
+  const response = await fetch(`${BaseURL}/dbs-stage-status/application/${applicationId}/approve`, {
+    method: 'PATCH',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    },
+    body: data
+  })
+  return response
+}
+
+export const fetchStageByApplicationAndStage = async (applicationId: number, stageId: number) => {
+  const token = localStorage.getItem('accessToken');
+  const response = await fetch(`${BaseURL}/dbs-stage-status/application/${applicationId}/stage/${stageId}`, {
+    method: 'GET',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  })
+  return response
+}

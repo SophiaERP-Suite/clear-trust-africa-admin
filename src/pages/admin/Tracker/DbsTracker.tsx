@@ -22,13 +22,14 @@ import Tippy from "@tippyjs/react";
 
 interface DbsChecks {
   dbsApplicationId: number;
-  userId: number
-  requestedById: number
-  dbsTypeId: number
-  status: string
-  submittedAt: string
-  completedAt: string
-  dateCreated: string
+  userId: number;
+  requestedById: number;
+  dbsTypeId: number;
+  status: number;
+  statusName: string;
+  submittedAt: string;
+  completedAt: string;
+  dateCreated: string;
   userFirstName: string;
   userLastName: string;
   organisationName: string;
@@ -62,12 +63,20 @@ export interface DBSTypes {
   description: string;
 }
 
-const statusStyles: Record<string, string> = {
-  Draft: 'bg-orange-200',
-  Submitted: 'bg-blue-200',
-  'In Review': 'bg-purple-200',
-  Completed: 'bg-green-200',
-  Rejected: 'bg-red-200',
+const statusStyles: Record<number, string> = {
+  1: 'bg-orange-200/50',
+  2: 'bg-blue-200/50',
+  3: 'bg-purple-200/50',
+  4: 'bg-green-200/50',
+  5: 'bg-red-200/50',
+};
+
+const statusTextStyles: Record<number, string> = {
+  1: 'text-orange-500',
+  2: 'text-blue-500',
+  3: 'text-purple-500',
+  4: 'text-green-500',
+  5: 'text-red-500',
 };
 
 export default function DBSTrackerModule() {
@@ -638,11 +647,11 @@ export default function DBSTrackerModule() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-gray-900">
                           <p
-                            className={`p-1 text-center rounded-lg ${
+                            className={`p-1 px-2 text-center rounded-lg ${
                               statusStyles[data.status] ?? 'bg-gray-200'
-                            }`}
+                            } ${statusTextStyles[data.status] ?? 'text-black'} font-bold`}
                           >
-                            {data.status}
+                            {data.statusName}
                           </p>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
