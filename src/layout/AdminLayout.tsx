@@ -10,6 +10,7 @@ import {
   Wallet,
   Settings,
   LogOut,
+  ClipboardPaste,
 } from "lucide-react";
 
 function AdminLayout() {
@@ -33,6 +34,11 @@ function AdminLayout() {
       path: "/Tracker",
       icon: <ClipboardList size={25} />,
       label: "DBS Tracker",
+    },
+    {
+      path: "/DBSSearch",
+      icon: <ClipboardPaste size={25} />,
+      label: "DBS Search",
     },
     {
       path: "/IncidentMgt",

@@ -7,6 +7,7 @@ import {
   ChevronRightIcon,
   CircleCheckBig,
   ClipboardClock,
+  ClipboardList,
   FileIcon,
   FolderCog,
   Mail,
@@ -15,7 +16,6 @@ import {
   Phone,
   Plus,
   Search,
-  Shield,
   ShieldCheck,
   SquareCheckBig,
   User,
@@ -940,7 +940,7 @@ export default function TrackerDetails() {
       >
         <div className="flex flex-wrap mb-8 items-center justify-between">
           <div className="flex">
-            <Shield className="text-blue-600 mr-2" size={36} />
+            <ClipboardList className="text-blue-600 mr-2" size={36} />
             <div>
             <h3 className="mb-0 text-black">
                 DBS Application Details

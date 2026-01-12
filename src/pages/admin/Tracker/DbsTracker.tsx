@@ -13,6 +13,7 @@ import {
   Bell,
   XCircle,
   Eye,
+  ClipboardList,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { fetchDbsChecks, fetchDbsStatus, fetchDbsTypes } from "../../../utils/Requests/DbsRequests";
@@ -290,7 +291,7 @@ export default function DBSTrackerModule() {
             <div className="col-md-12">
               <div className="flex flex-wrap items-center justify-between">
                 <div className="flex">
-                  <Shield className="text-blue-600 mr-2" size={36} />
+                  <ClipboardList className="text-blue-600 mr-2" size={36} />
                   <div>
                     <h3 className="mb-0 text-black">
                       DBS Tracker & Compliance
