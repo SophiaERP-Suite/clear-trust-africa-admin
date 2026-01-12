@@ -8,7 +8,7 @@ import {
   updateRole,
 } from "../../../api/roleApi";
 import type { RolesDto } from "../../../types/controlPanel/roles";
-import { Check, Pen, Plus, Shield, Trash, Trash2Icon } from "lucide-react";
+import { CheckCheck, Pen, Plus, Shield, Trash, Trash2Icon } from "lucide-react";
 
 type ModalType = "add" | "edit" | "delete" | null;
 
@@ -160,7 +160,7 @@ function Roles() {
                     inputLabel="New Role Name"
                     inputPlaceholder="Enter Role Name..."
                     headerIcon={<Shield />}
-                    butonIcon={<Check />}
+                    butonIcon={<CheckCheck />}
                     onConfirm={handleNewRole}
                     onCancel={closeModal}
                   />
