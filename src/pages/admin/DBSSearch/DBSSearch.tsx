@@ -1,14 +1,18 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Shield,
-  AlertTriangle,
-  Clock,
   ChevronRightIcon,
   FileText,
-  XCircle,
   ClipboardPaste,
+  Eye,
+  Calendar,
+  Search,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
+import Tippy from "@tippyjs/react";
+import Hashids from "hashids";
+import { useForm, useWatch } from "react-hook-form";
+import { fetchNIMCSearch } from "../../../utils/Requests/NIMCRequests";
 
 export interface DBSStatus {
   statusId: number;
@@ -22,130 +26,68 @@ export interface DBSTypes {
   description: string;
 }
 
+export interface NIMCData {
+  nimcRecordId: string;
+  nin: string;
+  firstName: string;
+  lastName: string;
+  middleName: string;
+  dateOfBirth: string;
+  gender: string;
+  phone: string;
+  email: string;
+  residentialAddress: string;
+  state: string;
+  lga: string;
+  nationality: string;
+  photoURL: string;
+  occupation: string;
+  maritalStatus: string;
+  biometricVerified: string;
+  status: string;
+  lastVerifiedAt: string;
+  dateCreated: string;
+}
+
+type NIMCFilterForm = {
+  NIN: string;
+  UserName: string;
+  DateOfBirth: string;
+}
+
 export default function DBSSearchModule() {
   const [activeView, setActiveView] = useState("nimc");
-
-  const dbsChecks = [
-    {
-      id: "DBS-2024-001",
-      employeeName: "Sarah Oriaku",
-      employeeId: "EMP-1001",
-      department: "Healthcare",
-      position: "Senior Nurse",
-      checkType: "Enhanced",
-      status: "Valid",
-      applicationDate: "2024-01-05",
-      issueDate: "2024-01-20",
-      expiryDate: "2025-01-20",
-      certificateNumber: "DBS-001234567890",
-      result: "Clear",
-      updateService: true,
-      lastUpdated: "2024-01-28",
-      daysUntilExpiry: 357,
-      photo:
-        "https://ui-avatars.com/api/?name=Sarah+Johnson&background=10b981&color=fff",
-    },
-    {
-      id: "DBS-2024-002",
-      employeeName: "Michael Adebayo",
-      employeeId: "EMP-1002",
-      department: "Education",
-      position: "Teacher",
-      checkType: "Enhanced with Barred List",
-      status: "Expiring Soon",
-      applicationDate: "2023-11-10",
-      issueDate: "2023-11-25",
-      expiryDate: "2024-11-25",
-      certificateNumber: "DBS-001234567891",
-      result: "Clear",
-      updateService: true,
-      lastUpdated: "2024-01-15",
-      daysUntilExpiry: 30,
-      photo:
-        "https://ui-avatars.com/api/?name=Michael+Chen&background=3b82f6&color=fff",
-    },
-    {
-      id: "DBS-2024-003",
-      employeeName: "Emmanuella Williams",
-      employeeId: "EMP-1003",
-      department: "Social Care",
-      position: "Care Worker",
-      checkType: "Enhanced",
-      status: "Expired",
-      applicationDate: "2022-12-01",
-      issueDate: "2022-12-18",
-      expiryDate: "2023-12-18",
-      certificateNumber: "DBS-001234567892",
-      result: "Clear",
-      updateService: false,
-      lastUpdated: "2023-06-10",
-      daysUntilExpiry: -41,
-      photo:
-        "https://ui-avatars.com/api/?name=Emma+Williams&background=ef4444&color=fff",
-    },
-    {
-      id: "DBS-2024-004",
-      employeeName: "Femi Anderson",
-      employeeId: "EMP-1004",
-      department: "Administration",
-      position: "Office Manager",
-      checkType: "Standard",
-      status: "Pending",
-      applicationDate: "2024-01-22",
-      issueDate: null,
-      expiryDate: null,
-      certificateNumber: null,
-      result: "Pending",
-      updateService: false,
-      lastUpdated: "2024-01-22",
-      daysUntilExpiry: null,
-      photo:
-        "https://ui-avatars.com/api/?name=James+Anderson&background=f59e0b&color=fff",
-    },
-    {
-      id: "DBS-2024-005",
-      employeeName: "Lisa Abdul",
-      employeeId: "EMP-1005",
-      department: "Healthcare",
-      position: "Junior Doctor",
-      checkType: "Enhanced",
-      status: "Under Review",
-      applicationDate: "2024-01-18",
-      issueDate: null,
-      expiryDate: null,
-      certificateNumber: null,
-      result: "Under Review",
-      updateService: true,
-      lastUpdated: "2024-01-26",
-      daysUntilExpiry: null,
-      photo:
-        "https://ui-avatars.com/api/?name=Lisa+Martinez&background=8b5cf6&color=fff",
-    },
-    {
-      id: "DBS-2024-006",
-      employeeName: "David Thompson",
-      employeeId: "EMP-1006",
-      department: "Education",
-      position: "Teaching Assistant",
-      checkType: "Enhanced with Barred List",
-      status: "Valid",
-      applicationDate: "2023-09-15",
-      issueDate: "2023-10-02",
-      expiryDate: "2024-10-02",
-      certificateNumber: "DBS-001234567893",
-      result: "Clear",
-      updateService: true,
-      lastUpdated: "2024-01-10",
-      daysUntilExpiry: 247,
-      photo:
-        "https://ui-avatars.com/api/?name=David+Thompson&background=10b981&color=fff",
-    },
-  ];
-
+  const [nimcSearch, setNimcSearch] = useState<NIMCData[]>([]);
+  const [dbsPage, setDbsPage] = useState(1);
+  const dbsLimit = 5;
+  const [totalNimcSearch, setTotalNimcSearch] = useState(0);
+  const hashIds = new Hashids('ClearTrustAfricaEncode', 10);
+  const { register, control } = useForm<NIMCFilterForm>();
+  const filters = useWatch({ control });
   const searchTypes = [
     { id: "nimc", label: "NIMC", icon: Shield },
     { id: "checks", label: "NPF", icon: FileText },
   ]
+
+  useEffect(() => {
+    fetchNIMCSearch({ pageNumber: dbsPage, limit: dbsLimit, ...filters })
+    .then(res => {
+      if (res.status === 200) {
+        res.json()
+        .then(data => {
+          console.log(data);
+          setNimcSearch(data.data.search);
+          setTotalNimcSearch(data.data.totalCount);
+        })
+      } else {
+        res.text()
+        .then(data => {
+          console.log(JSON.parse(data));
+        })
+      }
+    })
+    .catch((err) => console.log(err))
+  }, [dbsPage, dbsLimit, filters]);
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -205,127 +147,185 @@ export default function DBSSearchModule() {
 
       {/* Main Content */}
       {activeView === "nimc" && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Expiring Soon */}
-          <div className="bg-white rounded-lg shadow-lg p-6">
-            <h3 className="text-xl font-bold mb-4 flex items-center gap-2 text-yellow-700">
-              <Clock className="text-yellow-500" />
-              Expiring Soon (30 Days)
-            </h3>
-            <div className="space-y-3">
-              {dbsChecks
-                .filter((c) => c.status === "Expiring Soon")
-                .map((check) => (
-                  <div
-                    key={check.id}
-                    className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg"
-                  >
-                    <div className="flex items-center gap-3">
-                      <img
-                        src={check.photo}
-                        alt={check.employeeName}
-                        className="w-10 h-10 rounded-full"
-                      />
-                      <div className="flex-1">
-                        <div className="font-semibold text-sm">
-                          {check.employeeName}
-                        </div>
-                        <div className="text-xs text-gray-600">
-                          {check.department} • {check.position}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="mt-2 text-xs text-yellow-700 font-semibold">
-                      Expires in {check.daysUntilExpiry} days
-                    </div>
-                  </div>
-                ))}
+        <div className="bg-white rounded-lg shadow-lg">
+          {/* Filters */}
+          <div className="p-6 border-b">
+            <div className="flex flex-wrap gap-4">
+              <div className="flex-1 min-w-[250px]">
+                <div className="relative">
+                  <Search
+                    className="absolute left-3 top-7 transform -translate-y-1/2 text-gray-400"
+                    size={20}
+                  />
+                  <input
+                    type="text"
+                    placeholder="Search by NIN..."
+                    {...register('NIN')}
+                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+              </div>
+              <div className="flex-1 min-w-[250px]">
+                <div className="relative">
+                  <Search
+                    className="absolute left-3 top-7 transform -translate-y-1/2 text-gray-400"
+                    size={20}
+                  />
+                  <input
+                    type="text"
+                    placeholder="Search by Names..."
+                    {...register('UserName')}
+                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+              </div>
+              <div className="flex-1 min-w-[250px]">
+                <div className="relative">
+                  <input
+                    type="date"
+                    placeholder="Search by Date Of Birth..."
+                    {...register('DateOfBirth')}
+                    className="w-full pl-2 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Expired */}
-          <div className="bg-white rounded-lg shadow-lg p-6">
-            <h3 className="text-xl font-bold mb-4 flex items-center gap-2 text-red-700">
-              <XCircle className="text-red-500" />
-              Expired Checks
-            </h3>
-            <div className="space-y-3">
-              {dbsChecks
-                .filter((c) => c.status === "Expired")
-                .map((check) => (
-                  <div
-                    key={check.id}
-                    className="p-3 bg-red-50 border border-red-200 rounded-lg"
+          {/* Table */}
+          <div className="overflow-x-auto">
+            <div className="p-6">
+              <div className="flex flex-wrap justify-between mx-5 overflow-x-auto">
+                <table className="min-w-full divide-y divide-secondary-200 dark:divide-secondary-800 border dark:border-secondary-800">
+                  <thead>
+                    <tr className="bg-secondary-100 dark:bg-dark-bg">
+                      <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                        S/N
+                      </th>
+                      <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                        Name
+                      </th>
+                      <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                        NIN
+                      </th>
+                      <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                        Phone
+                      </th>
+                      <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                        Email
+                      </th>
+                      <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                        Gender
+                      </th>
+                      <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                        Birth Date
+                      </th>
+                      <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                        Action
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-secondary-200 dark:divide-secondary-800">
+                    {
+                      nimcSearch.map((data, index) => (
+                      <tr key={data.nimcRecordId ?? index}>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="iq-media-group iq-media-group-1">
+                            <h6 className="font-bold dark:text-white">
+                              {" "}
+                              #{(index + (dbsLimit * (dbsPage - 1))) + 1}
+                            </h6>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex w-50 items-center gap-3">
+                            <img
+                              src={data.photoURL}
+                              className="h-12 w-12 rounded-full border-4 border-white mr-4"
+                              style={{ objectFit: "cover" }}
+                              alt="profile-image"
+                            />
+                            <div>
+                              <div className="font-semibold text-gray-900">
+                                {`${data.firstName} ${data.lastName}`}
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
+                          {data.nin}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
+                          {data.phone}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
+                          {data.email}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-gray-900">
+                          {data.gender}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
+                          {(new Date(data.dateOfBirth)).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
+                          <div className="flex items-center list-user-action">
+                            <Tippy content='Preview NIMC Details'>
+                              <NavLink  to={`/DBSSearch/${hashIds.encode(String(data.nimcRecordId))}`}
+                                className="btn btn-info btn-icon btn-sm mr-1"
+                              >
+                                <span className="btn-inner">
+                                  <Eye />
+                                </span>
+                              </NavLink>
+                            </Tippy>
+                          </div>
+                        </td>
+                      </tr>
+                      ))
+                    }
+                  </tbody>
+                </table>
+                {
+                  nimcSearch.length === 0 ?
+                    <div className="py-4 whitespace-nowrap w-full">
+                          <span className="px-6 py-4 text-left font-medium text-black dark:text-white">Your search hasn't produced any result</span>
+                    </div> : <></>
+                }
+              </div>
+              <div className="flex flex-wrap justify-between my-6 mx-5">
+                <div className="flex justify-center items-center mb-1">
+                  <p className="text-black">
+                    Showing { nimcSearch.length > 0 ? ((dbsPage * dbsLimit) - dbsLimit) + 1 : 0 } to { nimcSearch.length > 0 ? (((dbsPage * dbsLimit) - dbsLimit) + 1) + (nimcSearch.length - 1) : 0 } of { totalNimcSearch } entries
+                  </p>
+                </div>
+                <div className="inline-flex flex-wrap">
+                  {
+                    dbsPage > 1 && <a
+                    href="#"
+                    onClick={() => { if (dbsPage > 1) {setDbsPage(dbsPage - 1);} }}
+                    className="border-t border-b border-l text-primary-500 border-secondary-500 px-2 py-1 rounded-l dark:border-secondary-800"
                   >
-                    <div className="flex items-center gap-3">
-                      <img
-                        src={check.photo}
-                        alt={check.employeeName}
-                        className="w-10 h-10 rounded-full"
-                      />
-                      <div className="flex-1">
-                        <div className="font-semibold text-sm">
-                          {check.employeeName}
-                        </div>
-                        <div className="text-xs text-gray-600">
-                          {check.department} • {check.position}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="mt-2 text-xs text-red-700 font-semibold">
-                      Expired 2 days ago
-                    </div>
-                    <button className="mt-2 w-full bg-red-600 text-white text-xs py-1 rounded hover:bg-red-700">
-                      Urgent: Renew Now
-                    </button>
-                  </div>
-                ))}
-            </div>
-          </div>
-
-          {/* Pending Reviews */}
-          <div className="bg-white rounded-lg shadow-lg p-6">
-            <h3 className="text-xl font-bold mb-4 flex items-center gap-2 text-purple-700">
-              <AlertTriangle className="text-purple-500" />
-              Pending Reviews
-            </h3>
-            <div className="space-y-3">
-              {dbsChecks
-                .filter(
-                  (c) => c.status === "Pending" || c.status === "Under Review"
-                )
-                .map((check) => (
-                  <div
-                    key={check.id}
-                    className="p-3 bg-purple-50 border border-purple-200 rounded-lg"
+                    Previous
+                  </a>
+                  }
+                  <a
+                    href="#"
+                    className="border text-white border-secondary-500 cursor-pointer bg-primary-500 px-4 py-1 dark:border-secondary-800"
                   >
-                    <div className="flex items-center gap-3">
-                      <img
-                        src={check.photo}
-                        alt={check.employeeName}
-                        className="w-10 h-10 rounded-full"
-                      />
-                      <div className="flex-1">
-                        <div className="font-semibold text-sm">
-                          {check.employeeName}
-                        </div>
-                        <div className="text-xs text-gray-600">
-                          {check.department} • {check.position}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="mt-2 flex items-center justify-between">
-                      <span
-                        className={`text-xs px-2 py-1 rounded`}
-                      >
-                        {check.status}
-                      </span>
-                      <span className="text-xs text-gray-500">
-                        Applied: {check.applicationDate}
-                      </span>
-                    </div>
-                  </div>
-                ))}
+                    { dbsPage }
+                  </a>
+                  {
+                    (dbsPage * dbsLimit) < totalNimcSearch && <a
+                    href="#"
+                    onClick={() => { setDbsPage(dbsPage + 1); }}
+                    className="border-r border-t border-b text-primary-500 border-secondary-500 px-4 py-1 rounded-r dark:border-secondary-800"
+                  >
+                    Next
+                  </a>
+                  }
+                  
+                </div>
+              </div>
             </div>
           </div>
         </div>

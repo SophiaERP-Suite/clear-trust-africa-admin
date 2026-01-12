@@ -34,7 +34,7 @@ import { fetchDbsCheckById, fetchDbsLogsByApplication, fetchDbsStages, fetchStag
 import { toast, ToastContainer } from "react-toastify";
 import Modal from 'react-modal';
 import { useForm, useWatch } from "react-hook-form";
-import { fetchOrgMembers } from "../../../utils/Requests/AuthRequests.js";
+import { fetchOrgCaseAdmins } from "../../../utils/Requests/AuthRequests.js";
 import { useAuth } from "../../../utils/useAuth.js";
 import { handleCreateEmployee } from "../../../utils/ResponseHandlers/EmployeeResponse.js";
 import Tippy from "@tippyjs/react";
@@ -188,7 +188,7 @@ export default function TrackerDetails() {
   const { id } = useParams();
   const { user } = useAuth();
   const [dbsDetails, setDbsDetails] = useState<DbsChecks | null>(null);
-  const [orgMembers, setOrgMembers] = useState<UserData[]>([]);
+  const [orgCaseAdmins, setOrgCaseAdmins] = useState<UserData[]>([]);
   const [activityLog, setActivityLog] = useState<ActivityLogData[]>([]);
   const [totalActivityLog, setTotalActivityLog] = useState(0);
   const [activityPage, setActivityPage] = useState(1);
@@ -348,12 +348,12 @@ export default function TrackerDetails() {
   }
     
   useEffect(() => {
-      fetchOrgMembers()
+      fetchOrgCaseAdmins()
       .then(res => {
         if (res.status === 200) {
           res.json()
           .then(data => {
-            setOrgMembers(data.data);
+            setOrgCaseAdmins(data.data);
           })
         } else {
           res.text()
@@ -595,7 +595,7 @@ export default function TrackerDetails() {
                   >
                     <option value="default">Select Administrator</option>
                     {
-                      orgMembers.map((data, index) => (
+                      orgCaseAdmins.map((data, index) => (
                           <option value={data.userId} key={index}>{`${data.firstName} ${data.lastName}`}</option>
                       ))
                     }
@@ -673,7 +673,7 @@ export default function TrackerDetails() {
                       >
                         <option value="default">Select Staff In Charge</option>
                         {
-                          orgMembers.map((data, index) => (
+                          orgCaseAdmins.map((data, index) => (
                             <option value={data.userId} key={index}>{`${data.firstName} ${data.lastName}`}</option>
                           ))
                         }
