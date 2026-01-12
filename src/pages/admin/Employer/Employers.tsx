@@ -25,12 +25,12 @@ import {
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import {
-  getAllOrganizations,
-  approveOrganization,
-  rejectOrganization,
-  suspendOrganization,
+  getAllOrganisations,
+  approveOrganisation,
+  rejectOrganisation,
+  suspendOrganisation,
 } from "../../../api/adminApi.js";
-import type { OrganizationDto } from "../../../types/controlPanel/organization.js";
+import type { OrganisationDto } from "../../../types/controlPanel/organisation.js";
 import { ToastContainer, toast } from "react-toastify";
 import Modal from "../../utils/modal.js";
 import Loading from "../../utils/Loading.js";
@@ -38,7 +38,7 @@ import Loading from "../../utils/Loading.js";
 type ModalType = "suspend" | "approve" | "reject" | null;
 
 function Employers() {
-  const [organizations, setOrganizations] = useState<OrganizationDto[]>([]);
+  const [organisations, setOrganisations] = useState<OrganisationDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [modalType, setModalType] = useState<ModalType>(null);
@@ -55,23 +55,23 @@ function Employers() {
   const totalPages = Math.ceil(totalCount / pageSize);
 
   useEffect(() => {
-    fetchOrganizations();
+    fetchOrganisations();
   }, [page, statusFilter, pageSize]);
 
-  const fetchOrganizations = async () => {
+  const fetchOrganisations = async () => {
     try {
       setLoading(true);
-      const data = await getAllOrganizations(
+      const data = await getAllOrganisations(
         statusFilter || undefined,
         page,
         pageSize
       );
-      setOrganizations(data);
+      setOrganisations(data);
       setTotalCount(data.length);
       console.log(data);
     } catch (err: any) {
       console.error(err);
-      setError("Failed to fetch organizations");
+      setError("Failed to fetch organisations");
     } finally {
       setLoading(false);
     }
@@ -79,26 +79,26 @@ function Employers() {
 
   // Toast messages
   const notifySuccess = () =>
-    toast.success("Organization activated successfully");
+    toast.success("Organisation activated successfully");
   const notifyRejection = () =>
-    toast.success("Organization rejected successfully");
+    toast.success("Organisation rejected successfully");
   const notifySuspend = () =>
-    toast.success("Organization suspended successfully");
+    toast.success("Organisation suspended successfully");
   const notifyError = () => toast.error("Action Failed");
 
   // Call modals
-  const openApproveModal = (organizationId: number) => {
-    setSelectedOrgId(organizationId);
+  const openApproveModal = (organisationId: number) => {
+    setSelectedOrgId(organisationId);
     setModalType("approve");
   };
 
-  const openRejectModal = (organizationId: number) => {
-    setSelectedOrgId(organizationId);
+  const openRejectModal = (organisationId: number) => {
+    setSelectedOrgId(organisationId);
     setModalType("reject");
   };
 
-  const openSuspendModal = (organizationId: number) => {
-    setSelectedOrgId(organizationId);
+  const openSuspendModal = (organisationId: number) => {
+    setSelectedOrgId(organisationId);
     setModalType("suspend");
   };
 
@@ -112,10 +112,10 @@ function Employers() {
 
     try {
       setLoading(true);
-      const OrganizationId = selectedOrgId;
-      await approveOrganization(OrganizationId);
+      const OrganisationId = selectedOrgId;
+      await approveOrganisation(OrganisationId);
       notifySuccess();
-      fetchOrganizations();
+      fetchOrganisations();
       closeModal();
     } catch (err: any) {
       notifyError();
@@ -128,13 +128,13 @@ function Employers() {
     try {
       setLoading(true);
       const payload = {
-        organizationId: selectedOrgId,
+        organisationId: selectedOrgId,
         reason: reasonInput || "Not meeting criteria",
       };
-      await rejectOrganization(payload.organizationId, payload.reason);
+      await rejectOrganisation(payload.organisationId, payload.reason);
       notifyRejection();
       closeModal();
-      fetchOrganizations();
+      fetchOrganisations();
     } catch (err: any) {
       notifyError();
     }
@@ -146,13 +146,13 @@ function Employers() {
     try {
       setLoading(true);
       const payload = {
-        organizationId: selectedOrgId,
+        organisationId: selectedOrgId,
         reason: reasonInput || "Not meeting criteria",
       };
-      await suspendOrganization(payload.organizationId, payload.reason);
+      await suspendOrganisation(payload.organisationId, payload.reason);
       notifySuspend();
       closeModal();
-      fetchOrganizations();
+      fetchOrganisations();
     } catch (err: any) {
       notifyError();
     }
@@ -163,8 +163,8 @@ function Employers() {
       <ToastContainer />
       <Modal
         isOpen={modalType === "approve"}
-        title="Approve Organization"
-        message="Are you sure you want to approve this organization?"
+        title="Approve Organisation"
+        message="Are you sure you want to approve this organisation?"
         confirmText="Approve"
         confirmColor="green"
         headerIcon={<Check />}
@@ -176,8 +176,8 @@ function Employers() {
 
       <Modal
         isOpen={modalType === "reject"}
-        title="Reject Organization"
-        message="Are you sure you want to reject this organization?"
+        title="Reject Organisation"
+        message="Are you sure you want to reject this organisation?"
         confirmText="Reject"
         confirmColor="green"
         inputLabel="Reason for Rejection"
@@ -191,8 +191,8 @@ function Employers() {
 
       <Modal
         isOpen={modalType === "suspend"}
-        title="Suspend Organization"
-        message="Are you sure you want to suspend this organization?"
+        title="Suspend Organisation"
+        message="Are you sure you want to suspend this organisation?"
         confirmText="Suspend"
         confirmColor="yellow"
         inputLabel="Reason for Suspension"
@@ -228,13 +228,46 @@ function Employers() {
           </div>
         </div>
 
-        {loading && <Loading />}
+        {loading && (
+          <div
+            className="loading flex items-center justify-center gap-3 text-center mt-8"
+            aria-label="Loading Organisations"
+            role="status"
+          >
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 44 44"
+              stroke="currentColor"
+              aria-label="Loading"
+            >
+              <g fill="none" fillRule="evenodd" strokeWidth="4">
+                <circle cx="22" cy="22" r="9" strokeOpacity="0.2" />
+                <path
+                  d="M22 3 A19 19 0 0 1 41 22"
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                >
+                  <animateTransform
+                    attributeName="transform"
+                    type="rotate"
+                    from="0 22 22"
+                    to="360 22 22"
+                    dur="1s"
+                    repeatCount="indefinite"
+                  />
+                </path>
+              </g>
+            </svg>
+            <span className="text-gray-700">Loading Organisations...</span>
+          </div>
+        )}
         {error && (
           <div className="error flex justify-center text-center mt-[25%]">
             Error: {error}
           </div>
         )}
-        {!loading && !error && organizations.length > 0 ? (
+        {!loading && !error && organisations.length > 0 ? (
           <div
             className="footer-inner mx-auto main-container container"
             x-bind:className="setting.page_layout"
@@ -313,39 +346,39 @@ function Employers() {
                           />
                         </div> */}
                         </div>
+                        {!loading && !error && organisations.length > 0 ? (
+                          <table className="min-w-full overflow-hidden divide-y divide-secondary-200 dark:divide-secondary-800 border text-sm dark:border-secondary-800">
+                            <thead>
+                              <tr className="bg-secondary-100 dark:bg-dark-bg">
+                                <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                                  Name
+                                </th>
 
-                        <table className="min-w-full overflow-hidden divide-y divide-secondary-200 dark:divide-secondary-800 border text-sm dark:border-secondary-800">
-                          <thead>
-                            <tr className="bg-secondary-100 dark:bg-dark-bg">
-                              <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
-                                Name
-                              </th>
-
-                              <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
-                                Org Type
-                              </th>
-                              <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
-                                Address
-                              </th>
-                              <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
-                                Status
-                              </th>
-                              <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
-                                Reg No
-                              </th>
-                              <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
-                                Join Date
-                              </th>
-                              <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
-                                Action
-                              </th>
-                            </tr>
-                          </thead>
-                          <tbody className="divide-y divide-secondary-200 dark:divide-secondary-800">
-                            {organizations.map((orgData) => {
-                              return (
-                                <tr>
-                                  {/* <td className="px-6 py-4 whitespace-nowrap">
+                                <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                                  Org Type
+                                </th>
+                                <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                                  Address
+                                </th>
+                                <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                                  Status
+                                </th>
+                                <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                                  Reg No
+                                </th>
+                                <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                                  Join Date
+                                </th>
+                                <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                                  Action
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-secondary-200 dark:divide-secondary-800">
+                              {organisations.map((orgData) => {
+                                return (
+                                  <tr>
+                                    {/* <td className="px-6 py-4 whitespace-nowrap">
                                   <a href="employerProfile">
                                     <img
                                       className="w-10 h-10 mr-3 text-primary-400 bg-primary-500/10 rounded-xl"
@@ -356,20 +389,20 @@ function Employers() {
                                   </a>
                                 </td> */}
 
-                                  <td className="px-6 py-4 whitespace-nowrap text-black dark:text-black">
-                                    {orgData.name}
-                                  </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-black dark:text-black">
+                                      {orgData.name}
+                                    </td>
 
-                                  <td className="px-6 py-4 whitespace-nowrap text-black dark:text-black">
-                                    {orgData.organizationTypeName}
-                                  </td>
-                                  <td className="px-6 py-4 whitespace-nowrap text-black dark:text-black">
-                                    {orgData.address}
-                                  </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-black dark:text-black">
+                                      {orgData.organisationTypeName}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-black dark:text-black">
+                                      {orgData.address}
+                                    </td>
 
-                                  <td className="px-6 py-4">
-                                    <span
-                                      className={`
+                                    <td className="px-6 py-4">
+                                      <span
+                                        className={`
                                     ${
                                       orgData.statusDisplay == "Active"
                                         ? "bg-success-500"
@@ -386,26 +419,83 @@ function Employers() {
                                         : ""
                                     }
                                     inline-block whitespace-nowrap px-2 py-1 text-xs text-center font-bold leading-none text-white rounded`}
-                                    >
-                                      {orgData.statusDisplay}
-                                    </span>
-                                  </td>
-                                  <td className="px-6 py-4 whitespace-nowrap text-black dark:text-black">
-                                    {orgData.registrationNumber}
-                                  </td>
-                                  <td className="px-6 py-4 whitespace-nowrap text-black dark:text-black">
-                                    {orgData.dateCreated.slice(0, 10)}
-                                  </td>
-                                  <td className="px-6 py-4">
-                                    <div className="flex items-center list-user-action">
-                                      {orgData.statusDisplay === "Pending" && (
-                                        <div>
+                                      >
+                                        {orgData.statusDisplay}
+                                      </span>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-black dark:text-black">
+                                      {orgData.registrationNumber}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-black dark:text-black">
+                                      {orgData.dateCreated.slice(0, 10)}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                      <div className="flex items-center list-user-action">
+                                        {orgData.statusDisplay ===
+                                          "Pending" && (
+                                          <div>
+                                            <button
+                                              className="btn btn-success btn-icon btn-sm mr-1"
+                                              type="button"
+                                              onClick={() =>
+                                                openApproveModal(
+                                                  orgData.organisationId
+                                                )
+                                              }
+                                              data-tp-toggle="tooltip"
+                                              data-tp-placement="top"
+                                              data-tp-title="Add"
+                                            >
+                                              <span className="btn-inner">
+                                                <Check />
+                                              </span>
+                                            </button>
+
+                                            <button
+                                              className="btn btn-danger btn-icon btn-sm mr-1"
+                                              type="button"
+                                              data-tp-toggle="tooltip"
+                                              data-tp-placement="top"
+                                              data-tp-title="Delete"
+                                              onClick={() =>
+                                                openRejectModal(
+                                                  orgData.organisationId
+                                                )
+                                              }
+                                            >
+                                              <span className="btn-inner">
+                                                <X />
+                                              </span>
+                                            </button>
+                                          </div>
+                                        )}
+                                        {orgData.statusDisplay === "Active" && (
+                                          <button
+                                            className="btn btn-warning btn-icon btn-sm mr-1"
+                                            type="button"
+                                            data-tp-toggle="tooltip"
+                                            data-tp-placement="top"
+                                            data-tp-title="Suspend"
+                                            onClick={() =>
+                                              openSuspendModal(
+                                                orgData.organisationId
+                                              )
+                                            }
+                                          >
+                                            <span className="btn-inner">
+                                              <AlertCircle />
+                                            </span>
+                                          </button>
+                                        )}
+
+                                        {orgData.statusDisplay ===
+                                          "Suspended" && (
                                           <button
                                             className="btn btn-success btn-icon btn-sm mr-1"
                                             type="button"
                                             onClick={() =>
                                               openApproveModal(
-                                                orgData.organizationId
+                                                orgData.organisationId
                                               )
                                             }
                                             data-tp-toggle="tooltip"
@@ -416,71 +506,19 @@ function Employers() {
                                               <Check />
                                             </span>
                                           </button>
-
-                                          <button
-                                            className="btn btn-danger btn-icon btn-sm mr-1"
-                                            type="button"
-                                            data-tp-toggle="tooltip"
-                                            data-tp-placement="top"
-                                            data-tp-title="Delete"
-                                            onClick={() =>
-                                              openRejectModal(
-                                                orgData.organizationId
-                                              )
-                                            }
-                                          >
-                                            <span className="btn-inner">
-                                              <X />
-                                            </span>
-                                          </button>
-                                        </div>
-                                      )}
-                                      {orgData.statusDisplay === "Active" && (
-                                        <button
-                                          className="btn btn-warning btn-icon btn-sm mr-1"
-                                          type="button"
-                                          data-tp-toggle="tooltip"
-                                          data-tp-placement="top"
-                                          data-tp-title="Suspend"
-                                          onClick={() =>
-                                            openSuspendModal(
-                                              orgData.organizationId
-                                            )
-                                          }
-                                        >
-                                          <span className="btn-inner">
-                                            <AlertCircle />
-                                          </span>
-                                        </button>
-                                      )}
-
-                                      {orgData.statusDisplay ===
-                                        "Suspended" && (
-                                        <button
-                                          className="btn btn-success btn-icon btn-sm mr-1"
-                                          type="button"
-                                          onClick={() =>
-                                            openApproveModal(
-                                              orgData.organizationId
-                                            )
-                                          }
-                                          data-tp-toggle="tooltip"
-                                          data-tp-placement="top"
-                                          data-tp-title="Add"
-                                        >
-                                          <span className="btn-inner">
-                                            <Check />
-                                          </span>
-                                        </button>
-                                      )}
-                                    </div>
-                                  </td>
-                                </tr>
-                              );
-                            })}
-                          </tbody>
-                        </table>
-
+                                        )}
+                                      </div>
+                                    </td>
+                                  </tr>
+                                );
+                              })}
+                            </tbody>
+                          </table>
+                        ) : (
+                          <div className="text-center text-black dark:text-white mt-10 mb-10">
+                            No organisations found.
+                          </div>
+                        )}
                         <div className="border dark:border-secondary-800">
                           <div className="flex flex-wrap justify-between my-6 mx-5">
                             <div className="flex justify-center items-center mb-1">
@@ -489,36 +527,47 @@ function Employers() {
                               </p>
                             </div>
 
-                            <div className="inline-flex flex-wrap">
-                              <button
-                                disabled={page === 1}
-                                onClick={() => setPage(page - 1)}
-                                className="border-t border-b border-l px-2 py-1 rounded-l disabled:opacity-50"
-                              >
-                                Previous
-                              </button>
+                            <div className="border dark:border-secondary-800">
+                              <div className="flex flex-wrap justify-between my-6 mx-5">
+                                <div className="flex justify-center items-center mb-1">
+                                  <p className="text-black">
+                                    Showing {start} to {end} of {totalCount}{" "}
+                                    entries
+                                  </p>
+                                </div>
 
-                              {[...Array(totalPages)].map((_, i) => (
-                                <button
-                                  key={i}
-                                  onClick={() => setPage(i + 1)}
-                                  className={`border px-4 py-1 ${
-                                    page === i + 1
-                                      ? "bg-primary-500 text-white"
-                                      : "text-primary-500"
-                                  }`}
-                                >
-                                  {i + 1}
-                                </button>
-                              ))}
+                                <div className="inline-flex flex-wrap">
+                                  <button
+                                    disabled={page === 1}
+                                    onClick={() => setPage(page - 1)}
+                                    className="border-t border-b border-l px-2 py-1 rounded-l disabled:opacity-50"
+                                  >
+                                    Previous
+                                  </button>
 
-                              <button
-                                disabled={page === totalPages}
-                                onClick={() => setPage(page + 1)}
-                                className="border-t border-b border-r px-2 py-1 rounded-r disabled:opacity-50"
-                              >
-                                Next
-                              </button>
+                                  {[...Array(totalPages)].map((_, i) => (
+                                    <button
+                                      key={i}
+                                      onClick={() => setPage(i + 1)}
+                                      className={`border px-4 py-1 ${
+                                        page === i + 1
+                                          ? "bg-primary-500 text-white"
+                                          : "text-primary-500"
+                                      }`}
+                                    >
+                                      {i + 1}
+                                    </button>
+                                  ))}
+
+                                  <button
+                                    disabled={page === totalPages}
+                                    onClick={() => setPage(page + 1)}
+                                    className="border-t border-b border-r px-2 py-1 rounded-r disabled:opacity-50"
+                                  >
+                                    Next
+                                  </button>
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </div>

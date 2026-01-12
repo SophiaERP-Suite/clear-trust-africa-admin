@@ -1,19 +1,19 @@
 export interface CreatePermissionsDto {
   name: string;
   description: string;
-  organizationTypeId: number;
+  organisationTypeId: number;
 }
 
 export interface UpdatePermissionsDto {
   name: string;
   description?: string;
-  organizationTypeId?: number;
+  organisationTypeId?: number;
 }
 
 export interface PermissionsDto {
   permissionId: number;
   name: string;
   description: string;
-  organizationTypeName: string;
-  organizationTypeId?: number;
+  organisationTypeName: string;
+  organisationTypeId?: number;
 }

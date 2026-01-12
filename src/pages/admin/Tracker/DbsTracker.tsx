@@ -1,28 +1,97 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Shield,
   AlertTriangle,
   Clock,
   Search,
-  Filter,
-  Download,
   ChevronRightIcon,
   ListChecks,
   Hourglass,
   ClockAlert,
   ClockFading,
-  Eye,
-  RefreshCw,
   FileText,
   Bell,
   XCircle,
+  Eye,
+  ClipboardList,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
+import { fetchDbsChecks, fetchDbsStatus, fetchDbsTypes } from "../../../utils/Requests/DbsRequests";
+import { useForm, useWatch } from "react-hook-form";
+import Hashids from "hashids";
+import Tippy from "@tippyjs/react";
+
+interface DbsChecks {
+  dbsApplicationId: number;
+  userId: number;
+  requestedById: number;
+  dbsTypeId: number;
+  status: number;
+  statusName: string;
+  submittedAt: string;
+  completedAt: string;
+  dateCreated: string;
+  userFirstName: string;
+  userLastName: string;
+  organisationName: string;
+  requestedBy: string;
+  staffInChargeId: number;
+  staffInChargeFirstName: string;
+  staffInChargeLastName: string;
+  adminId: number;
+  adminFirstName: string;
+  adminLastName: string;
+  dbsType: string;
+  dbsTypeCost: number;
+}
+
+type FilterForm = {
+  UserName: string;
+  OrganisationName: string;
+  Status: number;
+  Type: number;
+}
+
+export interface DBSStatus {
+  statusId: number;
+  statusName: string;
+}
+
+export interface DBSTypes {
+  dbsTypeId: number;
+  typeName: string;
+  typeCost: number;
+  description: string;
+}
+
+const statusStyles: Record<number, string> = {
+  1: 'bg-orange-200/50',
+  2: 'bg-blue-200/50',
+  3: 'bg-purple-200/50',
+  4: 'bg-green-200/50',
+  5: 'bg-red-200/50',
+};
+
+const statusTextStyles: Record<number, string> = {
+  1: 'text-orange-500',
+  2: 'text-blue-500',
+  3: 'text-purple-500',
+  4: 'text-green-500',
+  5: 'text-red-500',
+};
 
 export default function DBSTrackerModule() {
   const [activeView, setActiveView] = useState("dashboard");
-  const [filterStatus, setFilterStatus] = useState("all");
-  const [searchTerm, setSearchTerm] = useState("");
+  const [dbsChecks1, setDbsChecks1] = useState<DbsChecks[]>([]);
+  const [dbsStatus, setDbsStatus] = useState<DBSStatus[]>([]);
+  const [dbsType, setDbsType] = useState<DBSTypes[]>([]);
+  const [dbsPage, setDbsPage] = useState(1);
+  const dbsLimit = 5;
+  const [totalDbsChecks, setTotalDbsChecks] = useState(0);
+  const colors = ["#5d009bff", "#ff8800ff", "#ff0000", "#003000ff", "#00006dff"];
+  const { register, control } = useForm<FilterForm>();
+  const filters = useWatch({ control });
+  const hashIds = new Hashids('ClearTrustAfricaEncode', 10);
 
   const dbsChecks = [
     {
@@ -141,6 +210,62 @@ export default function DBSTrackerModule() {
     },
   ];
 
+  useEffect(() => {
+      fetchDbsChecks({ pageNumber: dbsPage, limit: dbsLimit, ...filters })
+      .then(res => {
+        if (res.status === 200) {
+          res.json()
+          .then(data => {
+            console.log(data);
+            setDbsChecks1(data.data.checks);
+            setTotalDbsChecks(data.data.totalCount);
+          })
+        } else {
+          res.text()
+          .then(data => {
+            console.log(JSON.parse(data));
+          })
+        }
+      })
+      .catch((err) => console.log(err))
+  }, [dbsPage, dbsLimit, filters]);
+
+  useEffect(() => {
+    fetchDbsTypes()
+    .then(res => {
+      if (res.status === 200) {
+        res.json()
+        .then(data => {
+          console.log(data.data);
+          setDbsType(data.data);
+        })
+      } else {
+        res.text()
+        .then(data => {
+          console.log(JSON.parse(data));
+        })
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    fetchDbsStatus()
+    .then(res => {
+      if (res.status === 200) {
+        res.json()
+        .then(data => {
+          console.log(data);
+          setDbsStatus(data.data);
+        })
+      } else {
+        res.text()
+        .then(data => {
+          console.log(JSON.parse(data));
+        })
+      }
+    });
+  }, []);
+
   const stats = {
     total: dbsChecks.length,
     valid: dbsChecks.filter((c) => c.status === "Valid").length,
@@ -156,18 +281,6 @@ export default function DBSTrackerModule() {
     ),
   };
 
-  const filteredChecks = dbsChecks.filter((check) => {
-    const matchesSearch =
-      check.employeeName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      check.employeeId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      check.id.toLowerCase().includes(searchTerm.toLowerCase());
-
-    const matchesFilter =
-      filterStatus === "all" || check.status === filterStatus;
-
-    return matchesSearch && matchesFilter;
-  });
-
   return (
     <div className="min-h-screen bg-gray-50 p-6">
 
@@ -178,7 +291,7 @@ export default function DBSTrackerModule() {
             <div className="col-md-12">
               <div className="flex flex-wrap items-center justify-between">
                 <div className="flex">
-                  <Shield className="text-blue-600 mr-2" size={36} />
+                  <ClipboardList className="text-blue-600 mr-2" size={36} />
                   <div>
                     <h3 className="mb-0 text-black">
                       DBS Tracker & Compliance
@@ -411,172 +524,210 @@ export default function DBSTrackerModule() {
           {/* Filters */}
           <div className="p-6 border-b">
             <div className="flex flex-wrap gap-4">
-              <div className="flex-1 min-w-[300px]">
+              <div className="flex-1 min-w-[250px]">
                 <div className="relative">
                   <Search
-                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                    className="absolute left-3 top-7 transform -translate-y-1/2 text-gray-400"
                     size={20}
                   />
                   <input
                     type="text"
-                    placeholder="Search by name, employee ID, or DBS number..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="Search by applicant name..."
+                    {...register('UserName')}
+                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+              </div>
+              <div className="flex-1 min-w-[250px]">
+                <div className="relative">
+                  <Search
+                    className="absolute left-3 top-7 transform -translate-y-1/2 text-gray-400"
+                    size={20}
+                  />
+                  <input
+                    type="text"
+                    placeholder="Search by organisation name..."
+                    {...register('OrganisationName')}
                     className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
               </div>
               <select
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
+                {...register('Status')}
                 className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
-                <option value="all">All Status</option>
-                <option value="Valid">Valid</option>
-                <option value="Expiring Soon">Expiring Soon</option>
-                <option value="Expired">Expired</option>
-                <option value="Pending">Pending</option>
-                <option value="Under Review">Under Review</option>
+                <option value="">All Status</option>
+                {
+                  dbsStatus.map((data, index) => (
+                    <option value={data.statusId} key={index}>{data.statusName}</option>
+                  ))
+                }
               </select>
-              <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
-                <Filter size={18} />
-                More Filters
-              </button>
-              <button className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
-                <Download size={18} />
-                Export
-              </button>
+              <select
+                {...register('Type')}
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="">All Types</option>
+                {
+                  dbsType.map((data, index) => (
+                    <option value={data.dbsTypeId} key={index}>{ data.typeName }</option>
+                  ))
+                }
+              </select>
             </div>
           </div>
 
           {/* Table */}
           <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                    Employee
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                    Department
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                    Check Type
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                    Issue Date
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                    Expiry Date
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {filteredChecks.map((check) => (
-                  <tr
-                    key={check.id}
-                    className="hover:bg-gray-50 transition-colors"
+            <div className="p-6">
+              <div className="flex flex-wrap justify-between mx-5 overflow-x-auto">
+                <table className="min-w-full divide-y divide-secondary-200 dark:divide-secondary-800 border dark:border-secondary-800">
+                  <thead>
+                    <tr className="bg-secondary-100 dark:bg-dark-bg">
+                      <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                        S/N
+                      </th>
+                      <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                        Applicant
+                      </th>
+                      <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                        Requested By
+                      </th>
+                      <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                        Organisation
+                      </th>
+                      <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                        Status
+                      </th>
+                      <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                        Request Type
+                      </th>
+                      <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                        Staff In Charge
+                      </th>
+                      <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                        Admin
+                      </th>
+                      <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                        Request Date
+                      </th>
+                      <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                        Action
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-secondary-200 dark:divide-secondary-800">
+                    {
+                      dbsChecks1.map((data, index) => (
+                      <tr key={data.dbsApplicationId ?? index}>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="iq-media-group iq-media-group-1">
+                            <h6 className="font-bold dark:text-white">
+                              {" "}
+                              #{(index + (dbsLimit * (dbsPage - 1))) + 1}
+                            </h6>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex w-50 items-center gap-3">
+                            <div className="h-12 w-12 border rounded-full" style={{ backgroundColor: colors[index % 4], display: "flex", justifyContent: "center", alignItems: "center", color: "#ffffff"}}>
+                              { `${data.userFirstName[0]} ${data.userLastName[0]}` }
+                            </div>
+                            <div>
+                              <div className="font-semibold text-gray-900">
+                                {`${data.userFirstName} ${data.userLastName}`}
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
+                          {data.requestedBy}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
+                          {data.organisationName}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-gray-900">
+                          <p
+                            className={`p-1 px-2 text-center rounded-lg ${
+                              statusStyles[data.status] ?? 'bg-gray-200'
+                            } ${statusTextStyles[data.status] ?? 'text-black'} font-bold`}
+                          >
+                            {data.statusName}
+                          </p>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
+                          {data.dbsType}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
+                          {data.staffInChargeId ? `${data.staffInChargeFirstName} ${data.staffInChargeLastName}` : 'None Assigned'}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
+                          {data.adminId ? `${data.adminFirstName} ${data.adminLastName}` : 'None Assigned'}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
+                          {(new Date(data.dateCreated)).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
+                          <div className="flex items-center list-user-action">
+                            <Tippy content='Preview Application'>
+                              <NavLink  to={`/Tracker/${hashIds.encode(String(data.dbsApplicationId))}`}
+                                className="btn btn-info btn-icon btn-sm mr-1"
+                              >
+                                <span className="btn-inner">
+                                  <Eye />
+                                </span>
+                              </NavLink>
+                            </Tippy>
+                          </div>
+                        </td>
+                      </tr>
+                      ))
+                    }
+                    
+                  </tbody>
+                </table>
+                {
+                  dbsChecks1.length === 0 ?
+                    <div className="py-4 whitespace-nowrap w-full">
+                          <span className="px-6 py-4 text-left font-medium text-black dark:text-white">There hasn't been any dbs checks</span>
+                    </div> : <></>
+                }
+              </div>
+              <div className="flex flex-wrap justify-between my-6 mx-5">
+                <div className="flex justify-center items-center mb-1">
+                  <p className="text-black">
+                    Showing { dbsChecks1.length > 0 ? ((dbsPage * dbsLimit) - dbsLimit) + 1 : 0 } to { dbsChecks1.length > 0 ? (((dbsPage * dbsLimit) - dbsLimit) + 1) + (dbsChecks1.length - 1) : 0 } of { totalDbsChecks } entries
+                  </p>
+                </div>
+                <div className="inline-flex flex-wrap">
+                  {
+                    dbsPage > 1 && <a
+                    href="#"
+                    onClick={() => { if (dbsPage > 1) {setDbsPage(dbsPage - 1);} }}
+                    className="border-t border-b border-l text-primary-500 border-secondary-500 px-2 py-1 rounded-l dark:border-secondary-800"
                   >
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <img
-                          src={check.photo}
-                          alt={check.employeeName}
-                          className="w-10 h-10 rounded-full"
-                        />
-                        <div>
-                          <div className="font-semibold text-gray-900">
-                            {check.employeeName}
-                          </div>
-                          <div className="text-sm text-gray-500">
-                            {check.employeeId}
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="text-sm text-gray-900">
-                        {check.department}
-                      </div>
-                      <div className="text-xs text-gray-500">
-                        {check.position}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="text-sm text-gray-900">
-                        {check.checkType}
-                      </div>
-                      {check.updateService && (
-                        <div className="flex items-center gap-1 text-xs text-green-600 mt-1">
-                          <RefreshCw size={12} />
-                          Update Service
-                        </div>
-                      )}
-                    </td>
-                    <td className="px-6 py-4">
-                      <span
-                        className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold border`}
-                      >
-                        {/* {getStatusIcon(check.status)} */}
-                        {check.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-900">
-                      {check.issueDate || "-"}
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="text-sm text-gray-900">
-                        {check.expiryDate || "-"}
-                      </div>
-                      {check.daysUntilExpiry !== null && (
-                        <div
-                          className={`text-xs mt-1 ${
-                            check.daysUntilExpiry < 0
-                              ? "text-red-600"
-                              : check.daysUntilExpiry < 30
-                              ? "text-yellow-600"
-                              : "text-gray-500"
-                          }`}
-                        >
-                          {check.daysUntilExpiry < 0
-                            ? `${Math.abs(check.daysUntilExpiry)} days overdue`
-                            : `${check.daysUntilExpiry} days left`}
-                        </div>
-                      )}
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        <button
-                        //   onClick={() => setSelectedCheck(check)}
-                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                          title="View Details"
-                        >
-                          <Eye size={18} />
-                        </button>
-                        <button
-                          className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
-                          title="Download Certificate"
-                        >
-                          <Download size={18} />
-                        </button>
-                        <button
-                          className="p-2 text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
-                          title="Renew"
-                        >
-                          <RefreshCw size={18} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                    Previous
+                  </a>
+                  }
+                  <a
+                    href="#"
+                    className="border text-white border-secondary-500 cursor-pointer bg-primary-500 px-4 py-1 dark:border-secondary-800"
+                  >
+                    { dbsPage }
+                  </a>
+                  {
+                    (dbsPage * dbsLimit) < totalDbsChecks && <a
+                    href="#"
+                    onClick={() => { setDbsPage(dbsPage + 1); }}
+                    className="border-r border-t border-b text-primary-500 border-secondary-500 px-4 py-1 rounded-r dark:border-secondary-800"
+                  >
+                    Next
+                  </a>
+                  }
+                  
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}

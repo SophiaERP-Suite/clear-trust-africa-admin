@@ -783,7 +783,7 @@ export default function DBSStages() {
                           </select>
                         </div>
                       </div>
-                            <div className="overflow-x-auto">
+                      <div className="overflow-x-auto">
                         <table className="min-w-full divide-y divide-secondary-200 dark:divide-secondary-800 border dark:border-secondary-800">
                           <thead>
                               <tr className="bg-secondary-100 dark:bg-dark-bg">

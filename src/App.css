@@ -30,3 +30,44 @@
 .bg-blue-600 {
     background-color: oklch(54.6% 0.245 262.881);
 }
+
+.dots {
+  display: none;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+}
+  
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  animation: bounce 1.5s infinite ease-in-out;
+  background-color: #fff;
+} 
+
+.dot:nth-child(1) {
+  animation-delay: 0s;
+}
+.dot:nth-child(2) {
+  animation-delay: 0.3s;
+}
+.dot:nth-child(3) {
+  animation-delay: 0.6s;
+}
+
+@keyframes bounce {
+  0%, 80%, 100% {
+    transform: scaleY(1);
+  }
+  40% {
+    transform: scaleY(1.5);
+  }
+}
+
+.error-msg {
+  color: red;
+  font-size: 12px;
+  margin-bottom: 10px;
+  padding-left: 5px;
+}

@@ -6,7 +6,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getAllRoles } from "../../../api/roleApi";
-import { getAllOrganizationTypes } from "../../../api/orgTypeApi";
+import { getAllOrganisationTypes } from "../../../api/orgTypeApi";
 import { getAllPermissions } from "../../../api/permissionApi";
 import { useNavigate } from "react-router-dom";
 
@@ -39,12 +39,12 @@ function ControlPanelOverview() {
     //   path: "/ControlPanel/RolePermissions",
     // },
     // {
-    //   id: "organizationType",
-    //   title: "Organization Types",
-    //   description: "Manage different organization classifications",
+    //   id: "organisationType",
+    //   title: "Organisation Types",
+    //   description: "Manage different organisation classifications",
     //   icon: <Building className="h-8 w-8" />,
     //   color: "bg-amber-100 text-amber-600",
-    //   path: "/ControlPanel/OrganizationType",
+    //   path: "/ControlPanel/OrganisationType",
     // },
     // {
     //   id: "notifications",
@@ -69,7 +69,7 @@ function ControlPanelOverview() {
   ];
 
   const stats = [
-    { title: "Organization Types", value: 120, color: "blue" },
+    { title: "Organisation Types", value: 120, color: "blue" },
     { title: "Permissions", value: 450, color: "green" },
     { title: "Active Roles", value: 10, color: "purple" },
   ];
@@ -113,7 +113,7 @@ function ControlPanelOverview() {
 
   const fetchOrgType = async () => {
     try {
-      const data = await getAllOrganizationTypes();
+      const data = await getAllOrganisationTypes();
       const dataCount = data.length;
       setOrgTypeCount(dataCount);
     } catch (err: any) {
