@@ -18,3 +18,15 @@ export const fetchNIMCSearch = async (filterData: object) => {
   })
   return response
 }
+
+export const matchNIMCSearchToApplication = async (data: FormData) => {
+  const token = localStorage.getItem('accessToken');
+  const response = await fetch(`${BaseURL}/nimc-search/dbs-search`, {
+    method: 'POST',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    },
+    body: data
+  })
+  return response
+}

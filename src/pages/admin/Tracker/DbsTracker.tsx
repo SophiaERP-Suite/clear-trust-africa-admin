@@ -21,7 +21,7 @@ import { useForm, useWatch } from "react-hook-form";
 import Hashids from "hashids";
 import Tippy from "@tippyjs/react";
 
-interface DbsChecks {
+export interface DbsChecks {
   dbsApplicationId: number;
   userId: number;
   requestedById: number;
