@@ -16,6 +16,8 @@ import ControlPanel from "../pages/admin/ControlPanel/ControlPanel";
 import TrackerDetails from "../pages/admin/Tracker/TrackerDetails";
 import DBSSearchModule from "../pages/admin/DBSSearch/DBSSearch";
 import NPFProfileDetails from "../pages/admin/DBSSearch/NPFProfileDetails";
+import DBSSearchCompare from "../pages/admin/DBSSearch/DBSSearchCompare";
+import DBSCertificate from "../pages/admin/Tracker/DBSCertificate";
 
 function AppRoutes() {
   return (
@@ -37,8 +39,10 @@ function AppRoutes() {
         />
         <Route path="Tracker" element={<DbsTracker />} />
         <Route path="Tracker/:id" element={<TrackerDetails />} />
+        <Route path="Tracker/Certificate/:id" element={<DBSCertificate />} />
         <Route path="DBSSearch" element={<DBSSearchModule />} />
         <Route path="DBSSearch/NPF/:id" element={<NPFProfileDetails />} />
+        <Route path="DBSSearch/Compare/:id" element={<DBSSearchCompare />} />
         <Route path="IncidentMgt" element={<Incidents />} />
         <Route path="FinanceMgt" element={<PaymentDashboard />} />
         <Route path="Reports" element={<InvestigationPortal />} />

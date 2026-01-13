@@ -8,6 +8,7 @@ import {
   CircleCheckBig,
   ClipboardClock,
   ClipboardList,
+  FileCheck,
   FileIcon,
   FolderCog,
   Mail,
@@ -268,6 +269,7 @@ export default function TrackerDetails() {
           if (res.status === 200) {
             res.json()
             .then(data => {
+              console.log("Stage Status", data)
               setCurrentStageStatus(data.data);
             })
           } else {
@@ -952,6 +954,14 @@ export default function TrackerDetails() {
                     </p>
                   </Tippy>
                 </div>
+                {
+                  currentStageStatus && currentStageStatus.finalStage && (<div>
+                    <NavLink className="btn btn-success mr-2 mb-2" to={`/Tracker/Certificate/${hashedId}`}>
+                      <FileCheck size={18} className="mr-2" />
+                      Go To Certificate
+                    </NavLink>
+                  </div>)
+                }
                 <div>
                   <Tippy content="Current Stage Status">
                     <p className={`btn mr-2 mb-2 ${currentStageStatus ? stageStatusStyles[currentStageStatus.status] : stageStatusStyles[1]} ${currentStageStatus ? stageStatusTextStyles[currentStageStatus.status] : stageStatusTextStyles[1]} font-bold`} style={{ cursor: 'auto' }}>
@@ -1001,6 +1011,7 @@ export default function TrackerDetails() {
                           </button>
                         )
                       }
+                      
                     </div>
                   )}
                 </div>
@@ -1202,7 +1213,7 @@ export default function TrackerDetails() {
                         </div>
                       </div>
                       <div
-                        className="bg-gradient-to-r from-red-600 to-red-500 rounded-xl p-6 border border-slate-200 hover:shadow-lg transition-shadow"
+                        className={`${!currentStageStatus?.finalStage ? 'bg-gradient-to-r from-red-600 to-red-500' : 'bg-gradient-to-r from-green-600 to-green-500'} rounded-xl p-6 border border-slate-200 hover:shadow-lg transition-shadow`}
                       >
                         <div className="flex items-start justify-end mb-4">
                           <div className="py-3 px-3 bg-white rounded-full">

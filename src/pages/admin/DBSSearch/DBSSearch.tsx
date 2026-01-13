@@ -21,7 +21,7 @@ import {
   CheckCheck,
   UserLock,
 } from "lucide-react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import Tippy from "@tippyjs/react";
 import Hashids from "hashids";
 import { useForm, useWatch } from "react-hook-form";
@@ -33,7 +33,7 @@ import type { FilterForm } from "./NPFProfileDetails.js";
 import { fetchDbsChecks, fetchDbsStatus, fetchDbsTypes } from "../../../utils/Requests/DbsRequests.js";
 import type { DbsChecks } from "../Tracker/DbsTracker.js";
 import { toast } from "react-toastify";
-import { handleCreateEmployee } from "../../../utils/ResponseHandlers/EmployeeResponse.js";
+import { handleSearchMatch } from "../../../utils/ResponseHandlers/EmployeeResponse.js";
 
 export interface DBSStatus {
   statusId: number;
@@ -79,6 +79,7 @@ export interface NPFData {
   gender: string;
   phone: string;
   email: string;
+  nin: string;
   residentialAddress: string;
   state: string;
   lga: string;
@@ -168,6 +169,7 @@ export default function DBSSearchModule() {
   const colors = ["#5d009bff", "#ff8800ff", "#ff0000", "#003000ff", "#00006dff"];
   const [dbsStatus, setDbsStatus] = useState<DBSStatus[]>([]);
   const [dbsType, setDbsType] = useState<DBSTypes[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchNIMCSearch({ pageNumber: dbsPage, limit: dbsLimit, ...filters })
@@ -269,8 +271,14 @@ export default function DBSSearchModule() {
       formData.append('NIMCRecordId', String(nimcDetails.nimcRecordId));
       formData.append('SearchType', String(1));
       const res = await matchNIMCSearchToApplication(formData);
-      handleCreateEmployee(res, null, null, { toast }, null)
-      .finally(() => setAttachModalState(false))
+      const data = await handleSearchMatch(res, { toast }, null);
+      setAttachModalState(false);
+      if (data) {
+        const dbsSearchId = data.data.dbsSearchId;
+        if (dbsSearchId) {
+          navigate(`/DBSSearch/Compare/${hashIds.encode(dbsSearchId)}`);
+        }
+      }
     }
   }
 
@@ -396,9 +404,9 @@ export default function DBSSearchModule() {
           }
       }}
       >
-          <div className="h-fit max-h-[70vh] overflow-y-auto overflow-x-auto w-70 max-w-70 md:w-100 md:max-w-[500px]">
+          <div className="h-fit max-h-[70vh] overflow-y-auto overflow-x-auto w-70 max-w-70 md:w-800 md:max-w-[800px]">
               <div className="flex justify-start">
-              <p className="font-semibold text-black py-1 text-lg"><UserLock size={20} className="mr-2" /> Match Record to Applicatiom</p>
+              <p className="font-semibold text-black py-1 text-lg"><UserLock size={20} className="mr-2" /> Match Record to Application</p>
               </div>
               <div className="bg-white rounded-lg shadow-lg">
                 {/* Filters */}
@@ -468,9 +476,6 @@ export default function DBSSearchModule() {
                                 Applicant
                             </th>
                             <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
-                                Requested By
-                            </th>
-                            <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
                                 Status
                             </th>
                             <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
@@ -497,10 +502,6 @@ export default function DBSSearchModule() {
                                     </div>
                                 </div>
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
-                                    <p>{data.requestedBy}</p>
-                                    <p className="text-sm"><b>Org:</b> {data.organisationName}</p>
-                                </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-gray-900">
                                     <p
                                         className={`p-1 px-2 text-center rounded-lg ${
@@ -514,12 +515,14 @@ export default function DBSSearchModule() {
                                     <p className="text-sm"><b>Type:</b> {data.dbsType}</p>
                                     <p className="text-sm"><b>Staff:</b> {data.staffInChargeId ? `${data.staffInChargeFirstName} ${data.staffInChargeLastName}` : 'None Assigned'}</p>
                                     <p className="text-sm"><b>Admin:</b> {data.adminId ? `${data.adminFirstName} ${data.adminLastName}` : 'None Assigned'}</p>
+                                    <p className="text-sm"><b>Requested By:</b>{data.requestedBy}</p>
                                     <p className="text-sm"><b>Request Date:</b> {(new Date(data.dateCreated)).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</p>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
                                 <div className="flex items-center list-user-action">
                                     <Tippy content='Match Application'>
-                                        <button onClick={() => matchDataToApplication(data.dbsApplicationId)}
+                                      <button onClick={() => matchDataToApplication(data.dbsApplicationId)}
+                                        className="btn btn-success"
                                         >
                                             <span className="btn-inner">
                                             <CheckCheck />

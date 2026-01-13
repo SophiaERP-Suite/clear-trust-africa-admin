@@ -17,7 +17,7 @@ import {
   UserLock,
   Venus,
 } from "lucide-react";
-import { NavLink, useParams } from "react-router-dom";
+import { NavLink, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Hashids from "hashids";
 import { toast, ToastContainer } from "react-toastify";
@@ -29,7 +29,7 @@ import Tippy from "@tippyjs/react";
 import { useForm, useWatch } from "react-hook-form";
 import { fetchDbsChecks, fetchDbsStatus, fetchDbsTypes } from "../../../utils/Requests/DbsRequests.js";
 import type { DbsChecks, DBSTypes } from "../Tracker/DbsTracker.js";
-import { handleCreateEmployee } from "../../../utils/ResponseHandlers/EmployeeResponse.js";
+import { handleSearchMatch } from "../../../utils/ResponseHandlers/EmployeeResponse.js";
 
 const riskLevels: Record<number, string[]> = {
   3: ['High', 'bg-red-200/50', 'text-red-500'],
@@ -112,6 +112,7 @@ export default function NPFProfileDetails() {
   const colors = ["#5d009bff", "#ff8800ff", "#ff0000", "#003000ff", "#00006dff"];
   const [dbsStatus, setDbsStatus] = useState<DBSStatus[]>([]);
   const [dbsType, setDbsType] = useState<DBSTypes[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
       fetchNPFSearchById(hashedId)
@@ -211,8 +212,13 @@ export default function NPFProfileDetails() {
     formData.append('NPFProfileRecordId', String(hashedId));
     formData.append('SearchType', String(2));
     const res = await matchNPFSearchToApplication(formData);
-      handleCreateEmployee(res, null, null, { toast }, null)
-        .finally(() => setAttachModalState(false));
+    const data = await handleSearchMatch(res, { toast }, null);
+    if (data) {
+        const dbsSearchId = data.data.dbsSearchId;
+        if (dbsSearchId) {
+            navigate(`/DBSSearch/Compare/${hashIds.encode(dbsSearchId)}`);
+        }
+    }
   }
 
   return (
@@ -235,9 +241,9 @@ export default function NPFProfileDetails() {
           }
       }}
       >
-          <div className="h-fit max-h-[70vh] overflow-y-auto overflow-x-auto w-70 max-w-70 md:w-100 md:max-w-[500px]">
+          <div className="h-fit max-h-[70vh] overflow-y-auto overflow-x-auto w-70 max-w-70 md:w-800 md:max-w-[800px]">
               <div className="flex justify-start">
-              <p className="font-semibold text-black py-1 text-lg"><UserLock size={20} className="mr-2" /> Match Record to Applicatiom</p>
+              <p className="font-semibold text-black py-1 text-lg"><UserLock size={20} className="mr-2" /> Match Record to Application</p>
               </div>
               <div className="bg-white rounded-lg shadow-lg">
                 {/* Filters */}
@@ -307,9 +313,6 @@ export default function NPFProfileDetails() {
                                 Applicant
                             </th>
                             <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
-                                Requested By
-                            </th>
-                            <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
                                 Status
                             </th>
                             <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
@@ -336,10 +339,6 @@ export default function NPFProfileDetails() {
                                     </div>
                                 </div>
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
-                                    <p>{data.requestedBy}</p>
-                                    <p className="text-sm"><b>Org:</b> {data.organisationName}</p>
-                                </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-gray-900">
                                     <p
                                         className={`p-1 px-2 text-center rounded-lg ${
@@ -353,12 +352,14 @@ export default function NPFProfileDetails() {
                                     <p className="text-sm"><b>Type:</b> {data.dbsType}</p>
                                     <p className="text-sm"><b>Staff:</b> {data.staffInChargeId ? `${data.staffInChargeFirstName} ${data.staffInChargeLastName}` : 'None Assigned'}</p>
                                     <p className="text-sm"><b>Admin:</b> {data.adminId ? `${data.adminFirstName} ${data.adminLastName}` : 'None Assigned'}</p>
+                                    <p className="text-sm"><b>Requested By:</b>{data.requestedBy}</p>
                                     <p className="text-sm"><b>Request Date:</b> {(new Date(data.dateCreated)).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</p>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
                                 <div className="flex items-center list-user-action">
                                     <Tippy content='Match Application'>
                                         <button onClick={() => matchDataToApplication(data.dbsApplicationId)}
+                                            className="btn btn-success"
                                         >
                                             <span className="btn-inner">
                                             <CheckCheck />

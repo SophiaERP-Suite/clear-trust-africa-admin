@@ -232,3 +232,36 @@ export const fetchStageByApplicationAndStage = async (applicationId: number, sta
   })
   return response
 }
+
+export const fetchDbsSearchData = async (dbsSearchId: number) => {
+  const token = localStorage.getItem('accessToken');
+  const response = await fetch(`${BaseURL}/dbs-search/${dbsSearchId}`, {
+    method: 'GET',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  })
+  return response
+}
+
+export const removeDbsSearchData = async (dbsSearchId: number) => {
+  const token = localStorage.getItem('accessToken');
+  const response = await fetch(`${BaseURL}/dbs-search/${dbsSearchId}`, {
+    method: 'DELETE',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  })
+  return response
+}
+
+export const matchDbsSearchData = async (dbsSearchId: number) => {
+  const token = localStorage.getItem('accessToken');
+  const response = await fetch(`${BaseURL}/dbs-search/${dbsSearchId}/match`, {
+    method: 'PATCH',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  })
+  return response
+}
