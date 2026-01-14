@@ -31,7 +31,7 @@ import { NavLink, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { fetchApplicantDocsById } from "../../../utils/Requests/EmployeeRequests.js";
 import Hashids from "hashids";
-import { fetchDbsCheckById, fetchDbsLogsByApplication, fetchDbsStages, fetchStageByApplicationAndStage, markStageAsApproved, markStageAsCompleted, submitDbsActivityLog, updateDbsApplications, updateDocStatus } from "../../../utils/Requests/DbsRequests.js";
+import { fetchDbsCheckById, fetchDbsLogsByApplication, fetchDbsStages, fetchStageByApplicationAndStage, generateNewDBSCertificate, markStageAsApproved, markStageAsCompleted, submitDbsActivityLog, updateDbsApplications, updateDocStatus } from "../../../utils/Requests/DbsRequests.js";
 import { toast, ToastContainer } from "react-toastify";
 import Modal from 'react-modal';
 import { useForm, useWatch } from "react-hook-form";
@@ -243,6 +243,7 @@ export default function TrackerDetails() {
     formState: approvedForm
   } = useForm<ApprovedStageFormValues>();
   const { errors: approvedErrors } = approvedForm;
+  const [certificate, setCertificate] = useState(false);
 
   useEffect(() => {
       fetchDbsCheckById(hashedId)
@@ -250,7 +251,8 @@ export default function TrackerDetails() {
         if (res.status === 200) {
           res.json()
           .then(data => {
-            setDbsDetails(data.data);
+            setDbsDetails(data.data.application);
+            setCertificate(data.data.certificate);
           })
         } else {
           res.text()
@@ -287,7 +289,8 @@ export default function TrackerDetails() {
     const res = await fetchDbsCheckById(hashedId);
     if (res.status === 200) {
       const data = await res.json();
-      setDbsDetails(data.data)
+      setDbsDetails(data.data.application);
+      setCertificate(data.data.certificate)
     } else {
       const resText = await res.text();
       console.log(JSON.parse(resText));
@@ -532,6 +535,16 @@ export default function TrackerDetails() {
         await refetchApplicationStage();
       });
     }
+  };
+
+  const generateCertificate = async () => {
+    setOpenMoreAction(!openMoreAction);
+    toast.success("Your Certificate is being generated");
+    const res = await generateNewDBSCertificate(hashedId);
+    handleCreateEmployee(res, null, null, { toast }, null)
+    .finally(async () => {
+      await refetchDbsDetails();
+    });
   };
 
   return (
@@ -954,14 +967,6 @@ export default function TrackerDetails() {
                     </p>
                   </Tippy>
                 </div>
-                {
-                  currentStageStatus && currentStageStatus.finalStage && (<div>
-                    <NavLink className="btn btn-success mr-2 mb-2" to={`/Tracker/Certificate/${hashedId}`}>
-                      <FileCheck size={18} className="mr-2" />
-                      Go To Certificate
-                    </NavLink>
-                  </div>)
-                }
                 <div>
                   <Tippy content="Current Stage Status">
                     <p className={`btn mr-2 mb-2 ${currentStageStatus ? stageStatusStyles[currentStageStatus.status] : stageStatusStyles[1]} ${currentStageStatus ? stageStatusTextStyles[currentStageStatus.status] : stageStatusTextStyles[1]} font-bold`} style={{ cursor: 'auto' }}>
@@ -998,6 +1003,21 @@ export default function TrackerDetails() {
                         )
                       }
                       {
+                        certificate && currentStageStatus && currentStageStatus.finalStage &&  (
+                          <NavLink className="block w-full px-4 py-2 hover:bg-secondary-200 text-left text-black"  to={`/Tracker/Certificate/${id}`}>
+                            <FileCheck size={18} className="mr-2" /> Go To Certificate
+                          </NavLink>
+                        )
+                      }
+                      {
+                        !certificate && currentStageStatus && currentStageStatus.finalStage &&  (
+                          <button className="block w-full px-4 py-2 hover:bg-secondary-200 text-left text-black" onClick={() => generateCertificate()}>
+                            <FileCheck size={18} className="mr-2" /> Generate Certificate
+                          </button>
+                        )
+                      }
+                      {
+                        
                         (dbsDetails.dbsStageAdminId == user?.userId || dbsDetails.staffInChargeId == user?.userId) && (!currentStageStatus || currentStageStatus.status == 1) && (
                           <button className="block w-full px-4 py-2 hover:bg-secondary-200 text-left text-black" onClick={() => { setCompleteModalState(true); setOpenMoreAction(!openMoreAction); }}>
                             <CircleCheckBig size={18} className="mr-2" /> Mark Stage Completed

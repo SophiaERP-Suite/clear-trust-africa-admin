@@ -76,6 +76,28 @@ export const fetchDbsCheckById = async (id: number) => {
   return response
 }
 
+export const generateNewDBSCertificate = async (id: number) => {
+  const token = localStorage.getItem('accessToken');
+  const response = await fetch(`${BaseURL}/dbs-applications/${id}/certificate`, {
+    method: 'POST',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  })
+  return response
+}
+
+export const getDBSCertificateByApplicationId = async (id: number) => {
+  const token = localStorage.getItem('accessToken');
+  const response = await fetch(`${BaseURL}/dbs-applications/${id}/certificate`, {
+    method: 'GET',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  })
+  return response
+}
+
 export const submitDbsStatus = async (data: FormData) => {
   const token = localStorage.getItem('accessToken');
   const response = await fetch(`${BaseURL}/dbs-status`, {
