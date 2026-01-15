@@ -113,7 +113,7 @@ export default function DBSSearchCompare() {
     }
     const res = await removeDbsSearchData(hashedId);
     handleCreateEmployee(res, loader, text, { toast }, null)
-    .finally(() => navigate('/DBSSearch'));
+    .finally(() => navigate('/CTASearch'));
   }
   
   const approveDBSSearcMatch = async () => {
@@ -150,14 +150,14 @@ export default function DBSSearchCompare() {
             <ClipboardList className="text-blue-600 mr-2" size={36} />
             <div>
                 <h3 className="mb-0 text-black">
-                    DBS Search Match
+                    CTA Search Match
                 </h3>
                 <p className="text-secondary-600 text-black">
                     <NavLink to="/Dashboard">Dashboard</NavLink>{" "}
                     <ChevronRightIcon size={14} />{" "}
-                    <NavLink to="/DBSSearch">DBS Search</NavLink>{" "}
+                    <NavLink to="/CTASearch">CTA Search</NavLink>{" "}
                     <ChevronRightIcon size={14} />{" "}
-                    <NavLink to={`/DBSSearch/Compare/${id}`}>DBS Search Match</NavLink>{" "}
+                    <NavLink to={`/CTASearch/Compare/${id}`}>CTA Search Match</NavLink>{" "}
                 </p>
             </div>
           </div>

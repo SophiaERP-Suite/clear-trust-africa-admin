@@ -143,7 +143,7 @@ export default function DBSStatus() {
         
           <div className="h-fit w-100">
             <div className="flex justify-start">
-              <p className="font-semibold text-black py-1 text-lg"><BookKey size={20} className="mr-2" /> Add New DBS Status</p>
+              <p className="font-semibold text-black py-1 text-lg"><BookKey size={20} className="mr-2" /> Add New Status</p>
             </div>
             <form
                   onSubmit={handleSubmit(addNewStatus)}
@@ -271,7 +271,7 @@ export default function DBSStatus() {
           <div className="relative flex flex-col mb-8  bg-white dark:bg-dark-card shadow rounded">
             <div className="flex justify-between flex-auto p-5 border-b dark:border-secondary-800 rounded">
               <h4 className="mb-0 dark:text-secondary-200">
-                <BookKey /> DBS Status
+                <BookKey /> Check Status
               </h4>
             </div>
             <div className="py-2 px-3">
@@ -284,7 +284,7 @@ export default function DBSStatus() {
                         className="btn btn-success"
                         onClick={() => setAddModalState(true)}
                       >
-                        <Plus /> Add New DBS Status
+                        <Plus /> Add New Check Status
                       </button>
                     </div>
                   </div>

@@ -294,12 +294,12 @@ export default function DBSTrackerModule() {
                   <ClipboardList className="text-blue-600 mr-2" size={36} />
                   <div>
                     <h3 className="mb-0 text-black">
-                      DBS Tracker & Compliance
+                      CTA Tracker & Compliance
                     </h3>
                     <p className="text-secondary-600 text-black">
                       <NavLink to="/Dashboard">Dashboard</NavLink>{" "}
                       <ChevronRightIcon size={14} />{" "}
-                      <NavLink to="/Tracker">DBS Tracker</NavLink>{" "}
+                      <NavLink to="/Tracker">CTA Tracker</NavLink>{" "}
                     </p>
                   </div>
                 </div>

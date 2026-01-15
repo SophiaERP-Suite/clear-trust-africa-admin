@@ -4,9 +4,11 @@ import Modal from 'react-modal';
 import { FolderKey, CheckCheck, Pen, Plus, X,} from "lucide-react";
 import { fetchDbsTypes, submitDbsType, updateDbsType } from "../../../utils/Requests/DbsRequests";
 import type { DBSTypes } from "../Tracker/DbsTracker";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { handleCreateEmployee } from "../../../utils/ResponseHandlers/EmployeeResponse";
 import Tippy from "@tippyjs/react";
+import RichTextEditor from "../../../layout/RichTextEditor";
+import HtmlRenderer from "../../../layout/HTMLRenderer";
 
 interface DBSTypesFormValues {
   TypeName: string;
@@ -18,12 +20,13 @@ export default function DBSType() {
   const [loading, setLoading] = useState(true);
   const [dbsType, setDbsType] = useState<DBSTypes[]>([]);
   const [dbsTypeEdit, setDbsTypeEdit] = useState<DBSTypes | null>(null);
-  const { register, reset, handleSubmit, formState } = useForm<DBSTypesFormValues>();
+  const { register, reset, handleSubmit, formState, control } = useForm<DBSTypesFormValues>();
   const {
     register: regEdit,
     reset: resetEdit,
     handleSubmit: submitEdit,
     formState: editFormState,
+    control: editControl,
     setValue,
   } = useForm<DBSTypesFormValues>();
   const [error, setError] = useState<string | null>(null);
@@ -153,7 +156,7 @@ export default function DBSType() {
         
           <div className="h-fit w-100">
             <div className="flex justify-start">
-              <p className="font-semibold text-black py-1 text-lg"><FolderKey size={20} className="mr-2" /> Add New DBS Type</p>
+              <p className="font-semibold text-black py-1 text-lg"><FolderKey size={20} className="mr-2" /> Add New Type</p>
             </div>
             <form
                   onSubmit={handleSubmit(addNewStatus)}
@@ -210,14 +213,16 @@ export default function DBSType() {
                     Description
                   </label>
                   <div>
-                    <textarea
-                      className="w-full h-30 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-black placeholder-secondary-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                        {
-                        ...register('Description', {
-                          required: 'Required'
-                        })
-                      }
-                      required
+                    <Controller
+                        name="Description"
+                        control={control}
+                        rules={{ required: 'Required' }}
+                        render={({ field }) => (
+                          <RichTextEditor
+                            value={field.value}
+                            onChange={field.onChange}
+                          />
+                        )}
                     />
                     <p className='error-msg'>{errors.Description?.message}</p>
                   </div>
@@ -265,7 +270,7 @@ export default function DBSType() {
             dbsTypeEdit && (
                 <div className="h-fit w-100">
                     <div className="flex justify-start">
-                    <p className="font-semibold text-black py-1 text-lg"><FolderKey size={20} className="mr-2" /> Update DBS Type</p>
+                    <p className="font-semibold text-black py-1 text-lg"><FolderKey size={20} className="mr-2" /> Update Type</p>
                     </div>
                     <form
                         onSubmit={submitEdit(updateType)}
@@ -322,14 +327,17 @@ export default function DBSType() {
                             Description
                         </label>
                         <div>
-                            <textarea
-                            className="w-full h-30 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-black placeholder-secondary-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                                {
-                                ...regEdit('Description', {
-                                required: 'Required'
-                                })
-                            }
-                            />
+                          <Controller
+                              name="Description"
+                              control={editControl}
+                              rules={{ required: 'Required' }}
+                              render={({ field }) => (
+                                <RichTextEditor
+                                  value={field.value}
+                                  onChange={field.onChange}
+                                />
+                              )}
+                          />
                             <p className='error-msg'>{editErrors.Description?.message}</p>
                         </div>
                         </div>
@@ -362,7 +370,7 @@ export default function DBSType() {
           <div className="relative flex flex-col mb-8  bg-white dark:bg-dark-card shadow rounded">
             <div className="flex justify-between flex-auto p-5 border-b dark:border-secondary-800 rounded">
               <h4 className="mb-0 dark:text-secondary-200">
-                <FolderKey /> DBS Type
+                <FolderKey /> Check Type
               </h4>
             </div>
             <div className="py-2 px-3">
@@ -375,7 +383,7 @@ export default function DBSType() {
                         className="btn btn-success"
                         onClick={() => setAddModalState(true)}
                       >
-                        <Plus /> Add New DBS Type
+                        <Plus /> Add New Check Type
                       </button>
                     </div>
                   </div>
@@ -420,7 +428,7 @@ export default function DBSType() {
                   )}
                   {!loading && !error && dbsType.length === 0 && (
                     <div className="no-roles flex justify-center text-center mt-[25%]">
-                      No DBS Status found.
+                      No Type found.
                     </div>
                   )}
                   {!loading && !error && dbsType.length > 0 && (
@@ -465,7 +473,7 @@ export default function DBSType() {
                                         { `NGN ${data.typeCost.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2})}` }
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
-                                        {data.description}
+                                          <HtmlRenderer html={data.description} />
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className="flex items-center list-user-action">
@@ -493,7 +501,7 @@ export default function DBSType() {
                             {
                             dbsType.length === 0 ?
                                 <div className="py-4 whitespace-nowrap w-full">
-                                    <span className="px-6 py-4 text-left font-medium text-black dark:text-white">There hasn't been any dbs types added</span>
+                                    <span className="px-6 py-4 text-left font-medium text-black dark:text-white">There hasn't been any types added</span>
                                 </div> : <></>
                             }
                         </div>

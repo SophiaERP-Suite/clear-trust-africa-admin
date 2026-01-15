@@ -40,9 +40,9 @@ function AppRoutes() {
         <Route path="Tracker" element={<DbsTracker />} />
         <Route path="Tracker/:id" element={<TrackerDetails />} />
         <Route path="Tracker/Certificate/:id" element={<DBSCertificate />} />
-        <Route path="DBSSearch" element={<DBSSearchModule />} />
-        <Route path="DBSSearch/NPF/:id" element={<NPFProfileDetails />} />
-        <Route path="DBSSearch/Compare/:id" element={<DBSSearchCompare />} />
+        <Route path="CTASearch" element={<DBSSearchModule />} />
+        <Route path="CTASearch/NPF/:id" element={<NPFProfileDetails />} />
+        <Route path="CTASearch/Compare/:id" element={<DBSSearchCompare />} />
         <Route path="IncidentMgt" element={<Incidents />} />
         <Route path="FinanceMgt" element={<PaymentDashboard />} />
         <Route path="Reports" element={<InvestigationPortal />} />

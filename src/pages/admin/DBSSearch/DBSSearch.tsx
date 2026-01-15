@@ -552,12 +552,12 @@ export default function DBSSearchModule() {
                   <ClipboardPaste className="text-blue-600 mr-2" size={36} />
                   <div>
                     <h3 className="mb-0 text-black">
-                      DBS Search
+                      CTA Search
                     </h3>
                     <p className="text-secondary-600 text-black">
                       <NavLink to="/Dashboard">Dashboard</NavLink>{" "}
                       <ChevronRightIcon size={14} />{" "}
-                      <NavLink to="/DBSSearch">DBS Search</NavLink>{" "}
+                      <NavLink to="/CTASearch">CTA Search</NavLink>{" "}
                     </p>
                   </div>
                 </div>
@@ -903,7 +903,7 @@ export default function DBSSearchModule() {
                         <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
                           <div className="flex items-center list-user-action">
                             <Tippy content='Preview NIMC Details'>
-                              <NavLink  to={`/DBSSearch/NPF/${hashIds.encode(String(data.npfProfileRecordId))}`}
+                              <NavLink  to={`/CTASearch/NPF/${hashIds.encode(String(data.npfProfileRecordId))}`}
                                 className="btn btn-info btn-icon btn-sm mr-1"
                               >
                                 <span className="btn-inner">

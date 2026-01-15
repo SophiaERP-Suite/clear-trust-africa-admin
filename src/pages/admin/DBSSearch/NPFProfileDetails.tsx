@@ -216,7 +216,7 @@ export default function NPFProfileDetails() {
     if (data) {
         const dbsSearchId = data.data.dbsSearchId;
         if (dbsSearchId) {
-            navigate(`/DBSSearch/Compare/${hashIds.encode(dbsSearchId)}`);
+            navigate(`/CTASearch/Compare/${hashIds.encode(dbsSearchId)}`);
         }
     }
   }
@@ -395,9 +395,9 @@ export default function NPFProfileDetails() {
                 <p className="text-secondary-600 text-black">
                     <NavLink to="/Dashboard">Dashboard</NavLink>{" "}
                     <ChevronRightIcon size={14} />{" "}
-                    <NavLink to="/DBSSearch">DBS Search</NavLink>{" "}
+                    <NavLink to="/CTASearch">CTA Search</NavLink>{" "}
                     <ChevronRightIcon size={14} />{" "}
-                    <NavLink to={`/DBSSearch/NPF/${id}`}>NPF Profile Details</NavLink>{" "}
+                    <NavLink to={`/CTASearch/NPF/${id}`}>NPF Profile Details</NavLink>{" "}
                 </p>
             </div>
           </div>

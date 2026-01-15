@@ -184,6 +184,29 @@ export const submitDbsStage = async (data: FormData) => {
   return response
 }
 
+export const submitNewComment = async (data: FormData, dbsApplicationId: number) => {
+  const token = localStorage.getItem('accessToken');
+  const response = await fetch(`${BaseURL}/comment-log/dbs-application/${dbsApplicationId}`, {
+    method: 'POST',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    },
+    body: data
+  })
+  return response
+}
+
+export const getDBSApplicationComment = async (dbsApplicationId: number) => {
+  const token = localStorage.getItem('accessToken');
+  const response = await fetch(`${BaseURL}/comment-log/dbs-application/${dbsApplicationId}`, {
+    method: 'GET',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  })
+  return response
+}
+
 export const updateDbsStage = async (data: FormData, stageId: number) => {
   const token = localStorage.getItem('accessToken');
   const response = await fetch(`${BaseURL}/dbs-stages/${stageId}`, {

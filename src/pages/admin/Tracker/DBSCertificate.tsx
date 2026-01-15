@@ -145,14 +145,14 @@ export default function DBSCertificate() {
                     <ShieldCheck className="text-blue-600 mr-2" size={36} />
                     <div>
                         <h3 className="mb-0 text-black">
-                            DBS Certificate
+                            CTA Certificate
                         </h3>
                         <p className="text-secondary-600 text-black">
                             <NavLink to="/Dashboard">Dashboard</NavLink>{" "}
                             <ChevronRightIcon size={14} />{" "}
-                            <NavLink to="/Tracker">DBS Tracker</NavLink>{" "}
+                            <NavLink to="/Tracker">CTA Tracker</NavLink>{" "}
                             <ChevronRightIcon size={14} />{" "}
-                            <NavLink to={`/Tracker/${id}`}>DBS Details</NavLink>{" "}
+                            <NavLink to={`/Tracker/${id}`}>CTA Details</NavLink>{" "}
                             <ChevronRightIcon size={14} />{" "}
                             <NavLink to={`/Tracker/Certificate/${id}`}>Certificate</NavLink>{" "}
                         </p>
@@ -200,7 +200,7 @@ export default function DBSCertificate() {
                                     <div className="max-w-[180px] border-l pl-4 pt-2 items-center">
                                         <CheckCircle size={40} className="mr-2" style={{ color: 'rgb(4, 120, 87)'}} />
                                         <h1 className="text-xl" style={{ color: 'rgb(31, 41, 55)'}}>
-                                            Disclosure & Barring Service
+                                            CLEAR TRUST AFRICA
                                         </h1>
                                         <p className="text-xs">Generated: {(new Date(certificate.dateCreated)).toLocaleDateString('en-GB').replace(/\//g, '-')}</p>
                                     </div>
