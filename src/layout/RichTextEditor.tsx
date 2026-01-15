@@ -1,6 +1,9 @@
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
+import BulletList from '@tiptap/extension-bullet-list'
+import OrderedList from '@tiptap/extension-ordered-list'
+import ListItem from '@tiptap/extension-list-item'
 import { useEffect } from 'react';
  
 interface RichTextEditorProps {
@@ -13,8 +16,14 @@ export default function RichTextEditor({ value, onChange }: RichTextEditorProps)
     extensions: [
       StarterKit.configure({
         heading: { levels: [1, 2, 3] },
+        bulletList: false,
+        orderedList: false,
+        listItem: false,
       }),
       Underline,
+      BulletList,
+      OrderedList,
+      ListItem,
     ],
     content: value,
     editorProps: {
