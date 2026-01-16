@@ -16,7 +16,7 @@ import {
   ClipboardList,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
-import { fetchDbsChecks, fetchDbsStatus, fetchDbsTypes } from "../../../utils/Requests/DbsRequests";
+import { fetchDbsChecks, fetchDbsstats, fetchDbsStatus, fetchDbsTypes, fetchOverdueChecks } from "../../../utils/Requests/DbsRequests";
 import { useForm, useWatch } from "react-hook-form";
 import Hashids from "hashids";
 import Tippy from "@tippyjs/react";
@@ -80,10 +80,31 @@ const statusTextStyles: Record<number, string> = {
   5: 'text-red-500',
 };
 
+interface DBSStats {
+  totalCompleted: string;
+  totalInReview: string;
+  totalPending: string;
+  totalPastDue: string;
+}
+
+interface OverdueChecks {
+  dbsStageStatusId: number;
+  dbsStageId: number;
+  dbsStageName: string;
+  applicantFirstName: string;
+  applicantLastName: string;
+  dbsApplicationId: number;
+  status: number;
+  expiryDate: string;
+  dateCreated: string;
+}
+
 export default function DBSTrackerModule() {
   const [activeView, setActiveView] = useState("dashboard");
   const [dbsChecks1, setDbsChecks1] = useState<DbsChecks[]>([]);
   const [dbsStatus, setDbsStatus] = useState<DBSStatus[]>([]);
+  const [overdueChecks, setOverdueChecks] = useState<OverdueChecks[]>([]);
+  const [dbsStats, setDbsStats] = useState<DBSStats | null>(null);
   const [dbsType, setDbsType] = useState<DBSTypes[]>([]);
   const [dbsPage, setDbsPage] = useState(1);
   const dbsLimit = 5;
@@ -231,6 +252,44 @@ export default function DBSTrackerModule() {
   }, [dbsPage, dbsLimit, filters]);
 
   useEffect(() => {
+      fetchDbsstats()
+      .then(res => {
+        if (res.status === 200) {
+          res.json()
+          .then(data => {
+            console.log(data);
+            setDbsStats(data.data);
+          })
+        } else {
+          res.text()
+          .then(data => {
+            console.log(JSON.parse(data));
+          })
+        }
+      })
+      .catch((err) => console.log(err))
+  }, []);
+
+  useEffect(() => {
+      fetchOverdueChecks()
+      .then(res => {
+        if (res.status === 200) {
+          res.json()
+          .then(data => {
+            console.log(data);
+            setOverdueChecks(data.data);
+          })
+        } else {
+          res.text()
+          .then(data => {
+            console.log(JSON.parse(data));
+          })
+        }
+      })
+      .catch((err) => console.log(err))
+  }, []);
+
+  useEffect(() => {
     fetchDbsTypes()
     .then(res => {
       if (res.status === 200) {
@@ -319,8 +378,8 @@ export default function DBSTrackerModule() {
               <ListChecks className="text-white text-xl" />
             </div>
             <div>
-              <p className="text-sm text-green-50">Active</p>
-              <h2 className="text-3xl font-bold text-white">{stats.valid}</h2>
+              <p className="text-sm text-green-50">Completed</p>
+              <h2 className="text-3xl font-bold text-white">{dbsStats?.totalCompleted ?? 0}</h2>
             </div>
           </div>
 
@@ -330,8 +389,8 @@ export default function DBSTrackerModule() {
               <Hourglass className="text-white text-xl" />
             </div>
             <div>
-              <p className="text-sm text-purple-50">Pending</p>
-              <h2 className="text-3xl font-bold text-white">{stats.pending}</h2>
+              <p className="text-sm text-purple-50">In Review</p>
+              <h2 className="text-3xl font-bold text-white">{dbsStats?.totalInReview ?? 0}</h2>
             </div>
           </div>
 
@@ -341,9 +400,9 @@ export default function DBSTrackerModule() {
               <ClockAlert className="text-white text-xl" />
             </div>
             <div>
-              <p className="text-sm text-yellow-50">Expiring Soon</p>
+              <p className="text-sm text-yellow-50">Pending</p>
               <h2 className="text-3xl font-bold text-white">
-                {stats.expiringSoon}
+                {dbsStats?.totalPending ?? 0}
               </h2>
             </div>
           </div>
@@ -354,8 +413,8 @@ export default function DBSTrackerModule() {
               <ClockFading className="text-white text-xl" />
             </div>
             <div>
-              <p className="text-sm text-red-50">Expired</p>
-              <h2 className="text-3xl font-bold text-white">{stats.expired}</h2>
+              <p className="text-sm text-red-50">Overdue</p>
+              <h2 className="text-3xl font-bold text-white">{dbsStats?.totalPastDue ?? 0}</h2>
             </div>
           </div>
         </div>
@@ -398,33 +457,29 @@ export default function DBSTrackerModule() {
           <div className="bg-white rounded-lg shadow-lg p-6">
             <h3 className="text-xl font-bold mb-4 flex items-center gap-2 text-yellow-700">
               <Clock className="text-yellow-500" />
-              Expiring Soon (30 Days)
+              Awaiting Assignment
             </h3>
             <div className="space-y-3">
-              {dbsChecks
-                .filter((c) => c.status === "Expiring Soon")
-                .map((check) => (
+              {overdueChecks.map((data, index) => (
                   <div
-                    key={check.id}
+                    key={data.dbsStageStatusId}
                     className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg"
                   >
                     <div className="flex items-center gap-3">
-                      <img
-                        src={check.photo}
-                        alt={check.employeeName}
-                        className="w-10 h-10 rounded-full"
-                      />
+                      <div className="h-12 w-12 border rounded-full" style={{ backgroundColor: colors[index % 4], display: "flex", justifyContent: "center", alignItems: "center", color: "#ffffff"}}>
+                        { `${data.applicantFirstName[0]} ${data.applicantLastName[0]}` }
+                      </div>
                       <div className="flex-1">
                         <div className="font-semibold text-sm">
-                          {check.employeeName}
+                          { `${data.applicantFirstName[0]} ${data.applicantLastName[0]}` }
                         </div>
                         <div className="text-xs text-gray-600">
-                          {check.department} • {check.position}
+                          {data.dbsStageName}
                         </div>
                       </div>
                     </div>
                     <div className="mt-2 text-xs text-yellow-700 font-semibold">
-                      Expires in {check.daysUntilExpiry} days
+                      Expired {(new Date(data.expiryDate)).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
                     </div>
                   </div>
                 ))}
@@ -435,38 +490,34 @@ export default function DBSTrackerModule() {
           <div className="bg-white rounded-lg shadow-lg p-6">
             <h3 className="text-xl font-bold mb-4 flex items-center gap-2 text-red-700">
               <XCircle className="text-red-500" />
-              Expired Checks
+              Overdue Checks
             </h3>
             <div className="space-y-3">
-              {dbsChecks
-                .filter((c) => c.status === "Expired")
-                .map((check) => (
-                  <div
-                    key={check.id}
-                    className="p-3 bg-red-50 border border-red-200 rounded-lg"
+              {overdueChecks.map((data, index) => (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                  <NavLink
+                    key={data.dbsStageStatusId}
+                    to={`/Tracker/${hashIds.encode(String(data.dbsApplicationId))}`}
+                    className=""
                   >
                     <div className="flex items-center gap-3">
-                      <img
-                        src={check.photo}
-                        alt={check.employeeName}
-                        className="w-10 h-10 rounded-full"
-                      />
+                      <div className="h-12 w-12 border rounded-full" style={{ backgroundColor: colors[index % 4], display: "flex", justifyContent: "center", alignItems: "center", color: "#ffffff"}}>
+                        { `${data.applicantFirstName[0]} ${data.applicantLastName[0]}` }
+                      </div>
                       <div className="flex-1">
                         <div className="font-semibold text-sm">
-                          {check.employeeName}
+                          { `${data.applicantFirstName} ${data.applicantLastName}` }
                         </div>
                         <div className="text-xs text-gray-600">
-                          {check.department} • {check.position}
+                          {data.dbsStageName}
                         </div>
                       </div>
                     </div>
                     <div className="mt-2 text-xs text-red-700 font-semibold">
-                      Expired 2 days ago
+                      Expired: {(new Date(data.expiryDate)).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
                     </div>
-                    <button className="mt-2 w-full bg-red-600 text-white text-xs py-1 rounded hover:bg-red-700">
-                      Urgent: Renew Now
-                    </button>
-                  </div>
+                  </NavLink>
+                </div>
                 ))}
             </div>
           </div>
@@ -475,7 +526,7 @@ export default function DBSTrackerModule() {
           <div className="bg-white rounded-lg shadow-lg p-6">
             <h3 className="text-xl font-bold mb-4 flex items-center gap-2 text-purple-700">
               <AlertTriangle className="text-purple-500" />
-              Pending Reviews
+              Awaiting Approval
             </h3>
             <div className="space-y-3">
               {dbsChecks

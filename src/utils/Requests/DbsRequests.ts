@@ -160,6 +160,30 @@ export const fetchDbsLogsByApplication = async (applicationId: number, filterDat
   return response
 }
 
+export const fetchDbsstats = async () => {
+  const token = localStorage.getItem('accessToken');
+  const url = `${BaseURL}/dbs-applications/stats`;
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  })
+  return response
+}
+
+export const fetchOverdueChecks = async () => {
+  const token = localStorage.getItem('accessToken');
+  const url = `${BaseURL}/dbs-stage-status/overdue`;
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  })
+  return response
+}
+
 export const submitDbsActivityLog = async (applicationId: number, data: FormData) => {
   const token = localStorage.getItem('accessToken');
   const response = await fetch(`${BaseURL}/dbs-activity-log/${applicationId}`, {
