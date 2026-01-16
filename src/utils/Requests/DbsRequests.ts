@@ -196,9 +196,15 @@ export const submitNewComment = async (data: FormData, dbsApplicationId: number)
   return response
 }
 
-export const getDBSApplicationComment = async (dbsApplicationId: number) => {
+export const getDBSApplicationComment = async (dbsApplicationId: number, filterData: object) => {
   const token = localStorage.getItem('accessToken');
-  const response = await fetch(`${BaseURL}/comment-log/dbs-application/${dbsApplicationId}`, {
+  const params = new URLSearchParams();
+  Object.entries(filterData).forEach(([key, value]) => {
+    if (value !== null && value !== undefined && value !== "") {
+      params.append(key, value);
+    }
+  })
+  const response = await fetch(`${BaseURL}/comment-log/dbs-application/${dbsApplicationId}?${params}`, {
     method: 'GET',
     headers: {
       "Authorization": `Bearer ${token}`

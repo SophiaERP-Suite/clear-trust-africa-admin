@@ -1,9 +1,6 @@
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
-import BulletList from '@tiptap/extension-bullet-list'
-import OrderedList from '@tiptap/extension-ordered-list'
-import ListItem from '@tiptap/extension-list-item'
 import { useEffect } from 'react';
  
 interface RichTextEditorProps {
@@ -16,14 +13,8 @@ export default function RichTextEditor({ value, onChange }: RichTextEditorProps)
     extensions: [
       StarterKit.configure({
         heading: { levels: [1, 2, 3] },
-        bulletList: false,
-        orderedList: false,
-        listItem: false,
       }),
       Underline,
-      BulletList,
-      OrderedList,
-      ListItem,
     ],
     content: value,
     editorProps: {
@@ -104,18 +95,18 @@ export default function RichTextEditor({ value, onChange }: RichTextEditorProps)
  
         <button
           type="button"
-          className={btn(editor.isActive('bulletList'))}
-          onClick={() => editor.chain().focus().toggleBulletList().run()}
+          className={btn(false)}
+          onClick={() => editor.chain().focus().undo().run()}
         >
-          • List
+          ↺
         </button>
  
         <button
           type="button"
-          className={btn(editor.isActive('orderedList'))}
-          onClick={() => editor.chain().focus().toggleOrderedList().run()}
+          className={btn(false)}
+          onClick={() => editor.chain().focus().redo().run()}
         >
-          1. List
+          ↻
         </button>
  
         <button

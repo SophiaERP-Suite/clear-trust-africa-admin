@@ -215,6 +215,11 @@ type ActivityFilterForm = {
   StageLevel: number;
 }
 
+type CommentFilterForm = {
+  Sender: string;
+  DateCreated: string;
+}
+
 export default function TrackerDetails() {
   const { id } = useParams();
   const { user } = useAuth();
@@ -224,13 +229,21 @@ export default function TrackerDetails() {
   const [activityLog, setActivityLog] = useState<ActivityLogData[]>([]);
   const [commentLog, setCommentLog] = useState<CommentLogData[]>([]);
   const [totalActivityLog, setTotalActivityLog] = useState(0);
+  const [totalCommentLog, setTotalCommentLog] = useState(0);
   const [activityPage, setActivityPage] = useState(1);
   const activityLimit = 3;
+  const [commentPage, setCommentPage] = useState(1);
+  const commentLimit = 3;
   const {
     register: activityFilterReg,
     control,
   } = useForm<ActivityFilterForm>();
   const activityFilters = useWatch({ control });
+  const {
+    register: commentFilterReg,
+    control: commentFilterControl,
+  } = useForm<CommentFilterForm>();
+  const commentFilters = useWatch({ control: commentFilterControl });
   const [dbsStages, setDbsStages] = useState<DBSStagesData[]>([]);
   const hashIds = new Hashids('ClearTrustAfricaEncode', 10);
   const hashedId = id ? Number(hashIds.decode(id)[0]) : 0;
@@ -340,10 +353,11 @@ export default function TrackerDetails() {
   }
 
   const refetchComments = async () => {
-    const res = await getDBSApplicationComment(hashedId);
+    const res = await getDBSApplicationComment(hashedId, { pageNumber: commentPage, limit: commentLimit, ...commentFilters});
     if (res.status === 200) {
       const data = await res.json();
-      setCommentLog(data.data);
+      setTotalCommentLog(data.data.totalCount)
+      setCommentLog(data.data.comments);
     } else {
       const resText = await res.text();
       console.log(JSON.parse(resText));
@@ -382,13 +396,14 @@ export default function TrackerDetails() {
   }, [activityPage, activityLimit, activityFilters, hashedId]);
 
   useEffect(() => {
-    getDBSApplicationComment(hashedId)
+    getDBSApplicationComment(hashedId, { pageNumber: commentPage, limit: commentLimit, ...commentFilters})
     .then(res => {
       if (res.status === 200) {
         res.json()
         .then(data => {
           console.log(data);
-          setCommentLog(data.data);
+          setTotalCommentLog(data.data.totalCount)
+          setCommentLog(data.data.comments);
         })
       } else {
         res.text()
@@ -397,7 +412,7 @@ export default function TrackerDetails() {
         })
       }
     })
-  }, [hashedId]);
+  }, [hashedId, commentPage, commentLimit, commentFilters]);
 
   const refetchActivityLog = async () => {
     const res = await fetchDbsLogsByApplication(hashedId, { pageNumber: activityPage, limit: activityLimit, ...activityFilters });
@@ -1684,7 +1699,34 @@ export default function TrackerDetails() {
                           </button>)
                         }
                       </div>
-                      <div className="p-6">
+                      <div className="p-5">
+                        <div className="flex flex-wrap gap-4">
+                          <div className="flex-1 min-w-[330px]">
+                            <div className="relative">
+                              <Search
+                                className="absolute left-3 top-7 transform -translate-y-1/2 text-gray-400"
+                                size={20}
+                              />
+                              <input
+                                type="text"
+                                placeholder="Search by sender name..."
+                                {...commentFilterReg('Sender')}
+                                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              />
+                            </div>
+                          </div>
+                          <div className="flex-1">
+                            <div className="relative">
+                              <input
+                                type="date"
+                                {...commentFilterReg('DateCreated')}
+                                className="w-full pl-2 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="p-5">
                         <div className="flex flex-wrap justify-between overflow-x-auto h-fit">
                           <table className="min-w-full divide-y divide-secondary-200 dark:divide-secondary-800 border dark:border-secondary-800">
                             <thead>
@@ -1725,8 +1767,7 @@ export default function TrackerDetails() {
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
                                       <p><HtmlRenderer html={data.comment} /></p>
-                                      <br />
-                                      <span className="text-sm">Date: {(new Date(data.dateCreated)).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+                                      <span className="text-xs">Date: {(new Date(data.dateCreated)).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
                                     </td>
                                 </tr>
                                 ))
@@ -1740,6 +1781,40 @@ export default function TrackerDetails() {
                             )
                           }
                         </div>
+                        <div className="flex flex-wrap justify-between mt-6">
+                      <div className="flex justify-center items-center mb-1">
+                        <p className="text-black">
+                          Showing { commentLog.length > 0 ? ((commentPage * commentLimit) - commentLimit) + 1 : 0 } to { commentLog.length > 0 ? (((commentPage * commentLimit) - commentLimit) + 1) + (commentLog.length - 1) : 0 } of { totalCommentLog } entries
+                        </p>
+                      </div>
+                        <div className="inline-flex flex-wrap">
+                          {
+                            commentPage > 1 && <a
+                            href="#"
+                            onClick={() => { if (commentPage > 1) {setCommentPage(commentPage - 1);} }}
+                            className="border-t border-b border-l text-primary-500 border-secondary-500 px-2 py-1 rounded-l dark:border-secondary-800"
+                          >
+                            Previous
+                          </a>
+                          }
+                          <a
+                            href="#"
+                            className="border text-white border-secondary-500 cursor-pointer bg-primary-500 px-4 py-1 dark:border-secondary-800"
+                          >
+                            { commentPage }
+                          </a>
+                          {
+                            (commentPage * activityLimit) < totalCommentLog && <a
+                            href="#"
+                            onClick={() => { setCommentPage(commentPage + 1); }}
+                            className="border-r border-t border-b text-primary-500 border-secondary-500 px-4 py-1 rounded-r dark:border-secondary-800"
+                          >
+                            Next
+                          </a>
+                          }
+                          
+                        </div>
+                      </div>
                       </div>
                     </div>
                   </div>
