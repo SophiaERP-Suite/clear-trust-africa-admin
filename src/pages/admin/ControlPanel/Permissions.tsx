@@ -8,10 +8,10 @@ import {
   updatePermission,
 } from "../../../api/permissionApi";
 import type { PermissionsDto } from "../../../types/controlPanel/permissions";
-import Modal from "../../utils/modal";
 import { getAllOrganisationTypes } from "../../../api/orgTypeApi";
 import type { OrganisationTypeDto } from "../../../types/controlPanel/organisationType";
 import Loading from "../../utils/Loading";
+import Modal from "../../../components/modal";
 
 type ModalType = "add" | "edit" | "delete" | null;
 
@@ -124,7 +124,7 @@ function Permissions() {
   ) => {
     try {
       setLoading(true);
-      
+
       if (!permissionInput || !permissionInput2 || !orgTypeId) {
         toast.error("Please fill all fields");
         setLoading(false);
@@ -203,7 +203,21 @@ function Permissions() {
                       value: type.organisationTypeId,
                       label: type.name,
                     }))}
-                    onConfirm={handleNewPermission}
+                    onConfirm={({
+                      inputValue,
+                      inputValue2,
+                      dropdownValue,
+                    }: {
+                      inputValue?: string;
+                      inputValue2?: string;
+                      dropdownValue?: string;
+                    }) =>
+                      handleNewPermission(
+                        inputValue,
+                        inputValue2,
+                        dropdownValue
+                      )
+                    }
                     onCancel={closeModal}
                   />
 
@@ -231,17 +245,28 @@ function Permissions() {
                     inputPlaceholder="Enter Permission Name..."
                     inputLabel2="Permission Description"
                     inputPlaceholder2="Enter Permission Description..."
+                    headerIcon={<Check width={22} />}
+                    butonIcon={<CheckCheck width={22} />}
                     dropdownLabel="Organisation Type"
                     dropdownOptions={organisationTypes.map((type) => ({
                       value: type.organisationTypeId,
                       label: type.name,
                     }))}
-                    defaultDropdownValue=""
-                    defaultInputValue=""
-                    defaultInputValue2=""
-                    headerIcon={<Pen width={22} />}
-                    butonIcon={<Pen width={22} />}
-                    onConfirm={handleUpdatePermission}
+                    onConfirm={({
+                      inputValue,
+                      inputValue2,
+                      dropdownValue,
+                    }: {
+                      inputValue?: string;
+                      inputValue2?: string;
+                      dropdownValue?: string;
+                    }) =>
+                      handleNewPermission(
+                        inputValue,
+                        inputValue2,
+                        dropdownValue
+                      )
+                    }
                     onCancel={closeModal}
                   />
                   <h3 className="text-xl font-semibold mb-4"></h3>

@@ -32,8 +32,8 @@ import {
 } from "../../../api/adminApi.js";
 import type { OrganisationDto } from "../../../types/controlPanel/organisation.js";
 import { ToastContainer, toast } from "react-toastify";
-import Modal from "../../utils/modal.js";
 import Loading from "../../utils/Loading.js";
+import Modal from "../../../components/modal.js";
 
 type ModalType = "suspend" | "approve" | "reject" | null;
 
@@ -185,7 +185,7 @@ function Employers() {
         headerIcon={<X />}
         butonIcon={<X />}
         loading={loading}
-        onConfirm={handleReject}
+        onConfirm={({ inputValue }) => handleReject(inputValue)}
         onCancel={closeModal}
       />
 
@@ -200,7 +200,7 @@ function Employers() {
         headerIcon={<AlertCircle />}
         butonIcon={<Check />}
         loading={loading}
-        onConfirm={handleSuspend}
+        onConfirm={({ inputValue }) => handleSuspend(inputValue)}
         onCancel={closeModal}
       />
       <div

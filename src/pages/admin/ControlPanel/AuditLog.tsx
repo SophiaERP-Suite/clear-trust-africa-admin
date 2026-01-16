@@ -82,11 +82,6 @@ function AuditLog() {
                         Error: {error}
                       </div>
                     )}
-                    {!loading && !error && auditTrails.length === 0 && (
-                      <div className="no-countrys flex justify-center text-center mt-[25%]">
-                        No records found.
-                      </div>
-                    )}
                     <tbody className="bg-white divide-y divide-gray-200">
                       {/* Row 1 */}
                       {!loading &&
@@ -151,8 +146,13 @@ function AuditLog() {
                             </td>
                           </tr>
                         ))}
-                    </tbody>
+                    </tbody>{" "}
                   </table>
+                  {!loading && !error && auditTrails.length === 0 && (
+                    <div className="no-countrys flex justify-center text-center my-5">
+                      No records found.
+                    </div>
+                  )}
                 </div>
                 {/* Pagination */}
                 {/* <div className="flex items-center justify-between px-6 py-4 border-t border-gray-200">

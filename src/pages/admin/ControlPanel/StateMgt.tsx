@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
-import Modal from "../../utils/modal";
 import {
   Building2,
   Pen,
@@ -24,6 +23,7 @@ import {
 } from "../../../api/locationApi";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import Loading from "../../utils/Loading";
+import Modal from "../../../components/modal";
 
 type ModalType = "add" | "edit" | "delete" | null;
 
@@ -422,7 +422,18 @@ function StatesManagement() {
                     inputPlaceholder2="Enter state code..."
                     headerIcon={<Building2 />}
                     butonIcon={<CheckCheck />}
-                    onConfirm={handleNewState}
+                    onConfirm={({
+                      inputValue,
+                      inputValue2
+                    }: {
+                      inputValue?: string;
+                      inputValue2?: string;
+                    }) =>
+                      handleNewState(
+                        inputValue,
+                        inputValue2
+                      )
+                    }
                     onCancel={closeModal}
                   />
 
@@ -454,7 +465,9 @@ function StatesManagement() {
                     defaultInputValue2={selectedState?.code || ""}
                     headerIcon={<Shield />}
                     butonIcon={<Pen />}
-                    onConfirm={handleUpdateState}
+                    onConfirm={({ inputValue }) =>
+                      handleUpdateState(inputValue)
+                    }
                     onCancel={closeModal}
                   />
 

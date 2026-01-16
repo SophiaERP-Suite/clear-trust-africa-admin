@@ -11,7 +11,7 @@ import {
   getAllRolePermissions,
 } from "../../../api/rolePermissionApi";
 import type { RolePermissionsDto } from "../../../types/controlPanel/rolePermissions";
-import Modal from "../../utils/modal";
+import Modal from "../../../components/modal";
 
 type ModalType = "add" | "edit" | "delete" | null;
 

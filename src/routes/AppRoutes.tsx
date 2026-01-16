@@ -8,13 +8,14 @@ import EmployersNew from "../pages/admin/Employer/EmployerNew";
 import Employers from "../pages/admin/Employer/Employers";
 import EmployerProfile from "../pages/admin/Employer/EmployerProfile";
 import DbsTracker from "../pages/admin/Tracker/DbsTracker";
-import Incidents from "../pages/admin/Incident/IncidentMgt";
 import PaymentDashboard from "../pages/admin/Payment/Payment";
 import InvestigationPortal from "../pages/admin/Report/Report";
 import CommunicationsPage from "../pages/admin/Communication/Communication";
 import ControlPanel from "../pages/admin/ControlPanel/ControlPanel";
 import TrackerDetails from "../pages/admin/Tracker/TrackerDetails";
 import DBSSearchModule from "../pages/admin/DBSSearch/DBSSearch";
+import Incidents from "../pages/admin/Incident/incident";
+import IncidentReportDetails from "../pages/admin/Incident/IncidentReportDetails";
 
 function AppRoutes() {
   return (
@@ -38,6 +39,10 @@ function AppRoutes() {
         <Route path="Tracker/:id" element={<TrackerDetails />} />
         <Route path="DBSSearch" element={<DBSSearchModule />} />
         <Route path="IncidentMgt" element={<Incidents />} />
+        <Route
+          path="IncidentReportDetails/:irid"
+          element={<IncidentReportDetails />}
+        />
         <Route path="FinanceMgt" element={<PaymentDashboard />} />
         <Route path="Reports" element={<InvestigationPortal />} />
         <Route path="Communication" element={<CommunicationsPage />} />

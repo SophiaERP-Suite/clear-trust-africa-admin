@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
-import Modal from "../../utils/modal";
 import { Building2, Pen, Plus, Trash2, Flag, CheckCheck } from "lucide-react";
 import type {
   StateDto,
@@ -17,6 +16,7 @@ import {
 } from "../../../api/locationApi";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import Loading from "../../utils/Loading";
+import Modal from "../../../components/modal";
 
 type ModalType = "add" | "edit" | "delete" | null;
 
@@ -551,7 +551,7 @@ function CitiesManagement() {
                     inputPlaceholder2="Enter city code..."
                     headerIcon={<Building2 />}
                     butonIcon={<CheckCheck />}
-                    onConfirm={handleNewCity}
+                    onConfirm={({ inputValue }) => handleNewCity(inputValue)}
                     onCancel={closeModal}
                   />
 
@@ -583,7 +583,7 @@ function CitiesManagement() {
                     defaultInputValue2={selectedCity?.code || ""}
                     headerIcon={<Pen />}
                     butonIcon={<Pen />}
-                    onConfirm={handleUpdateCity}
+                    onConfirm={({ inputValue }) => handleUpdateCity(inputValue)}
                     onCancel={closeModal}
                   />
 
