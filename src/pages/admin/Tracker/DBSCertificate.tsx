@@ -42,6 +42,7 @@ type DBSCertificate = {
   dbsTypeName: string,
   dbsApplicationId: number,
   logoUrl: string;
+  watermarkUrl: string;
   countryId: number,
   dbsCertificateId: number,
   dateCreated: string,
@@ -177,7 +178,7 @@ export default function DBSCertificate() {
                         <div className="py-2 rounded-lg shadow-lg w-[794px] h-[1123px] min-w-[794px] relative" id="cta-certificate" style={{ backgroundColor: 'rgb(255, 255, 255)'}}>
                             <div className="absolute inset-0 bg-center bg-no-repeat bg-contain opacity-10"
                                 style={{
-                                    backgroundImage: "url('http://localhost:5173/xt/cta_adm/cleartrust_logo_mini.png')"
+                                    backgroundImage: `url(${certificate.watermarkUrl})`
                                 }}
                             />
                             <div className="space-y-8 relative z-10">

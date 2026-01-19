@@ -8,11 +8,13 @@ import { handleCreateEmployee } from "../../../utils/ResponseHandlers/EmployeeRe
 
 interface CTASettingFormValue {
   Logo: string;
+  Watermark: string;
   CertificateValidity: number;
 }
 
 interface CTASettings {
   logoUrl: string;
+  watermarkUrl: string;
   certificateValidity: number;
 }
 
@@ -91,6 +93,9 @@ export default function CTASettings() {
       if (data.Logo) {
         formData.append("Logo", data.Logo[0]);
       }
+      if (data.Watermark) {
+        formData.append("Watermark", data.Watermark[0]);
+      }
       const res = await updateCTASettings(formData);
       handleCreateEmployee(res, loader, text, { toast }, resetEdit)
       .finally(async () => {
@@ -154,25 +159,46 @@ export default function CTASettings() {
                 </div>
                 </div>
                 <div>
-                <label
-                    className="inline-block mb-2 text-secondary-600 dark:text-white"
-                    htmlFor="email"
-                >
-                    Certificate Logo
-                </label>
-                <div>
-                    <input
-                    type="file"
-                    className="w-full h-12 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-black placeholder-secondary-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                        {
-                        ...regEdit('Logo', {
-                        required: false
-                        })
-                    }
-                    required
-                    />
-                    <p className='error-msg'>{editErrors.Logo?.message}</p>
+                  <label
+                      className="inline-block mb-2 text-secondary-600 dark:text-white"
+                      htmlFor="email"
+                  >
+                      Certificate Logo
+                  </label>
+                  <div>
+                      <input
+                      type="file"
+                      className="w-full h-12 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-black placeholder-secondary-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                          {
+                          ...regEdit('Logo', {
+                          required: false
+                          })
+                      }
+                      required
+                      />
+                      <p className='error-msg'>{editErrors.Logo?.message}</p>
+                  </div>
                 </div>
+                <div>
+                  <label
+                      className="inline-block mb-2 text-secondary-600 dark:text-white"
+                      htmlFor="email"
+                  >
+                      Certificate Watermark
+                  </label>
+                  <div>
+                      <input
+                      type="file"
+                      className="w-full h-12 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-black placeholder-secondary-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                          {
+                          ...regEdit('Watermark', {
+                          required: false
+                          })
+                      }
+                      required
+                      />
+                      <p className='error-msg'>{editErrors.Watermark?.message}</p>
+                  </div>
                 </div>
             </div>
             <hr className="mt-5" />
@@ -201,7 +227,7 @@ export default function CTASettings() {
           <div className="relative flex flex-col mb-8  bg-white dark:bg-dark-card shadow rounded">
             <div className="flex justify-between flex-auto p-5 border-b dark:border-secondary-800 rounded">
               <h4 className="mb-0 dark:text-secondary-200">
-                <ShieldCheck /> CTA Setting
+                <ShieldCheck /> CTA Branding & Validity
               </h4>
             </div>
             <div className="py-2 px-3">
@@ -261,21 +287,38 @@ export default function CTASettings() {
                     !loading && !error && (
                         <div className="space-y-3">
                             <div>
-                                {
-                                    ctaSetting && ctaSetting.logoUrl && (
-                                        <div className="p-2 flex items-center">
-                                            <img
-                                                src="http://localhost:5173/xt/cta_adm/coat_of_arms.jpg"
-                                                className="w-30 h-30 border-4 border-white rounded-full mr-4"
-                                                style={{ objectFit: "cover" }}
-                                                alt="profile-image"
-                                            />
-                                        </div>
-                                    )
-                                }
-                                <div>
-                                    <p>Certificate Logo {ctaSetting && ctaSetting.logoUrl ? '' : ': None Set'}</p>
-                                </div>
+                              {
+                                  ctaSetting && ctaSetting.logoUrl && (
+                                      <div className="p-2 flex items-center">
+                                          <img
+                                              src={ctaSetting.logoUrl}
+                                              className="w-30 h-30 border-4 border-white rounded-full mr-4"
+                                              style={{ objectFit: "cover" }}
+                                              alt="profile-image"
+                                          />
+                                      </div>
+                                  )
+                              }
+                              <div>
+                                  <p>Certificate Logo {ctaSetting && ctaSetting.logoUrl ? '' : ': None Set'}</p>
+                              </div>
+                            </div>
+                            <div>
+                              {
+                                  ctaSetting && ctaSetting.watermarkUrl && (
+                                      <div className="p-2 flex items-center">
+                                          <img
+                                              src={ctaSetting.watermarkUrl}
+                                              className="w-30 h-30 border-4 border-white rounded-full mr-4"
+                                              style={{ objectFit: "cover" }}
+                                              alt="profile-image"
+                                          />
+                                      </div>
+                                  )
+                              }
+                              <div>
+                                  <p>Certificate Watermark {ctaSetting && ctaSetting.watermarkUrl ? '' : ': None Set'}</p>
+                              </div>
                             </div>
                             <div> Certificate Validity:  {ctaSetting && ctaSetting.certificateValidity ? `${ctaSetting.certificateValidity} years` : 'None Set'}</div>
                         </div>

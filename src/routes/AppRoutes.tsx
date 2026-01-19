@@ -18,6 +18,7 @@ import DBSSearchModule from "../pages/admin/DBSSearch/DBSSearch";
 import NPFProfileDetails from "../pages/admin/DBSSearch/NPFProfileDetails";
 import DBSSearchCompare from "../pages/admin/DBSSearch/DBSSearchCompare";
 import DBSCertificate from "../pages/admin/Tracker/DBSCertificate";
+import PaymentReceipt from "../pages/admin/Payment/PaymentReceipt";
 
 function AppRoutes() {
   return (
@@ -45,6 +46,7 @@ function AppRoutes() {
         <Route path="CTASearch/Compare/:id" element={<DBSSearchCompare />} />
         <Route path="IncidentMgt" element={<Incidents />} />
         <Route path="FinanceMgt" element={<PaymentDashboard />} />
+        <Route path="FinanceMgt/Receipt/:id" element={<PaymentReceipt />} />
         <Route path="Reports" element={<InvestigationPortal />} />
         <Route path="Communication" element={<CommunicationsPage />} />
         <Route path="ControlPanel/*" element={<ControlPanel />} />

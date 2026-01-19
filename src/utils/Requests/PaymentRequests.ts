@@ -1,0 +1,31 @@
+const BaseURL = "http://localhost:5181";
+
+export const fetchPayments = async (filterData: object) => {
+  const token = localStorage.getItem('accessToken');
+  const params = new URLSearchParams();
+  Object.entries(filterData).forEach(([key, value]) => {
+    if (value !== null && value !== undefined && value !== "") {
+      params.append(key, value);
+    }
+  })
+  const url = `${BaseURL}/api/payments?${params}`;
+  console.log(url);
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  })
+  return response
+}
+
+export const fetcPaymentById = async (id: number) => {
+  const token = localStorage.getItem('accessToken');
+  const response = await fetch(`${BaseURL}/api/payments/${id}`, {
+    method: 'GET',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  })
+  return response
+}

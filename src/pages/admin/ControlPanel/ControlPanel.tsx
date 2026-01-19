@@ -103,10 +103,10 @@ const sidebarItems = [
     component: DBSStages,
   },
   {
-    id: "cta-settings",
-    label: "CTA Settings",
+    id: "cta-certificate",
+    label: "CTA Certificate Settings",
     icon: <ShieldCheck size={20} />,
-    path: "/ControlPanel/CTA-Settings",
+    path: "/ControlPanel/CTA-Certificate",
     component: CTASettings,
   },
   {
