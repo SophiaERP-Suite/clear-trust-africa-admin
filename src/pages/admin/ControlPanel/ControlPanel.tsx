@@ -15,6 +15,7 @@ import {
   BookKey,
   FolderKey,
   IdCard,
+  ShieldCheck,
 } from "lucide-react";
 import { Link, useLocation, Routes, Route } from "react-router-dom";
 
@@ -28,6 +29,7 @@ import LocationManagement from "./LocationManagement";
 import DBSStatus from "./DBSStatus";
 import DBSType from "./DBSTypes";
 import DBSStages from "./DBSStages";
+import CTASettings from "./CTASettings";
 
 const sidebarItems = [
   {
@@ -99,6 +101,13 @@ const sidebarItems = [
     icon: <IdCard size={20} />,
     path: "/ControlPanel/Check-Stage",
     component: DBSStages,
+  },
+  {
+    id: "cta-settings",
+    label: "CTA Settings",
+    icon: <ShieldCheck size={20} />,
+    path: "/ControlPanel/CTA-Settings",
+    component: CTASettings,
   },
   {
     id: "audit",

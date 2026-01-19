@@ -258,7 +258,7 @@ function Roles() {
                           className="flex items-center justify-between bg-gray-50 p-3 rounded-lg"
                         >
                           <span>{role.name}</span>
-                          <div>
+                          <div className={`${[1, 2, 3].includes(role.roleId) && 'hidden'}`}>
                             <button
                               className="btn btn-danger btn-icon btn-sm mr-1"
                               type="button"

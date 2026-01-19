@@ -172,6 +172,30 @@ export const fetchDbsstats = async () => {
   return response
 }
 
+export const fetchDbsChecksAwaitingAssignemnt = async () => {
+  const token = localStorage.getItem('accessToken');
+  const url = `${BaseURL}/dbs-applications/awaiting-assignment`;
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  })
+  return response
+}
+
+export const fetchDbsChecksAwaitingApproval = async () => {
+  const token = localStorage.getItem('accessToken');
+  const url = `${BaseURL}/dbs-stage-status/awaiting-approval`;
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  })
+  return response
+}
+
 export const fetchOverdueChecks = async () => {
   const token = localStorage.getItem('accessToken');
   const url = `${BaseURL}/dbs-stage-status/overdue`;
@@ -188,6 +212,54 @@ export const submitDbsActivityLog = async (applicationId: number, data: FormData
   const token = localStorage.getItem('accessToken');
   const response = await fetch(`${BaseURL}/dbs-activity-log/${applicationId}`, {
     method: 'POST',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    },
+    body: data
+  })
+  return response
+}
+
+export const fetchCTASettings = async () => {
+  const token = localStorage.getItem('accessToken');
+  const url = `${BaseURL}/cta-settings`;
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  })
+  return response
+}
+
+export const fetchExpiredCertificates = async () => {
+  const token = localStorage.getItem('accessToken');
+  const url = `${BaseURL}/dbs-certificate/expired`;
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  })
+  return response
+}
+
+export const fetchSoonExpiringCertificates = async () => {
+  const token = localStorage.getItem('accessToken');
+  const url = `${BaseURL}/dbs-certificate/expiring-soon`;
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  })
+  return response
+}
+
+export const updateCTASettings = async (data: FormData) => {
+  const token = localStorage.getItem('accessToken');
+  const response = await fetch(`${BaseURL}/cta-settings`, {
+    method: 'PATCH',
     headers: {
       "Authorization": `Bearer ${token}`
     },

@@ -265,7 +265,7 @@ function OrganisationTypes() {
                           className="flex items-center justify-between bg-gray-50 p-3 rounded-lg"
                         >
                           <span>{OrganisationType.name}</span>
-                          <div>
+                          <div className={`${[1, 2, 3, 4].includes(OrganisationType.organisationTypeId) && 'hidden' }`}>
                             <button
                               className="btn btn-danger btn-icon btn-sm mr-1"
                               type="button"

@@ -38,12 +38,13 @@ type NPFProfile = {
 };
 
 type DBSCertificate = {
-    dbsCertificateNo: number,
-    dbsTypeName: string,
-    dbsApplicationId: number,
-    countryId: number,
-    dbsCertificateId: number,
-    dateCreated: string,
+  dbsCertificateNo: number,
+  dbsTypeName: string,
+  dbsApplicationId: number,
+  logoUrl: string;
+  countryId: number,
+  dbsCertificateId: number,
+  dateCreated: string,
 }
 
 const riskLevels: Record<number, string> = {
@@ -185,7 +186,7 @@ export default function DBSCertificate() {
                                 <div className="p-4 flex justify-between">
                                     <div className="flex items-center">
                                         <img
-                                            src="http://localhost:5173/xt/cta_adm/coat_of_arms.jpg"
+                                            src={certificate.logoUrl ?? "http://localhost:5173/xt/cta_adm/coat_of_arms.jpg"}
                                             className="w-30 h-30 border-4 border-white rounded-full mr-4"
                                             style={{ objectFit: "cover" }}
                                             alt="profile-image"
