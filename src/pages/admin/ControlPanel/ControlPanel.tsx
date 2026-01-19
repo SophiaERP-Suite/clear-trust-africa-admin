@@ -16,6 +16,7 @@ import {
   FolderKey,
   IdCard,
   ShieldCheck,
+  AlertTriangleIcon,
 } from "lucide-react";
 import { Link, useLocation, Routes, Route } from "react-router-dom";
 
@@ -30,6 +31,7 @@ import DBSStatus from "./DBSStatus";
 import DBSType from "./DBSTypes";
 import DBSStages from "./DBSStages";
 import CTASettings from "./CTASettings";
+import IncidentType from "./IncidentType";
 
 const sidebarItems = [
   {
@@ -82,7 +84,14 @@ const sidebarItems = [
     component: LocationManagement,
   },
   {
-    id: "ceck-status",
+    id: "incident-type",
+    label: "Incident Type",
+    icon: <AlertTriangleIcon size={20} />,
+    path: "/ControlPanel/Incident-Type",
+    component: IncidentType,
+  },
+  {
+    id: "check-status",
     label: "Check Status",
     icon: <BookKey size={20} />,
     path: "/ControlPanel/Check-Status",

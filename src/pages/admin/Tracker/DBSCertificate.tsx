@@ -234,7 +234,7 @@ export default function DBSCertificate() {
                                 {/* RECORDS SECTION */}
                                 <div className="p-6">
                                     <h2 className="text-xl font-semibold mb-4" style={{ color: 'rgb(31, 41, 55)'}}>
-                                        Criminal & Incident Records
+                                        Records of Convictions, Cautions, Reprimands and Warnings
                                     </h2>
                             
                                     <div className="flex flex-wrap gap-4 mb-6">

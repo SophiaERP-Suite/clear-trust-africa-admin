@@ -56,3 +56,36 @@ export const fetchApplicantDocsById = async (applicantId: number, pageNumber=1, 
   })
   return response
 }
+
+export const fetchCountries = async () => {
+  const token = localStorage.getItem('accessToken');
+  const response = await fetch(`${BaseURL}/api/admin/Country/GetAll`, {
+    method: 'GET',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  })
+  return response
+}
+
+export const fetchStatesByCountryId = async (countryId: number) => {
+  const token = localStorage.getItem('accessToken');
+  const response = await fetch(`${BaseURL}/api/admin/State/${countryId}/GetAll`, {
+    method: 'GET',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  })
+  return response
+}
+
+export const fetchCitiesByStateId = async (stateId: number) => {
+  const token = localStorage.getItem('accessToken');
+  const response = await fetch(`${BaseURL}/api/admin/City/${stateId}/GetAll`, {
+    method: 'GET',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  })
+  return response
+}

@@ -412,3 +412,17 @@ export const matchDbsSearchData = async (dbsSearchId: number) => {
   })
   return response
 }
+
+export const fetchDbsPartners = async () => {
+  const token = localStorage.getItem("accessToken");
+
+  const response = await fetch(`${BaseURL}/api/admin/DbsPartners/GetAll`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+
+  return response;
+};

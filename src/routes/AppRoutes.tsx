@@ -8,7 +8,6 @@ import EmployersNew from "../pages/admin/Employer/EmployerNew";
 import Employers from "../pages/admin/Employer/Employers";
 import EmployerProfile from "../pages/admin/Employer/EmployerProfile";
 import DbsTracker from "../pages/admin/Tracker/DbsTracker";
-import Incidents from "../pages/admin/Incident/IncidentMgt";
 import PaymentDashboard from "../pages/admin/Payment/Payment";
 import InvestigationPortal from "../pages/admin/Report/Report";
 import CommunicationsPage from "../pages/admin/Communication/Communication";
@@ -19,6 +18,9 @@ import NPFProfileDetails from "../pages/admin/DBSSearch/NPFProfileDetails";
 import DBSSearchCompare from "../pages/admin/DBSSearch/DBSSearchCompare";
 import DBSCertificate from "../pages/admin/Tracker/DBSCertificate";
 import PaymentReceipt from "../pages/admin/Payment/PaymentReceipt";
+import Incidents from "../pages/admin/Incident/Incident";
+import IncidentReportDetails from "../pages/admin/Incident/IncidentReportDetails";
+import IncidentReportForm from "../pages/admin/Incident/IncidentReportForm";
 
 function AppRoutes() {
   return (
@@ -45,6 +47,11 @@ function AppRoutes() {
         <Route path="CTASearch/NPF/:id" element={<NPFProfileDetails />} />
         <Route path="CTASearch/Compare/:id" element={<DBSSearchCompare />} />
         <Route path="IncidentMgt" element={<Incidents />} />
+        <Route path="Incident/Report/New" element={<IncidentReportForm />} />
+        <Route
+          path="Incident/Report/:irid"
+          element={<IncidentReportDetails />}
+        />
         <Route path="FinanceMgt" element={<PaymentDashboard />} />
         <Route path="FinanceMgt/Receipt/:id" element={<PaymentReceipt />} />
         <Route path="Reports" element={<InvestigationPortal />} />
