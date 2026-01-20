@@ -1,22 +1,33 @@
 import { useState, useEffect, useRef } from "react";
-import { useParams, NavLink } from "react-router-dom";
+import { useParams, NavLink, useNavigate } from "react-router-dom";
 import {
   AlertTriangleIcon,
   ChevronRightIcon,
   Upload,
   FileIcon,
+  Trash2,
   ArrowLeft,
   ChevronDown,
   MessageSquareIcon,
-  ArrowUpNarrowWide,
+  Pen,
   Eye,
+  ArrowUpNarrowWide,
+  CheckCheck,
+  ArrowRight,
 } from "lucide-react";
-import { toast, ToastContainer } from "react-toastify";
 import Hashids from "hashids";
-import { fetchIncidentAttachments } from "../../../utils/Requests/IncidentRequests";
-import { fetchDbsPartners } from "../../../utils/Requests/DbsRequests";
+import {
+  fetchIncidentAttachments,
+} from "../../../utils/Requests/IncidentRequests";
+import { toast, ToastContainer } from "react-toastify";
+import { useAuth } from "../../../utils/useAuth";
+import ChatPanel from "../../../components/ChatPanel";
+import {
+  fetchDbsPartners,
+  fetchEscalations,
+} from "../../../utils/Requests/IncidentRequests";
 
-interface IncidentReport {
+export interface IncidentReport {
   incidentReportId: number;
   incidentTitle: string;
   incidentTypeId: number;
@@ -46,15 +57,20 @@ export interface DbsPartners {
   partnerName: string;
 }
 
+export interface EscalationDto {
+  partnerId: number;
+  partnerName: string;
+}
+
 type ModalType = "add" | "edit" | "delete" | null;
 
 export default function IncidentDetails() {
-  const { irid } = useParams<{ irid: string }>();
   const hashIds = new Hashids('ClearTrustAfricaEncode', 10);
-  const decoded = hashIds.decode(irid || "");
+  const { id } = useParams<{ id: string }>();
+  const decoded = hashIds.decode(id || "");
   const originalId = decoded.length > 0 ? Number(decoded[0]) : null;
   const [attachments, setAttachments] = useState<IncidentAttachment[]>([]);
-  const [dbsPartners, setDbsPartners] = useState<DbsPartners[]>([]);
+  const [escalation, setEscalation] = useState<EscalationDto[]>([]);
   const [incident, setIncident] = useState<IncidentReport | null>(null);
   const [newFiles, setNewFiles] = useState<File[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -63,10 +79,13 @@ export default function IncidentDetails() {
   const [showChat, setShowChat] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [modalType, setModalType] = useState<ModalType>(null);
-  const [selectedPartnerId, setSelectedPartnerId] = useState<number | null>(
-    null
-  );
+  const navigate = useNavigate();
   
+  const [dbsPartners, setDbsPartners] = useState<DbsPartners[]>([]);
+
+  const { user } = useAuth();
+  const organisationId = user?.organisationId;
+
   useEffect(() => {
     if (!originalId) return;
 
@@ -76,11 +95,11 @@ export default function IncidentDetails() {
       try {
         setIsLoading(true);
 
-          const res = await fetchIncidentAttachments(originalId);
-          if (res.status === 200) {
-              const data: IncidentAttachment[] = await res.json();
-              setAttachments(data);
-          }
+        const res = await fetchIncidentAttachments(originalId);
+        if (res.status === 200) {
+          const data: IncidentAttachment[] = await res.json();
+          setAttachments(data);
+        }
       } catch (err) {
         console.error("Error loading attachments:", err);
       } finally {
@@ -97,20 +116,48 @@ export default function IncidentDetails() {
   const [currentUserName, setCurrentUserName] = useState<string>("");
 
   useEffect(() => {
-    const userData = localStorage.getItem("userData");
-    if (userData) {
-      const parsed = JSON.parse(userData);
-      setCurrentUserId(parsed.userId);
-      setCurrentUserName(parsed.userName);
+    getDbsPartners();
+    getEscalations(Number(originalId));
+  }, [originalId]);
+
+  const getDbsPartners = async () => {
+    try {
+      const res = await fetchDbsPartners();
+      if (res.status === 200) {
+        const data: DbsPartners[] = await res.json();
+        setDbsPartners(data);
+      }
+    } catch (err) {
+      console.error("Error fetching partners:", err);
+      toast.error("Failed to load partners");
     }
-  }, []);
+  };
+
+  const getEscalations = async (originalId: number) => {
+    try {
+      const res = await fetchEscalations(originalId);
+      if (res.status === 200) {
+        const data: EscalationDto[] = await res.json();
+        setEscalation(data);
+      }
+      
+    } catch (err) {
+      console.error("Error fetching partners:", err);
+      toast.error("Failed to load partners");
+    }
+  };
 
   useEffect(() => {
+    if (user) {
+      setCurrentUserId(user?.userId);
+      setCurrentUserName(user?.lastName + " " + user?.firstName);
+    }
+
     fetchIncidentDetails();
     if (originalId) {
       fetchIncidentAttachments(Number(originalId));
     }
-  }, [originalId]);
+  }, [user, originalId]);
 
   const fetchIncidentDetails = async () => {
     if (!originalId) return;
@@ -158,28 +205,28 @@ export default function IncidentDetails() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  useEffect(() => {
-    getDbsPartners();
-  }, []);
-
-  const getDbsPartners = async () => {
-    try {
-        const res = await fetchDbsPartners();
-        if (res.status === 200) {
-            const data: DbsPartners[] = await res.json();
-            setDbsPartners(data);
-        }
-      
-    } catch (err) {
-      console.error("Error fetching partners:", err);
-      toast.error("Failed to load partners");
-    }
-  };
-
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
     setNewFiles(Array.from(files));
+  };
+
+  const removeNewFile = (index: number) => {
+    setNewFiles((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const formatFileSize = (bytes: number): string => {
+    if (bytes === 0) return "0 Bytes";
+    const k = 1024;
+    const sizes = ["Bytes", "KB", "MB", "GB"];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + " " + sizes[i];
+  };
+
+  const handleDeleteAttachment = async (id: number) => {
+  };
+
+  const handleUpload = async () => {
   };
 
   const getSeverityBadge = (level: number) => {
@@ -197,19 +244,6 @@ export default function IncidentDetails() {
         {badge.label}
       </span>
     );
-  };
-
-  const openAddModal = () => {
-    if (dbsPartners.length === 0) {
-      toast.warning("No partners available. Please add partners first.");
-      return;
-    }
-    setModalType("add");
-  };
-
-  const closeModal = () => {
-    setModalType(null);
-    setSelectedPartnerId(null);
   };
 
   if (isLoading && !incident) {
@@ -231,6 +265,14 @@ export default function IncidentDetails() {
     );
   }
 
+  const openAddModal = () => {
+    if (dbsPartners.length === 0) {
+      toast.warning("No partners available. Please add partners first.");
+      return;
+    }
+    setModalType("add");
+  };
+
   return (
     <div className="p-5 lg:p-8 footer-inner mx-auto main-container container">
       {/* Header */}
@@ -248,23 +290,19 @@ export default function IncidentDetails() {
                   />
                   <div>
                     <h3 className="mb-0 text-black">
-                      Incident Report #{incident.incidentReportId}
+                      Incident Report
                     </h3>
                     <p className="text-secondary-600 text-black">
-                      Dashboard <ChevronRightIcon size={14} /> Incident
-                      Management <ChevronRightIcon size={14} /> Incident Details
+                      <NavLink to="/">Dashboard</NavLink>
+                      <ChevronRightIcon size={14} />
+                      <NavLink to="/IncidentMgt">Incident Management </NavLink>
+                      <ChevronRightIcon size={14} />
+                      Incident Details
                     </p>
                   </div>
                 </div>
 
                 <div className="flex gap-3 relative" ref={dropdownRef}>
-                  <NavLink
-                    to="/incidentMgt"
-                    className="btn btn-warning flex items-center gap-2"
-                  >
-                    <ArrowLeft size={18} />
-                    Back to List
-                  </NavLink>
 
                   {/* Dropdown Container */}
                   <div className="relative inline-block text-left">
@@ -278,28 +316,72 @@ export default function IncidentDetails() {
 
                     {/* Dropdown Menu */}
                     {isOpen && (
-                      <div className="absolute right-0 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
+                      <div className="absolute left-0 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
                         <div className="py-1">
                           <button
                             className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 gap-3"
+                            onClick={() => {
+                              setIsOpen(false);
+                              navigate(
+                                `/IncidentReportEdit/${hashIds.encode(
+                                  Number(originalId)
+                                )}`
+                              );
+                            }}
+                          >
+                            <Pen size={16} />
+                            Log Incident Action
+                          </button>
+
+                          <button
+                            className="hidden items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 gap-3"
                             onClick={() => {
                               setIsOpen(false);
                               setShowChat(true);
                             }}
                           >
                             <MessageSquareIcon size={16} />
-                            Chat
+                            Add Comment
                           </button>
 
+                          <div className="border-t my-1"></div>
+
                           <button
-                            className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 gap-3"
+                            className="hidden items-center w-full px-4 py-2 text-sm text-green-600 hover:bg-red-50 gap-3"
                             onClick={() => {
-                              setIsOpen(false);
-                              openAddModal();
+                              if (
+                                window.confirm(
+                                  "Are you sure you want to close this report?"
+                                )
+                              ) {
+                                console.log("Delete confirmed");
+                                // Add delete logic here
+                              }
+                              // setIsOpen(false);
                             }}
                           >
-                            <ArrowUpNarrowWide size={16} />
-                            Escalate Report
+                            <CheckCheck size={16} />
+                            Confirm Closure
+                          </button>
+
+                          <div className="hidden border-t my-1"></div>
+
+                          <button
+                            className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 gap-3"
+                            onClick={() => {
+                              if (
+                                window.confirm(
+                                  "Are you sure you want to delete this incident report?"
+                                )
+                              ) {
+                                console.log("Delete confirmed");
+                                // Add delete logic here
+                              }
+                              setIsOpen(false);
+                            }}
+                          >
+                            <Trash2 size={16} />
+                            Delete Report
                           </button>
                         </div>
                       </div>
@@ -311,6 +393,19 @@ export default function IncidentDetails() {
           </div>
         </div>
       </div>
+
+      {showChat &&
+        originalId !== null &&
+        currentUserId !== null &&
+        organisationId !== null &&
+        typeof organisationId === "number" && (
+          <ChatPanel
+            incidentReportId={originalId}
+            currentUserId={currentUserId}
+            currentUserName={currentUserName}
+            onClose={() => setShowChat(false)}
+          />
+        )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column - Incident Details */}
@@ -386,7 +481,11 @@ export default function IncidentDetails() {
 
             {/* Upload New Files */}
             <div className="border-t p-5">
-              <div className="border-2 hidden border-dashed border-gray-300 rounded-lg p-5 text-center mb-4">
+              <h5 className="text-sm font-semibold text-gray-700 mb-3">
+                Add New Attachments (Evidence, convictions, etc)
+              </h5>
+
+              <div className="border-2 border-dashed border-gray-300 rounded-lg p-5 text-center mb-4">
                 <input
                   type="file"
                   id="fileUpload"
@@ -409,8 +508,56 @@ export default function IncidentDetails() {
                   </p>
                 </label>
               </div>
+
+              {/* Selected Files (Not yet uploaded) */}
+              {newFiles.length > 0 && (
+                <div className="space-y-2 mb-4">
+                  {newFiles.map((file, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-200"
+                    >
+                      <div className="flex items-center gap-3">
+                        <FileIcon className="text-blue-600" size={20} />
+                        <div>
+                          <p className="text-sm font-medium text-black">
+                            {file.name}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {formatFileSize(file.size)}
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => removeNewFile(index)}
+                        className="text-red-600 hover:text-red-800"
+                        disabled={isUploading}
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    </div>
+                  ))}
+
+                  <button
+                    onClick={handleUpload}
+                    disabled={isUploading || newFiles.length === 0}
+                    className="btn btn-success disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 w-full"
+                  >
+                    <Upload size={18} />
+                    {isUploading
+                      ? `Uploading ${newFiles.length} file(s)...`
+                      : `Upload ${newFiles.length} file(s)`}
+                  </button>
+                </div>
+              )}
+
+              {/* Existing Attachments */}
               {attachments.length > 0 ? (
-                <div className="space-y-3 mt-0">
+                <div className="space-y-3 mt-6">
+                  <h5 className="text-sm font-semibold text-gray-700 mb-3">
+                    Existing Attachments
+                  </h5>
                   {attachments.map((att) => (
                     <div
                       className="flex justify-between items-center border rounded-md p-4"
@@ -437,12 +584,21 @@ export default function IncidentDetails() {
                       <div className="flex space-x-2">
                         <a
                           className="btn btn-success btn-sm flex items-center gap-2"
-                          href={`http://localhost:5181/${att.fileUrl}`}
+                          href={`http://localhost:5181${att.fileUrl}`}
                           target="_blank"
                           rel="noopener noreferrer"
                         >
                           <Eye size={16} /> View
                         </a>
+
+                        <button
+                          className="btn btn-danger btn-sm flex items-center gap-2"
+                          onClick={() =>
+                            handleDeleteAttachment(att.attachmentId)
+                          }
+                        >
+                          <Trash2 size={16} /> Delete
+                        </button>
                       </div>
                     </div>
                   ))}
@@ -485,6 +641,32 @@ export default function IncidentDetails() {
                 </p>
               </div>
             </div>
+          </div>
+
+          <div className="bg-white rounded-lg shadow-lg mt-6">
+            <div className="border-b">
+              <div className="p-5">
+                <h4 className="text-lg font-bold">
+                  Escalations ({escalation.length})
+                </h4>
+              </div>
+            </div>
+            {escalation && (
+              <div className="space-y-4 p-5">
+                {escalation.map((e) => (
+                  <div>
+                    <p className="text-sm text-black mb-1">
+                      <ArrowRight /> {e.partnerName}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
+            {escalation.length === 0 && (
+              <div className="pb-3 text-center text-black">
+                There are no escalations
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -1,15 +1,21 @@
 import { useEffect, useState } from "react";
-import { useParams, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import {
   AlertTriangleIcon,
   ChevronRightIcon,
   CheckCheck,
 } from "lucide-react";
-import { fetchApplicants, fetchCitiesByStateId, fetchCountries, fetchStatesByCountryId } from "../../../utils/Requests/EmployeeRequests";
-import Hashids from "hashids";
+import {
+  fetchApplicants,
+  fetchCitiesByStateId,
+  fetchCountries,
+  fetchStatesByCountryId,
+} from "../../../utils/Requests/EmployeeRequests";
 import { Controller, useForm } from "react-hook-form";
 import RichTextEditor from "../../../layout/RichTextEditor";
-import { fetchIncidentType } from "../../../utils/Requests/IncidentRequests";
+import { createNewIncidentReport, fetchIncidentType } from "../../../utils/Requests/IncidentRequests";
+import { handleCreateEmployee } from "../../../utils/ResponseHandlers/EmployeeResponse";
+import { toast, ToastContainer } from 'react-toastify';
 
 interface IncidentType {
   incidentTypeId: number;
@@ -46,7 +52,7 @@ interface IncidentReportFormData {
   incidentDate: string;
   description: string;
   incidentLocation: string;
-  reporterId: string;
+  ReportedById: string;
   accusedEmployeeId: string;
   severityLevel: number;
   notifyEmployee: boolean;
@@ -167,9 +173,42 @@ export default function IncidentReportForm() {
     { value: 3, label: "High", color: "text-orange-600" },
     { value: 4, label: "Critical", color: "text-red-600" },
   ];
+
   
-  const createNewIncidentReport = (data: IncidentReportFormData) => {
-    
+  const submitIncidentReport = async (data: IncidentReportFormData) => {
+     if (!errors.incidentTitle && !errors.incidentTypeId &&
+        !errors.incidentDate &&
+        !errors.description && !errors.incidentLocation &&
+        !errors.accusedEmployeeId && !errors.severityLevel &&
+        !errors.notifyEmployee && !errors.hasInjury &&
+        !errors.countryId && !errors.stateId &&
+        !errors.cityId
+      ) {
+        const loader = document.getElementById('query-loader');
+        const text = document.getElementById('query-text');
+        if (loader) {
+          loader.style.display = 'flex';
+        }
+        if (text) {
+          text.style.display = 'none';
+        }
+        const formData = new FormData();
+        formData.append('IncidentTitle', data.incidentTitle);
+        formData.append('IncidentTypeId', `${data.incidentTypeId}`);
+        formData.append('CountryId', data.countryId);
+        formData.append('IncidentDate', data.incidentDate);
+        formData.append('Description', data.description);
+        formData.append('IncidentLocation', data.incidentLocation);
+        formData.append('AccusedEmployeeId', data.accusedEmployeeId);
+        formData.append('ReportedById', data.ReportedById);
+        formData.append('SeverityLevel', `${data.severityLevel}`);
+        formData.append('NotifyEmployee', `${data.notifyEmployee}`);
+        formData.append('HasInjury', `${data.hasInjury}`);
+        formData.append('CityId', data.cityId);
+        formData.append('StateId', data.stateId);
+        const res = await createNewIncidentReport(formData);
+        handleCreateEmployee(res, loader, text, { toast }, reset);
+      }
   }
 
   useEffect(() => {
@@ -197,6 +236,7 @@ export default function IncidentReportForm() {
   return (
     <div className="p-6 lg:p-8 footer-inner mx-auto main-container container">
       {/* Header */}
+      <ToastContainer />
       <div className="mb-6">
         <div className="w-full mb-8">
           <div className="row">
@@ -236,7 +276,7 @@ export default function IncidentReportForm() {
             <div className="p-6">      
               {/* Form */}
               <div>
-                <form onSubmit={handleSubmit(createNewIncidentReport)}
+                <form onSubmit={handleSubmit(submitIncidentReport)}
                   noValidate>
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-5">
                         <div>
@@ -299,7 +339,7 @@ export default function IncidentReportForm() {
                             <div>
                                 <input
                                     className="w-full h-12 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-black placeholder-secondary-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                                    type="date"
+                                    type="datetime-local"
                                     {
                                         ...register('incidentDate', {
                                             required: 'Required'
@@ -484,7 +524,7 @@ export default function IncidentReportForm() {
                                 <select
                                     className="w-full h-12 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-black placeholder-secondary-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
                                     {
-                                        ...register('reporterId', {
+                                        ...register('ReportedById', {
                                             required: 'Required',
                                             pattern: {
                                             value: /^(?!default$).+$/,
@@ -500,7 +540,7 @@ export default function IncidentReportForm() {
                                         </option>
                                     ))}
                                 </select>
-                                <p className='error-msg'>{errors.reporterId?.message}</p>
+                                <p className='error-msg'>{errors.ReportedById?.message}</p>
                             </div>
                         </div>
                         <div>

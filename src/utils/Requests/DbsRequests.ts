@@ -55,7 +55,6 @@ export const fetchDbsChecks = async (filterData: object) => {
     }
   })
   const url = `${BaseURL}/dbs-applications?${params}`;
-  console.log(url);
   const response = await fetch(url, {
     method: 'GET',
     headers: {

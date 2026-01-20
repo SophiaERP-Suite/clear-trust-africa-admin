@@ -21,6 +21,7 @@ import PaymentReceipt from "../pages/admin/Payment/PaymentReceipt";
 import Incidents from "../pages/admin/Incident/Incident";
 import IncidentReportDetails from "../pages/admin/Incident/IncidentReportDetails";
 import IncidentReportForm from "../pages/admin/Incident/IncidentReportForm";
+import IncidentReport from "../pages/admin/Incident/IncidentReport";
 
 function AppRoutes() {
   return (
@@ -47,6 +48,7 @@ function AppRoutes() {
         <Route path="CTASearch/NPF/:id" element={<NPFProfileDetails />} />
         <Route path="CTASearch/Compare/:id" element={<DBSSearchCompare />} />
         <Route path="IncidentMgt" element={<Incidents />} />
+        <Route path="IncidentMgt/Report/:id" element={<IncidentReport />} />
         <Route path="Incident/Report/New" element={<IncidentReportForm />} />
         <Route
           path="Incident/Report/:irid"

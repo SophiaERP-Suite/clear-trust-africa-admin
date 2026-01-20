@@ -43,7 +43,7 @@ function AdminLayout() {
     {
       path: "/IncidentMgt",
       icon: <AlertTriangle size={25} />,
-      label: "Incident Mgt",
+      label: "Incident/Offence Mgt",
     },
 
     {

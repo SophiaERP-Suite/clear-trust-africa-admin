@@ -32,6 +32,25 @@ export const fetchIncidentChatMessages = async (incidentReportId: number) => {
   return response;
 };
 
+export const fetchAllIncidentReports = async (filterData: object) => {
+  const token = localStorage.getItem('accessToken');
+  const params = new URLSearchParams();
+  Object.entries(filterData).forEach(([key, value]) => {
+    if (value !== null && value !== undefined && value !== "") {
+      params.append(key, value);
+    }
+  })
+  const url = `${BaseURL}/api/employer/IncidentReports?${params}`;
+  console.log(url);
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  })
+  return response
+}
+
 export const sendChatMessage = async (
   incidentReportId: number,
   message: string
@@ -164,6 +183,140 @@ export const submitIncidentType = async (data: FormData) => {
 export const updateIncidentType = async (data: FormData, incidentTypeId: number) => {
   const token = localStorage.getItem('accessToken');
   const response = await fetch(`${BaseURL}/incident-type/${incidentTypeId}`, {
+    method: 'PATCH',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    },
+    body: data
+  })
+  return response
+}
+
+export const fetchDbsPartners = async () => {
+  const token = localStorage.getItem("accessToken");
+
+  const response = await fetch(`${BaseURL}/api/admin/DbsPartners/GetAll`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+
+  return response;
+}
+
+export const fetchEscalations = async (incidentReportId: number) => {
+  const token = localStorage.getItem("accessToken");
+
+  const response = await fetch(`${BaseURL}/api/employer/IncidentEscalation/${incidentReportId}/GetAll`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+
+  return response;
+};
+
+export const fetchIncidentReportById = async (incidentReportId: number) => {
+  const token = localStorage.getItem("accessToken");
+
+  const response = await fetch(`${BaseURL}/api/employer/IncidentReports/${incidentReportId}`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+
+  return response;
+};
+
+export const createNewIncidentReport = async (data: FormData) => {
+  const token = localStorage.getItem("accessToken");
+  const response = await fetch(
+    `${BaseURL}/api/employer/IncidentReports`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: data,
+    }
+  );
+  return response;
+};
+
+export const fetchIncidentAction = async () => {
+  const token = localStorage.getItem('accessToken');
+  const response = await fetch(`${BaseURL}/incident-action-type`, {
+    method: 'GET',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  })
+  return response
+}
+
+export const submitIncidentAction = async (data: FormData) => {
+  const token = localStorage.getItem('accessToken');
+  const response = await fetch(`${BaseURL}/incident-action-type`, {
+    method: 'POST',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    },
+    body: data
+  })
+  return response
+}
+
+export const updateIncidentAction = async (data: FormData, actionId: number) => {
+  const token = localStorage.getItem('accessToken');
+  const response = await fetch(`${BaseURL}/incident-action-type/${actionId}`, {
+    method: 'PATCH',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    },
+    body: data
+  })
+  return response
+}
+
+export const fetchDBSPartner = async (filterData: object) => {
+  const token = localStorage.getItem('accessToken');
+  const params = new URLSearchParams();
+  Object.entries(filterData).forEach(([key, value]) => {
+    if (value !== null && value !== undefined && value !== "") {
+      params.append(key, value);
+    }
+  })
+  const url = `${BaseURL}/dbs-partners?${params}`;
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  })
+  return response
+}
+
+export const submitDBSPartner = async (data: FormData) => {
+  const token = localStorage.getItem('accessToken');
+  const response = await fetch(`${BaseURL}/dbs-partners`, {
+    method: 'POST',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    },
+    body: data
+  })
+  return response
+}
+
+export const updateDBSPartner = async (data: FormData, partnerId: number) => {
+  const token = localStorage.getItem('accessToken');
+  const response = await fetch(`${BaseURL}/dbs-partners/${partnerId}`, {
     method: 'PATCH',
     headers: {
       "Authorization": `Bearer ${token}`

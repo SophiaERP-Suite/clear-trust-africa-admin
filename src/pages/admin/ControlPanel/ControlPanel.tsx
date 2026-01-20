@@ -17,6 +17,8 @@ import {
   IdCard,
   ShieldCheck,
   AlertTriangleIcon,
+  OctagonAlertIcon,
+  AlertCircleIcon,
 } from "lucide-react";
 import { Link, useLocation, Routes, Route } from "react-router-dom";
 
@@ -32,6 +34,8 @@ import DBSType from "./DBSTypes";
 import DBSStages from "./DBSStages";
 import CTASettings from "./CTASettings";
 import IncidentType from "./IncidentType";
+import IncidentActionType from "./IncidentActionType";
+import CTAPartnerType from "./CTAPartners";
 
 const sidebarItems = [
   {
@@ -89,6 +93,20 @@ const sidebarItems = [
     icon: <AlertTriangleIcon size={20} />,
     path: "/ControlPanel/Incident-Type",
     component: IncidentType,
+  },
+  {
+    id: "action-type",
+    label: "Action Type",
+    icon: <OctagonAlertIcon size={20} />,
+    path: "/ControlPanel/Incident-Action-Type",
+    component: IncidentActionType,
+  },
+  {
+    id: "third-party",
+    label: "Third Party",
+    icon: <AlertCircleIcon size={20} />,
+    path: "/ControlPanel/Third-Party",
+    component: CTAPartnerType,
   },
   {
     id: "check-status",

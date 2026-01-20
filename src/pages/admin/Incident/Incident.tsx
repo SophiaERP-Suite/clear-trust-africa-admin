@@ -1,26 +1,27 @@
-import { NavLink, useNavigate } from "react-router-dom";
-import { useState, useEffect, useMemo } from "react";
-import { useAuth } from "../../../utils/useAuth";
+import { NavLink } from "react-router-dom";
+import { useState, useEffect } from "react";
 import {
   List,
   ListChecks,
   ClockAlert,
   ChevronRightIcon,
   AlertTriangleIcon,
-  Plus,
   Eye,
   RefreshCcw,
-  ChevronLeft,
-  ChevronRight,
+  Search,
 } from "lucide-react";
-import { fetchIncidentReports } from "../../../utils/Requests/IncidentRequests";
+import { fetchAllIncidentReports, fetchIncidentType } from "../../../utils/Requests/IncidentRequests";
 import Loading from "../../utils/Loading";
 import Hashids from "hashids";
+import Tippy from "@tippyjs/react";
+import { useForm, useWatch } from "react-hook-form";
+import { fetchCitiesByStateId, fetchCountries, fetchStatesByCountryId } from "../../../utils/Requests/EmployeeRequests";
 
 interface IncidentReport {
   incidentReportId: number;
   incidentTitle: string;
   incidentTypeId: number;
+  incidentType: string;
   incidentDate: string;
   description: string;
   incidentLocation: string;
@@ -31,172 +32,190 @@ interface IncidentReport {
   severityLevel: number;
   incidentStatus: number;
   dateCreated: string;
+  countryName: string;
+  stateName: string;
+  cityName: string;
+  accusedFirstName: string;
+  accusedLastName: string;
 }
 
-interface PaginatedResponse {
-  data: IncidentReport[];
-  totalCount: number;
-  page?: number;
-  pageSize?: number;
-  totalPages?: number;
+interface CountryData {
+  countryId: number;
+  name: string;
+  code: string;
+}
+
+interface StateData {
+  stateId: number;
+  name: string;
+  code: string;
+}
+
+interface CityData {
+  cityId: number;
+  name: string;
+  code: string;
+}
+
+interface IncidentType {
+  incidentTypeId: number;
+  name: string;
+}
+
+interface FilterForm {
+  CountryId: string;
+  StateId: string;
+  CityId: string;
+  IncidentTypeId: string;
+  AccusedName: string;
 }
 
 export default function Incidents() {
   const hashIds = new Hashids('ClearTrustAfricaEncode', 10);
   const [incidentReport, setIncidentReport] = useState<IncidentReport[]>([]);
+  const [totalIncidents, setTotalIncidents] = useState(0);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
-
-  // pagination
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState<number>(10);
-  const [totalCount, setTotalCount] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
-
-  const { user } = useAuth();
-  const organisationId: number | null = user?.organisationId ?? null;
-
-  // Calculate start and end indices
-  const start = totalCount > 0 ? (page - 1) * pageSize + 1 : 0;
-  const end = Math.min(page * pageSize, totalCount);
-
-  const isPaginatedResponse = (obj: object): obj is PaginatedResponse => {
-    return (
-      obj && typeof obj === "object" && "data" in obj && "totalCount" in obj
-    );
-  };
+  const [incidentType, setIncidentType] = useState<IncidentType[]>([]);
+  const [countries, setCountries] = useState<CountryData[]>([]);
+  const [states, setStates] = useState<StateData[]>([]);
+  const [cities, setCities] = useState<CityData[]>([]);
+  const { register, control, watch, setValue, reset } = useForm<FilterForm>();
+  const filters = useWatch({ control });
+  const selectedCountry = watch('CountryId');
+  const selectedState = watch('StateId');
+  const colors = ["#5d009bff", "#ff8800ff", "#ff0000", "#003000ff", "#00006dff"];
 
   useEffect(() => {
-    let isMounted = true;
-
-    const fetchData = async () => {
-      if (!isMounted) return;
-
-      setLoading(true);
-      setError(null);
-
-      try {
-        const response = await fetchIncidentReports(page, pageSize);
-        console.log("incident fetching", response);
-        if (isMounted) {
-          if (isPaginatedResponse(response)) {
-            setIncidentReport(response.data ?? []);
-            setTotalCount(response.totalCount || 0);
-            const calculatedTotalPages =
-              response.totalPages ||
-              Math.ceil((response.totalCount || 0) / pageSize);
-            setTotalPages(calculatedTotalPages);
-          } else if (Array.isArray(response)) {
-            setIncidentReport(response);
-            setTotalCount(response.length);
-            setTotalPages(Math.ceil(response.length / pageSize));
-          } else {
-            console.error("Unexpected response structure:", response);
-            setIncidentReport([]);
-            setTotalCount(0);
-            setTotalPages(0);
-          }
-        }
-      } catch (err) {
-        console.error("Failed to fetch incident reports:", err);
-        if (isMounted) {
-          setError("Could not fetch incident reports");
-        }
-      } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
+    fetchCountries()
+    .then(res => {
+      if (res.status === 200) {
+        res.json()
+        .then(data => {
+          setCountries(data);
+        })
+      } else {
+        res.text()
+        .then(data => {
+          console.log(JSON.parse(data));
+        })
       }
-    };
+    })
+    .catch((err) => console.log(err))
+  }, []);
+  
+  useEffect(() => {
+    if (!selectedCountry || selectedCountry == '') {
+      setStates([]);
+      setValue('StateId', '');
+      setValue('CityId', '')
+      return;
+    }
+    fetchStatesByCountryId(Number(selectedCountry))
+    .then(res => {
+      if (res.status === 200) {
+        res.json()
+        .then(data => {
+          setStates(data);
+        })
+      } else {
+        res.text()
+        .then(data => {
+          console.log(JSON.parse(data));
+        })
+      }
+    })
+    .catch((err) => console.log(err))
+  }, [selectedCountry, setValue]);
+  
+  useEffect(() => {
+    if (!selectedState || selectedState == '') {
+      setCities([]);
+      setValue('CityId', '')
+      return;
+    }
+    fetchCitiesByStateId(Number(selectedState))
+    .then(res => {
+      if (res.status === 200) {
+        res.json()
+        .then(data => {
+          setCities(data);
+        })
+      } else {
+        res.text()
+        .then(data => {
+          console.log(JSON.parse(data));
+        })
+      }
+    })
+    .catch((err) => console.log(err))
+  }, [selectedState, setValue]);
+  
+  useEffect(() => {
+    fetchIncidentType()
+    .then(res => {
+    if (res.status === 200) {
+        res.json()
+        .then(data => {
+        console.log(data);
+        setIncidentType(data.data);
+        })
+    } else {
+        res.text()
+        .then(data => {
+        console.log(JSON.parse(data));
+        })
+    }
+    })
+  }, []);
+  
+  useEffect(() => {
+    fetchAllIncidentReports({ pageNumber: page, limit: limit, ...filters })
+    .then(res => {
+      if (res.status === 200) {
+        res.json()
+        .then(data => {
+          console.log(data);
+          setIncidentReport(data.data.incidentReports);
+          setTotalIncidents(data.data.totalCount);
+        })
+      } else {
+        res.text()
+        .then(data => {
+          console.log(JSON.parse(data));
+        })
+      }
+    })
+    .catch((err) => console.log(err))
+    .finally(() => {
+      setLoading(false);
+      setError(null);
+    })
+   }, [page, limit, filters]);
 
-    fetchData();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [organisationId, page, pageSize]);
-
-  const resolvedCount = useMemo(() => {
-    return incidentReport.filter((ir) => ir.incidentStatus === 7).length;
-  }, [incidentReport]);
-
-  const ongoingCount = useMemo(() => {
-    return incidentReport.filter((ir) => ir.incidentStatus === 3).length;
-  }, [incidentReport]);
 
   const refetchData = async () => {
     setError(null);
 
     try {
       setLoading(true);
-      const response = await fetchIncidentReports(page, pageSize);
+      reset();
+      setPage(1)
+      const response = await fetchAllIncidentReports({pageNumber: page, limit });
 
-      console.log("incident", response);
-
-      if (isPaginatedResponse(response)) {
-        setIncidentReport(response.data ?? []);
-        setTotalCount(response.totalCount || 0);
-        const calculatedTotalPages =
-          response.totalPages ||
-          Math.ceil((response.totalCount || 0) / pageSize);
-        setTotalPages(calculatedTotalPages);
-      } else if (Array.isArray(response)) {
-        setIncidentReport(response);
-        setTotalCount(response.length);
-        setTotalPages(Math.ceil(response.length / pageSize));
+      if (response.status === 200) {
+        const data = await response.json();
+        setIncidentReport(data.data.incidentReports);
+        setTotalIncidents(data.data.totalCount);
+        console.log("incident fetching", data);
       }
     } catch (error) {
       console.error("Failed to refetch incident reports:", error);
       setError("Could not fetch incident reports. Please try again.");
     } finally {
       setLoading(false);
-    }
-  };
-
-  const getPaginationButtons = () => {
-    const buttons = [];
-    const maxVisibleButtons = 5;
-
-    if (totalPages <= maxVisibleButtons) {
-      for (let i = 1; i <= totalPages; i++) {
-        buttons.push(i);
-      }
-    } else {
-      if (page <= 3) {
-        for (let i = 1; i <= 4; i++) {
-          buttons.push(i);
-        }
-        buttons.push("...");
-        buttons.push(totalPages);
-      } else if (page >= totalPages - 2) {
-        buttons.push(1);
-        buttons.push("...");
-        for (let i = totalPages - 3; i <= totalPages; i++) {
-          buttons.push(i);
-        }
-      } else {
-        buttons.push(1);
-        buttons.push("...");
-        buttons.push(page - 1);
-        buttons.push(page);
-        buttons.push(page + 1);
-        buttons.push("...");
-        buttons.push(totalPages);
-      }
-    }
-
-    return buttons;
-  };
-
-  const handlePageSizeChange = (size: number) => {
-    setPageSize(size);
-    setPage(1);
-  };
-
-  const handlePageChange = (newPage: number) => {
-    if (newPage >= 1 && newPage <= totalPages) {
-      setPage(newPage);
     }
   };
 
@@ -249,7 +268,7 @@ export default function Incidents() {
                 <div>
                   <p className="text-sm text-white">Total Incidents</p>
                   <h2 className="text-3xl font-bold text-white">
-                    {totalCount}
+                    {totalIncidents}
                   </h2>
                 </div>
               </div>
@@ -264,7 +283,7 @@ export default function Incidents() {
                 <div>
                   <p className="text-sm text-white">Resolved</p>
                   <h2 className="text-3xl font-bold text-white">
-                    {resolvedCount}
+                    0
                   </h2>
                 </div>
               </div>
@@ -279,7 +298,7 @@ export default function Incidents() {
                 <div>
                   <p className="text-sm text-white">Under Investigation</p>
                   <h2 className="text-3xl font-bold text-white">
-                    {ongoingCount}
+                    0
                   </h2>
                 </div>
               </div>
@@ -289,59 +308,7 @@ export default function Incidents() {
       </div>
 
       <div>
-        {error && (
-          <div className="mb-6 p-6 bg-red-50 border border-red-200 rounded-lg">
-            <div className="flex items-center justify-between mb-4">
-              <h4 className="text-xl font-bold text-red-800">
-                Error Loading Reports
-              </h4>
-              <button
-                onClick={refetchData}
-                className="btn btn-outline btn-sm btn-error"
-              >
-                Retry
-              </button>
-            </div>
-            <p className="text-red-700 mb-2">{error}</p>
-            <p className="text-sm text-red-600">
-              Please check your connection and try again.
-            </p>
-          </div>
-        )}
-
-        {!error && incidentReport.length === 0 ? (
-          <div className="relative flex flex-col mb-8 bg-white rounded-lg shadow-lg dark:bg-dark-card">
-            <div className="flex flex-col overflow-hidden bg-white rounded-lg dark:bg-dark-card dark:text-secondary-600">
-              <div className="relative flex flex-wrap justify-between p-5">
-                <h4 className="mb-2 sm:mb-0 text-xl font-bold">
-                  Incident Reports
-                </h4>
-              </div>
-              <hr className="m-0" />
-              <div className="flex-auto p-8 text-center">
-                <div className="mx-auto w-24 h-24 mb-4 flex items-center justify-center rounded-full bg-gray-100">
-                  <AlertTriangleIcon className="text-gray-400" size={48} />
-                </div>
-                <h5 className="text-lg font-semibold text-gray-700 mb-2">
-                  No Incident Reports Found
-                </h5>
-                <p className="text-gray-500 mb-6">
-                  There are no incident reports available. Create your first
-                  incident report to get started.
-                </p>
-                <NavLink
-                  to="/Incident/Report/New"
-                  className="btn-success btn inline-flex items-center"
-                >
-                  <Plus size={18} className="mr-2" />
-                  Create First Incident Report
-                </NavLink>
-              </div>
-            </div>
-          </div>
-        ) : (
-          !error &&
-          incidentReport.length > 0 && (
+        {!error && (
             <div className="relative flex flex-col mb-8 bg-white rounded-lg shadow-lg dark:bg-dark-card">
               <div className="flex flex-col overflow-hidden bg-white rounded-lg dark:bg-dark-card dark:text-secondary-600">
                 <div className="relative flex flex-wrap justify-between p-5">
@@ -354,9 +321,9 @@ export default function Incidents() {
                         Show entries
                       </span>
                       <select
-                        value={pageSize}
+                        value={limit}
                         onChange={(e) =>
-                          handlePageSizeChange(Number(e.target.value))
+                          setLimit(Number(e.target.value))
                         }
                         className="border rounded px-2 py-1 text-sm"
                       >
@@ -372,8 +339,81 @@ export default function Incidents() {
                       className="btn btn-secondary btn-sm"
                       title="Refresh"
                     >
-                      <RefreshCcw className="mr-2 w-5" /> Refresh
+                      <RefreshCcw className="mr-2 w-5" /> Reset Filters
                     </button>
+                  </div>
+                </div>
+                {/* Filters */}
+                <div className="p-6 border-b">
+                  <div className="flex flex-wrap gap-4">
+                    <div className="flex-1 min-w-[150px]">
+                      <div className="relative">
+                        <Search
+                          className="absolute left-3 top-7 transform -translate-y-1/2 text-gray-400"
+                          size={20}
+                        />
+                        <input
+                          type="text"
+                          placeholder="Search by accused name..."
+                          {...register('AccusedName')}
+                          className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+                      </div>
+                    </div>
+                    <select
+                        className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        {
+                            ...register('IncidentTypeId')
+                        }
+                    >
+                        <option value="">Select Incident Type</option>
+                        {incidentType.map((data, index) => (
+                            <option key={data.incidentTypeId ?? index} value={data.incidentTypeId}>
+                                {data.name}
+                            </option>
+                        ))}
+                    </select>
+                    <select
+                      className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      {
+                        ...register('CountryId')
+                      }
+                    >
+                      <option value="">Select Country</option>
+                      {
+                        countries.map((data, index) => (
+                          <option key={index} value={data.countryId}>{data.name}</option>
+                        ))
+                      }
+                      </select>
+                      <select
+                        className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        {
+                          ...register('StateId')
+                        }
+                        disabled={!states.length}
+                      >
+                        <option value="">Select State</option>
+                        {
+                          states.map((data, index) => (
+                            <option key={index} value={data.stateId}>{data.name}</option>
+                          ))
+                        }
+                      </select>
+                      <select
+                        className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        {
+                          ...register('CityId')
+                        }
+                        disabled={!states.length}
+                      >
+                        <option value="">Select City</option>
+                        {
+                          cities.map((data, index) => (
+                            <option key={index} value={data.cityId}>{data.name}</option>
+                          ))
+                        }
+                      </select>
                   </div>
                 </div>
                 <hr className="m-0" />
@@ -387,13 +427,16 @@ export default function Incidents() {
                       <thead>
                         <tr className="bg-secondary-200 dark:bg-dark-bg">
                           <th className="px-6 py-3 text-left rtl:text-right text-black text-md whitespace-nowrap font-semibold dark:text-white">
-                            Incident ID
+                            S/N
+                          </th>
+                          <th className="px-6 py-3 text-left rtl:text-right text-black text-md whitespace-nowrap font-semibold dark:text-white">
+                            Accused
+                          </th>
+                          <th className="px-6 py-3 text-left rtl:text-right text-black text-md whitespace-nowrap font-semibold dark:text-white">
+                            Type
                           </th>
                           <th className="px-6 py-3 text-left rtl:text-right text-black text-md whitespace-nowrap font-semibold dark:text-white">
                             Title
-                          </th>
-                          <th className="px-6 py-3 text-left rtl:text-right text-black text-md whitespace-nowrap font-semibold dark:text-white">
-                            Recorded By
                           </th>
                           <th className="px-6 py-3 text-left rtl:text-right text-black text-md whitespace-nowrap font-semibold dark:text-white">
                             Location
@@ -402,33 +445,43 @@ export default function Incidents() {
                             Incident Date
                           </th>
                           <th className="px-6 py-3 text-left rtl:text-right text-black text-md whitespace-nowrap font-semibold dark:text-white">
-                            Date Created
-                          </th>
-                          <th className="px-6 py-3 text-left rtl:text-right text-black text-md whitespace-nowrap font-semibold dark:text-white">
                             Action
                           </th>
                         </tr>
                       </thead>
 
                       <tbody className="divide-y divide-secondary-200 dark:divide-secondary-800 dark:bg-dark-card dark:text-white">
-                        {incidentReport.map((ir) => (
+                        {incidentReport.map((ir, index) => (
                           <tr key={ir.incidentReportId}>
                             {/* Table rows remain the same */}
                             <td className="px-6 py-4 whitespace-nowrap">
                               <div className="iq-media-group iq-media-group-1">
                                 <h6 className="font-bold dark:text-white">
-                                  #{ir.incidentReportId}
+                                  #{(index + (limit * (page - 1))) + 1}
                                 </h6>
                               </div>
+                            </td>
+                            <td className="px-6 py-4">
+                              <div className="flex w-50 items-center gap-3">
+                                <div className="h-12 w-12 border rounded-full" style={{ backgroundColor: colors[index % 4], display: "flex", justifyContent: "center", alignItems: "center", color: "#ffffff"}}>
+                                  { `${ir.accusedFirstName[0]} ${ir.accusedLastName[0]}` }
+                                </div>
+                                <div>
+                                  <div className="font-semibold text-gray-900">
+                                    {`${ir.accusedFirstName} ${ir.accusedLastName}`}
+                                  </div>
+                                </div>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-gray-900">
+                              {ir.incidentType || "_"}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-gray-900">
                               {ir.incidentTitle || "_"}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-gray-900">
-                              {ir.recorderName || "_"}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-gray-900">
-                              {ir.incidentLocation}
+                              <p>{ir.incidentLocation}</p>
+                              <p className="text-sm">{`${ir.cityName && ir.cityName + ', '}${ir.stateName && ir.stateName + ', '}${ir.countryName && ir.countryName + '.'}`}</p>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <div className="flex items-center mb-2">
@@ -445,98 +498,69 @@ export default function Incidents() {
                                 </h6>
                               </div>
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="flex items-center mb-2">
-                                <h6 className="font-medium dark:text-white">
-                                  {ir.dateCreated
-                                    ? new Date(
-                                        ir.dateCreated
-                                      ).toLocaleDateString("en-US", {
-                                        day: "numeric",
-                                        month: "long",
-                                        year: "numeric",
-                                      })
-                                    : "—"}
-                                </h6>
-                              </div>
-                            </td>
-                            <td className="px-1 py-4 whitespace-nowrap">
-                              <div className="flex items-center justify-center mb-2">
-                                <button
-                                  className="btn btn-info btn-icon btn-sm"
-                                  onClick={() =>
-                                    navigate(
-                                      `/IncidentReportDetails/${hashIds.encode(
-                                        ir.incidentReportId
-                                      )}`
-                                    )
-                                  }
-                                >
-                                  <Eye />
-                                </button>
+                            <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
+                              <div className="flex items-center list-user-action">
+                                <Tippy content='Preview Incident Report'>
+                                  <NavLink  to={`/IncidentMgt/Report/${hashIds.encode(ir.incidentReportId)}`}
+                                    className="btn btn-info btn-icon btn-sm mr-1"
+                                  >
+                                    <span className="btn-inner">
+                                      <Eye />
+                                    </span>
+                                  </NavLink>
+                                </Tippy>
                               </div>
                             </td>
                           </tr>
                         ))}
                       </tbody>
                     </table>
-
-                    {/* Pagination Footer */}
-                    <div className="border-t hidden dark:border-secondary-800 px-6 py-4">
-                      <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-                        {/* Page size selector */}
-
-                        {/* Page info */}
-                        <div className="text-sm text-gray-600">
-                          Showing {start} to {end} of {totalCount} entries
-                        </div>
-
-                        {/* Pagination controls */}
-                        <div className="flex items-center gap-1">
-                          <button
-                            disabled={page === 1}
-                            onClick={() => handlePageChange(page - 1)}
-                            className="flex items-center justify-center w-10 h-10 border rounded-l hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                            title="Previous"
-                          >
-                            <ChevronLeft size={18} />
-                          </button>
-
-                          {getPaginationButtons().map((button, index) => (
-                            <button
-                              key={index}
-                              onClick={() =>
-                                typeof button === "number" &&
-                                handlePageChange(button)
-                              }
-                              disabled={button === "..."}
-                              className={`flex items-center justify-center min-w-10 h-10 border ${
-                                page === button
-                                  ? "bg-blue-600 text-white border-blue-600"
-                                  : "hover:bg-gray-50"
-                              } ${button === "..." ? "cursor-default" : ""}`}
-                            >
-                              {button === "..." ? "..." : button}
-                            </button>
-                          ))}
-
-                          <button
-                            disabled={page === totalPages}
-                            onClick={() => handlePageChange(page + 1)}
-                            className="flex items-center justify-center w-10 h-10 border rounded-r hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                            title="Next"
-                          >
-                            <ChevronRight size={18} />
-                          </button>
-                        </div>
-                      </div>
+                    {
+                      incidentReport.length === 0 ?
+                        <div className="py-4 whitespace-nowrap w-full">
+                              <span className="px-6 py-4 text-left font-medium text-black dark:text-white">There hasn't been any reported incidents</span>
+                        </div> : <></>
+                    }
+                  </div>
+                  <div className="flex flex-wrap justify-between my-6">
+                    <div className="flex justify-center items-center mb-1">
+                      <p className="text-black">
+                        Showing { incidentReport.length > 0 ? ((page * limit) - limit) + 1 : 0 } to { incidentReport.length > 0 ? (((page * limit) - limit) + 1) + (incidentReport.length - 1) : 0 } of { totalIncidents } entries
+                      </p>
+                    </div>
+                    <div className="inline-flex flex-wrap">
+                      {
+                        page > 1 && <a
+                        href="#"
+                        onClick={() => { if (page > 1) {setPage(page - 1);} }}
+                        className="border-t border-b border-l text-primary-500 border-secondary-500 px-2 py-1 rounded-l dark:border-secondary-800"
+                      >
+                        Previous
+                      </a>
+                      }
+                      <a
+                        href="#"
+                        className="border text-white border-secondary-500 cursor-pointer bg-primary-500 px-4 py-1 dark:border-secondary-800"
+                      >
+                        { page }
+                      </a>
+                      {
+                        (page * limit) < totalIncidents && <a
+                        href="#"
+                        onClick={() => { setPage(page + 1); }}
+                        className="border-r border-t border-b text-primary-500 border-secondary-500 px-4 py-1 rounded-r dark:border-secondary-800"
+                      >
+                        Next
+                      </a>
+                      }
+                      
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           )
-        )}
+        }
       </div>
     </div>
   );
