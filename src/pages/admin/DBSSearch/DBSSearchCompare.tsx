@@ -76,6 +76,7 @@ export default function DBSSearchCompare() {
   const hashedId = id ? Number(hashIds.decode(id)[0]) : 0;
   const [searchData, setSearchData] = useState<DBSSearchData | null>(null);
   const [applicantDetails, setApplicantData] = useState<AplicantData | null>(null);
+  const [accusedDetails, setAccusedData] = useState<AplicantData | null>(null);
   const [npfData, setNPFData] = useState<NPFData | null>(null);
   const [nimcData, setNIMCData] = useState<NIMCData | null>(null);
   const navigate = useNavigate();
@@ -91,6 +92,7 @@ export default function DBSSearchCompare() {
             setApplicantData(data.data.applicant);
             setNIMCData(data.data.nimcRecord);
             setNPFData(data.data.npfProfileRecord);
+            setAccusedData(data.data.accused);
           })
         } else {
           res.text()
@@ -229,6 +231,9 @@ export default function DBSSearchCompare() {
                                             {
                                                 nimcData && (nimcData.firstName == applicantDetails.firstName ? (<Check size={20} className="ml-2 text-green-500" />) : (<X size={20} className="ml-2 text-red-500" />))
                                             }
+                                            {
+                                                accusedDetails && (accusedDetails.firstName == applicantDetails.firstName ? (<Check size={20} className="ml-2 text-green-500" />) : (<X size={20} className="ml-2 text-red-500" />))
+                                            }
                                         </div>
                                         <div className="pl-1 mt-2 flex justify-start items-center">
                                             <SquareUser size={20} className="mr-2" />
@@ -238,6 +243,9 @@ export default function DBSSearchCompare() {
                                             }
                                             {
                                                 nimcData && (nimcData.lastName == applicantDetails.lastName ? (<Check size={20} className="ml-2 text-green-500" />) : (<X size={20} className="ml-2 text-red-500" />))
+                                            }
+                                            {
+                                                accusedDetails && (accusedDetails.lastName == applicantDetails.lastName ? (<Check size={20} className="ml-2 text-green-500" />) : (<X size={20} className="ml-2 text-red-500" />))
                                             }
                                         </div>
                                         <div className="pl-1 mt-2 flex justify-start items-center">
@@ -249,6 +257,9 @@ export default function DBSSearchCompare() {
                                             {
                                                 nimcData && (nimcData.middleName == applicantDetails.otherNames ? (<Check size={20} className="ml-2 text-green-500" />) : (<X size={20} className="ml-2 text-red-500" />))
                                             }
+                                            {
+                                                accusedDetails && (accusedDetails.otherNames == applicantDetails.otherNames ? (<Check size={20} className="ml-2 text-green-500" />) : (<X size={20} className="ml-2 text-red-500" />))
+                                            }
                                         </div>
                                         <div className="pl-1 mt-2 flex justify-start items-center">
                                             <Shield size={20} className="mr-2" />
@@ -258,6 +269,9 @@ export default function DBSSearchCompare() {
                                             }
                                             {
                                                 nimcData && (nimcData.nin == applicantDetails.identificationNumber ? (<Check size={20} className="ml-2 text-green-500" />) : (<X size={20} className="ml-2 text-red-500" />))
+                                            }
+                                            {
+                                                accusedDetails && (accusedDetails.identificationNumber == applicantDetails.identificationNumber ? (<Check size={20} className="ml-2 text-green-500" />) : (<X size={20} className="ml-2 text-red-500" />))
                                             }
                                         </div>
                                         <div className="pl-1 mt-2 flex justify-start items-center">
@@ -269,15 +283,21 @@ export default function DBSSearchCompare() {
                                             {
                                                 nimcData && (nimcData.email == applicantDetails.email ? (<Check size={20} className="ml-2 text-green-500" />) : (<X size={20} className="ml-2 text-red-500" />))
                                             }
+                                            {
+                                                accusedDetails && (accusedDetails.email == applicantDetails.email ? (<Check size={20} className="ml-2 text-green-500" />) : (<X size={20} className="ml-2 text-red-500" />))
+                                            }
                                         </div>
                                         <div className="pl-1 mt-2 flex justify-start items-center">
                                             <Phone size={20} className="mr-2" />
                                             {applicantDetails.phone ?? "None provided"}
                                             {
-                                                npfData && (npfData.email == applicantDetails.email ? (<Check size={20} className="ml-2 text-green-500" />) : (<X size={20} className="ml-2 text-red-500" />))
+                                                npfData && (npfData.phone == applicantDetails.phone ? (<Check size={20} className="ml-2 text-green-500" />) : (<X size={20} className="ml-2 text-red-500" />))
                                             }
                                             {
-                                                nimcData && (nimcData.email == applicantDetails.email ? (<Check size={20} className="ml-2 text-green-500" />) : (<X size={20} className="ml-2 text-red-500" />))
+                                                nimcData && (nimcData.phone == applicantDetails.phone ? (<Check size={20} className="ml-2 text-green-500" />) : (<X size={20} className="ml-2 text-red-500" />))
+                                            }
+                                            {
+                                                accusedDetails && (accusedDetails.phone == applicantDetails.phone ? (<Check size={20} className="ml-2 text-green-500" />) : (<X size={20} className="ml-2 text-red-500" />))
                                             }
                                         </div>
                                         <div className="pl-1 mt-2 flex justify-start items-center">
@@ -288,6 +308,9 @@ export default function DBSSearchCompare() {
                                             }
                                             {
                                                 nimcData && (nimcData.gender == applicantDetails.gender ? (<Check size={20} className="ml-2 text-green-500" />) : (<X size={20} className="ml-2 text-red-500" />))
+                                            }
+                                            {
+                                                accusedDetails && (accusedDetails.gender == applicantDetails.gender ? (<Check size={20} className="ml-2 text-green-500" />) : (<X size={20} className="ml-2 text-red-500" />))
                                             }
                                         </div>
                                         <div className="pl-1 mt-2 flex justify-start items-center">
@@ -300,6 +323,9 @@ export default function DBSSearchCompare() {
                                             {
                                                 nimcData && (compareDates(applicantDetails.dateOfBirth, nimcData.dateOfBirth) ? (<Check size={20} className="ml-2 text-green-500" />) : (<X size={20} className="ml-2 text-red-500" />))
                                             }
+                                            {
+                                                accusedDetails && (compareDates(applicantDetails.dateOfBirth, accusedDetails.dateOfBirth) ? (<Check size={20} className="ml-2 text-green-500" />) : (<X size={20} className="ml-2 text-red-500" />))
+                                            }
                                         </div>
                                         <div className="pl-1 mt-2 flex justify-start items-center">
                                             <MapPin size={20} className="mr-2" />
@@ -309,6 +335,104 @@ export default function DBSSearchCompare() {
                                             }
                                             {
                                                 nimcData && (nimcData.residentialAddress == applicantDetails.address ? (<Check size={20} className="ml-2 text-green-500" />) : (<X size={20} className="ml-2 text-red-500" />))
+                                            }
+                                            {
+                                                accusedDetails && (accusedDetails.address == applicantDetails.address ? (<Check size={20} className="ml-2 text-green-500" />) : (<X size={20} className="ml-2 text-red-500" />))
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )
+                }
+                {
+                    accusedDetails && (
+                        <div className="col lg:col-span-1">
+                            <div x-show="openTab === 4">
+                                <div className="h-fit overflow-y-auto relative flex flex-col mb-4 bg-white shadow rounded-xl dark:bg-dark-card">
+                                    <div className="bg-orange-500 p-5 border-b dark:border-secondary-800 dark:border-secondary-800">
+                                        <div className="lg:mb-0 profile-logo profile-logo1 flex justify-center">
+                                        <img
+                                            src={accusedDetails.profileImage}
+                                            className="w-24 h-24 border-4 border-white mb-3 rounded-full mr-4"
+                                            style={{ objectFit: "cover" }}
+                                            alt="profile-image"
+                                        />
+                                        </div>
+                                        <h4 className="card-title mb-2 text-white text-center">
+                                            Accused Profile Details
+                                        </h4>
+                                    </div>
+                                    <div className="p-6">
+                                        <div className="border-b dark:border-secondary-800 dark:border-secondary-800 flex items-center pb-1">
+                                            <User size={30} className="mr-2" />
+                                            <h4 className="card-title mb-0 dark:text-white font-bold">
+                                                Profile Details
+                                            </h4>
+                                        </div>
+                                        <div className="pl-1 mt-2 flex justify-start items-center">
+                                            <Contact size={20} className="mr-2" />
+                                            {accusedDetails.firstName ?? "None provided"}
+                                            {
+                                                applicantDetails && (applicantDetails.firstName == accusedDetails.firstName ? (<Check size={20} className="ml-2 text-green-500" />) : (<X size={20} className="ml-2 text-red-500" />))
+                                            }
+                                        </div>
+                                        <div className="pl-1 mt-2 flex justify-start items-center">
+                                            <SquareUser size={20} className="mr-2" />
+                                            {accusedDetails.lastName ?? "None provided"}
+                                            {
+                                                applicantDetails && (applicantDetails.lastName == accusedDetails.lastName ? (<Check size={20} className="ml-2 text-green-500" />) : (<X size={20} className="ml-2 text-red-500" />))
+                                            }
+                                        </div>
+                                        <div className="pl-1 mt-2 flex justify-start items-center">
+                                            <BookUser size={20} className="mr-2" />
+                                            {accusedDetails.otherNames ?? "None provided"}
+                                            {
+                                                applicantDetails && (applicantDetails.otherNames == accusedDetails.otherNames ? (<Check size={20} className="ml-2 text-green-500" />) : (<X size={20} className="ml-2 text-red-500" />))
+                                            }
+                                        </div>
+                                        <div className="pl-1 mt-2 flex justify-start items-center">
+                                            <Shield size={20} className="mr-2" />
+                                            {accusedDetails.identificationNumber ?? "None provided"}
+                                            {
+                                                applicantDetails && (applicantDetails.identificationNumber == accusedDetails.identificationNumber ? (<Check size={20} className="ml-2 text-green-500" />) : (<X size={20} className="ml-2 text-red-500" />))
+                                            }
+                                        </div>
+                                        <div className="pl-1 mt-2 flex justify-start items-center">
+                                            <Mail size={20} className="mr-2" />
+                                            {accusedDetails.email ?? "None provided"}
+                                            {
+                                                applicantDetails && (applicantDetails.email == accusedDetails.email ? (<Check size={20} className="ml-2 text-green-500" />) : (<X size={20} className="ml-2 text-red-500" />))
+                                            }
+                                        </div>
+                                        <div className="pl-1 mt-2 flex justify-start items-center">
+                                            <Phone size={20} className="mr-2" />
+                                            {accusedDetails.phone ?? "None provided"}
+                                            {
+                                                applicantDetails && (applicantDetails.email == accusedDetails.email ? (<Check size={20} className="ml-2 text-green-500" />) : (<X size={20} className="ml-2 text-red-500" />))
+                                            }
+                                        </div>
+                                        <div className="pl-1 mt-2 flex justify-start items-center">
+                                            <Venus size={20} className="mr-2" />
+                                            {accusedDetails.gender ?? "None provided"}
+                                            {
+                                                applicantDetails && (applicantDetails.gender == accusedDetails.gender ? (<Check size={20} className="ml-2 text-green-500" />) : (<X size={20} className="ml-2 text-red-500" />))
+                                            }
+                                        </div>
+                                        <div className="pl-1 mt-2 flex justify-start items-center">
+                                            <Cake size={20} className="mr-2" />
+                                            {accusedDetails.dateOfBirth && (new Date(accusedDetails.dateOfBirth)).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' })}
+                                            {accusedDetails.dateOfBirth && `  (${calculateAge(new Date(accusedDetails.dateOfBirth))})`}
+                                            {
+                                                applicantDetails && (compareDates(accusedDetails.dateOfBirth, applicantDetails.dateOfBirth) ? (<Check size={20} className="ml-2 text-green-500" />) : (<X size={20} className="ml-2 text-red-500" />))
+                                            }
+                                        </div>
+                                        <div className="pl-1 mt-2 flex justify-start items-center">
+                                            <MapPin size={20} className="mr-2" />
+                                            {accusedDetails.address ?? "None provided"}
+                                            {
+                                                applicantDetails && (applicantDetails.address == accusedDetails.address ? (<Check size={20} className="ml-2 text-green-500" />) : (<X size={20} className="ml-2 text-red-500" />))
                                             }
                                         </div>
                                     </div>

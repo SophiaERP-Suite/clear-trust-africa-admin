@@ -74,6 +74,7 @@ export interface NPFCriminalRcords {
 }
 
 export type FilterForm = {
+  UserId: number;
   UserName: string;
   OrganisationName: string;
   Status: number;

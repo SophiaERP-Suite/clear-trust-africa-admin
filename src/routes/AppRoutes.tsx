@@ -19,7 +19,6 @@ import DBSSearchCompare from "../pages/admin/DBSSearch/DBSSearchCompare";
 import DBSCertificate from "../pages/admin/Tracker/DBSCertificate";
 import PaymentReceipt from "../pages/admin/Payment/PaymentReceipt";
 import Incidents from "../pages/admin/Incident/Incident";
-import IncidentReportDetails from "../pages/admin/Incident/IncidentReportDetails";
 import IncidentReportForm from "../pages/admin/Incident/IncidentReportForm";
 import IncidentReport from "../pages/admin/Incident/IncidentReport";
 
@@ -50,10 +49,6 @@ function AppRoutes() {
         <Route path="IncidentMgt" element={<Incidents />} />
         <Route path="IncidentMgt/Report/:id" element={<IncidentReport />} />
         <Route path="Incident/Report/New" element={<IncidentReportForm />} />
-        <Route
-          path="Incident/Report/:irid"
-          element={<IncidentReportDetails />}
-        />
         <Route path="FinanceMgt" element={<PaymentDashboard />} />
         <Route path="FinanceMgt/Receipt/:id" element={<PaymentReceipt />} />
         <Route path="Reports" element={<InvestigationPortal />} />

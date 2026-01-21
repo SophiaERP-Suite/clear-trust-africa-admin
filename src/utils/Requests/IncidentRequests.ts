@@ -51,6 +51,37 @@ export const fetchAllIncidentReports = async (filterData: object) => {
   return response
 }
 
+export const fetchAllIncidentReportsForSearch = async (filterData: object) => {
+  const token = localStorage.getItem('accessToken');
+  const params = new URLSearchParams();
+  Object.entries(filterData).forEach(([key, value]) => {
+    if (value !== null && value !== undefined && value !== "") {
+      params.append(key, value);
+    }
+  })
+  const url = `${BaseURL}/api/employer/IncidentReports/cta-search?${params}`;
+  console.log(url);
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  })
+  return response
+}
+
+export const matchIncidentDataToApplication = async (data: FormData) => {
+  const token = localStorage.getItem('accessToken');
+  const response = await fetch(`${BaseURL}/api/employer/IncidentReports/match-search`, {
+    method: 'POST',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    },
+    body: data
+  })
+  return response
+}
+
 export const sendChatMessage = async (
   incidentReportId: number,
   message: string
@@ -318,6 +349,60 @@ export const updateDBSPartner = async (data: FormData, partnerId: number) => {
   const token = localStorage.getItem('accessToken');
   const response = await fetch(`${BaseURL}/dbs-partners/${partnerId}`, {
     method: 'PATCH',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    },
+    body: data
+  })
+  return response
+}
+
+export const updateIncidentReportStatus = async (data: FormData, reportId: number) => {
+  const token = localStorage.getItem('accessToken');
+  const response = await fetch(`${BaseURL}/api/employer/IncidentReports/${reportId}/updateStatus`, {
+    method: 'PUT',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    },
+    body: data
+  })
+  return response
+}
+
+export const fetchIncidentActionByReport = async (filterData: object, reportId: number) => {
+  const token = localStorage.getItem('accessToken');
+  const params = new URLSearchParams();
+  Object.entries(filterData).forEach(([key, value]) => {
+    if (value !== null && value !== undefined && value !== "") {
+      params.append(key, value);
+    }
+  })
+  const url = `${BaseURL}/incident-actions/${reportId}/?${params}`;
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  })
+  return response
+}
+
+export const submitIncidentActionByReport = async (data: FormData, reportId: number) => {
+  const token = localStorage.getItem('accessToken');
+  const response = await fetch(`${BaseURL}/incident-actions/${reportId}/`, {
+    method: 'POST',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    },
+    body: data
+  })
+  return response
+}
+
+export const linkActionToCTAPartner = async (data: FormData, actionId: string) => {
+  const token = localStorage.getItem('accessToken');
+  const response = await fetch(`${BaseURL}/incident-actions/partner/${actionId}/`, {
+    method: 'POST',
     headers: {
       "Authorization": `Bearer ${token}`
     },

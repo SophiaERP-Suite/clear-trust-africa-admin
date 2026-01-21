@@ -243,11 +243,11 @@ export default function Incidents() {
                     size={36}
                   />
                   <div>
-                    <h3 className="mb-0 text-black">Incident Management</h3>
+                    <h3 className="mb-0 text-black">Incident/Offence Management</h3>
                     <p className="text-secondary-600 text-black">
                       <NavLink to="/Dashboard">Dashboard</NavLink>{" "}
                       <ChevronRightIcon size={14} />{" "}
-                      <NavLink to="/IncidentMgt">Incident Management</NavLink>{" "}
+                      <NavLink to="/IncidentMgt">Incident/Offence Management</NavLink>{" "}
                     </p>
                   </div>
                 </div>
@@ -313,7 +313,7 @@ export default function Incidents() {
               <div className="flex flex-col overflow-hidden bg-white rounded-lg dark:bg-dark-card dark:text-secondary-600">
                 <div className="relative flex flex-wrap justify-between p-5">
                   <h4 className="mb-2 sm:mb-0 text-xl font-bold">
-                    Incident Reports
+                    Incident/Offence Reports
                   </h4>
                   <div className="flex items-center space-x-2">
                     <div className="flex items-center gap-2">

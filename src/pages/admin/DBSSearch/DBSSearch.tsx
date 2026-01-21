@@ -20,6 +20,8 @@ import {
   X,
   CheckCheck,
   UserLock,
+  AlertTriangleIcon,
+  Check,
 } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import Tippy from "@tippyjs/react";
@@ -34,6 +36,8 @@ import { fetchDbsChecks, fetchDbsStatus, fetchDbsTypes } from "../../../utils/Re
 import type { DbsChecks } from "../Tracker/DbsTracker.js";
 import { toast } from "react-toastify";
 import { handleSearchMatch } from "../../../utils/ResponseHandlers/EmployeeResponse.js";
+import { fetchAllIncidentReportsForSearch, fetchIncidentType, matchIncidentDataToApplication } from "../../../utils/Requests/IncidentRequests.js";
+import { fetchCitiesByStateId, fetchCountries, fetchStatesByCountryId } from "../../../utils/Requests/EmployeeRequests.js";
 
 export interface DBSStatus {
   statusId: number;
@@ -141,6 +145,59 @@ const statusTextStyles: Record<number, string> = {
   5: 'text-red-500',
 };
 
+interface IncidentFilterForm {
+  CountryId: string;
+  StateId: string;
+  CityId: string;
+  IncidentTypeId: string;
+  AccusedName: string;
+}
+
+interface IncidentReport {
+  incidentReportId: number;
+  incidentTitle: string;
+  incidentTypeId: number;
+  incidentType: string;
+  incidentDate: string;
+  description: string;
+  incidentLocation: string;
+  reportedById: number;
+  accusedEmployeeId: number;
+  recordedById: number;
+  recorderName: string;
+  severityLevel: number;
+  incidentStatus: number;
+  dateCreated: string;
+  countryName: string;
+  stateName: string;
+  cityName: string;
+  accusedFirstName: string;
+  accusedLastName: string;
+}
+
+interface CountryData {
+  countryId: number;
+  name: string;
+  code: string;
+}
+
+interface StateData {
+  stateId: number;
+  name: string;
+  code: string;
+}
+
+interface CityData {
+  cityId: number;
+  name: string;
+  code: string;
+}
+
+interface IncidentType {
+  incidentTypeId: number;
+  name: string;
+}
+
 export default function DBSSearchModule() {
   const [activeView, setActiveView] = useState("nimc");
   const [nimcSearch, setNimcSearch] = useState<NIMCData[]>([]);
@@ -161,15 +218,35 @@ export default function DBSSearchModule() {
   const searchTypes = [
     { id: "nimc", label: "NIMC", icon: Shield },
     { id: "npf", label: "NPF", icon: FileText },
+    { id: "incident", label: "Incident/Offense", icon: AlertTriangleIcon },
   ]
   const [attachModalState, setAttachModalState] = useState(false);
-  const { register: dbsRegister, control: dbsControl } = useForm<FilterForm>();
+  const [incidentModalState, setIncidentModalState] = useState(false);
+  const { register: dbsRegister, control: dbsControl, setValue: dbsSetValue, reset } = useForm<FilterForm>();
   const dbsFilters = useWatch({ control: dbsControl });
   const [dbsChecks, setDbsChecks] = useState<DbsChecks[]>([]);
   const colors = ["#5d009bff", "#ff8800ff", "#ff0000", "#003000ff", "#00006dff"];
   const [dbsStatus, setDbsStatus] = useState<DBSStatus[]>([]);
   const [dbsType, setDbsType] = useState<DBSTypes[]>([]);
   const navigate = useNavigate();
+  const [incidentReport, setIncidentReport] = useState<IncidentReport[]>([]);
+  const [incident, setIncident] = useState<IncidentReport | null>(null);
+  const [totalIncidents, setTotalIncidents] = useState(0);
+  const [incidentType, setIncidentType] = useState<IncidentType[]>([]);
+  const [countries, setCountries] = useState<CountryData[]>([]);
+  const [states, setStates] = useState<StateData[]>([]);
+  const [cities, setCities] = useState<CityData[]>([]);
+  const {
+    register: regIncident,
+    control: incidentControl,
+    watch,
+    setValue,
+  } = useForm<IncidentFilterForm>();
+  const incidentFilters = useWatch({ control: incidentControl });
+  const selectedCountry = watch('CountryId');
+  const selectedState = watch('StateId');
+  const [incidentPage, setIncidentPage] = useState(1);
+  const incidentLimit = 5;
 
   useEffect(() => {
     fetchNIMCSearch({ pageNumber: dbsPage, limit: dbsLimit, ...filters })
@@ -218,7 +295,9 @@ export default function DBSSearchModule() {
         res.json()
         .then(data => {
             console.log(data);
-            setDbsChecks(data.data.checks);
+            const checks: DbsChecks[] = data.data.checks;
+            const newChecks = checks.filter(data => data.status !== 4);
+            setDbsChecks(newChecks);
         })
         } else {
         res.text()
@@ -253,7 +332,9 @@ export default function DBSSearchModule() {
     if (res.status === 200) {
         res.json()
         .then(data => {
-        setDbsStatus(data.data);
+          const status: DBSStatus[] = data.data;
+          const newStatus = status.filter(data => data.statusId !== 4);
+          setDbsStatus(newStatus);
         })
     } else {
         res.text()
@@ -263,6 +344,109 @@ export default function DBSSearchModule() {
     }
     });
   }, []);
+
+  useEffect(() => {
+    fetchCountries()
+    .then(res => {
+      if (res.status === 200) {
+        res.json()
+        .then(data => {
+          setCountries(data);
+        })
+      } else {
+        res.text()
+        .then(data => {
+          console.log(JSON.parse(data));
+        })
+      }
+    })
+    .catch((err) => console.log(err))
+  }, []);
+  
+  useEffect(() => {
+    if (!selectedCountry || selectedCountry == '') {
+      setStates([]);
+      setValue('StateId', '');
+      setValue('CityId', '')
+      return;
+    }
+    fetchStatesByCountryId(Number(selectedCountry))
+    .then(res => {
+      if (res.status === 200) {
+        res.json()
+        .then(data => {
+          setStates(data);
+        })
+      } else {
+        res.text()
+        .then(data => {
+          console.log(JSON.parse(data));
+        })
+      }
+    })
+    .catch((err) => console.log(err))
+  }, [selectedCountry, setValue]);
+  
+  useEffect(() => {
+    if (!selectedState || selectedState == '') {
+      setCities([]);
+      setValue('CityId', '')
+      return;
+    }
+    fetchCitiesByStateId(Number(selectedState))
+    .then(res => {
+      if (res.status === 200) {
+        res.json()
+        .then(data => {
+          setCities(data);
+        })
+      } else {
+        res.text()
+        .then(data => {
+          console.log(JSON.parse(data));
+        })
+      }
+    })
+    .catch((err) => console.log(err))
+  }, [selectedState, setValue]);
+    
+  useEffect(() => {
+    fetchIncidentType()
+    .then(res => {
+    if (res.status === 200) {
+        res.json()
+        .then(data => {
+        console.log(data);
+        setIncidentType(data.data);
+        })
+    } else {
+        res.text()
+        .then(data => {
+        console.log(JSON.parse(data));
+        })
+    }
+    })
+  }, []);
+    
+  useEffect(() => {
+    fetchAllIncidentReportsForSearch({ pageNumber: incidentPage, limit: incidentLimit, ...incidentFilters })
+    .then(res => {
+      if (res.status === 200) {
+        res.json()
+        .then(data => {
+          console.log(data);
+          setIncidentReport(data.data.incidentReports);
+          setTotalIncidents(data.data.totalCount);
+        })
+      } else {
+        res.text()
+        .then(data => {
+          console.log(JSON.parse(data));
+        })
+      }
+    })
+    .catch((err) => console.log(err))
+    }, [incidentPage, incidentLimit, incidentFilters]);
 
   const matchDataToApplication = async (applicationId: number) => {
     if (nimcDetails) {
@@ -276,7 +460,25 @@ export default function DBSSearchModule() {
       if (data) {
         const dbsSearchId = data.data.dbsSearchId;
         if (dbsSearchId) {
-          navigate(`/DBSSearch/Compare/${hashIds.encode(dbsSearchId)}`);
+          navigate(`/CTASearch/Compare/${hashIds.encode(dbsSearchId)}`);
+        }
+      }
+    }
+  }
+
+  const matchIncidentToApplication = async (applicationId: number) => {
+    if (incident) {
+      const formData = new FormData();
+      formData.append('DBSApplicationId', String(applicationId));
+      formData.append('IncidentReportId', String(incident.incidentReportId));
+      formData.append('SearchType', String(3));
+      const res = await matchIncidentDataToApplication(formData);
+      const data = await handleSearchMatch(res, { toast }, null);
+      setAttachModalState(false);
+      if (data) {
+        const dbsSearchId = data.data.dbsSearchId;
+        if (dbsSearchId) {
+          navigate(`/CTASearch/Compare/${hashIds.encode(dbsSearchId)}`);
         }
       }
     }
@@ -377,7 +579,7 @@ export default function DBSSearchModule() {
                     <X size={18} className="mr-2" />
                     Cancel
                   </button>
-                  <button className="btn btn-success" onClick={() => { setNIMCModalState(false);  setAttachModalState(true); } }>
+                  <button className="btn btn-success" onClick={() => { setNIMCModalState(false); reset();  setAttachModalState(true); } }>
                     <CheckCheck size={18} className="mr-2" />
                     Match to Application
                   </button>
@@ -522,6 +724,161 @@ export default function DBSSearchModule() {
                                 <div className="flex items-center list-user-action">
                                     <Tippy content='Match Application'>
                                       <button onClick={() => matchDataToApplication(data.dbsApplicationId)}
+                                        className="btn btn-success"
+                                        >
+                                            <span className="btn-inner">
+                                            <CheckCheck />
+                                            </span>
+                                        </button>
+                                    </Tippy>
+                                </div>
+                                </td>
+                            </tr>
+                            ))
+                            }
+                        </tbody>
+                        </table>
+                    </div>
+                    </div>
+                </div>
+            </div>
+          </div>
+      </Modal>
+      <Modal isOpen={incidentModalState} onRequestClose={() => { setIncidentModalState(false); }}
+          style={{
+          content: {
+          width: 'fit-content',
+          height: 'fit-content',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          backgroundColor: 'rgb(255 255 255)',
+          borderRadius: '0.5rem',
+          boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)'
+          },
+          overlay: {
+          backgroundColor: 'rgba(255, 255, 255, 0.7)'
+          }
+      }}
+      >
+          <div className="h-fit max-h-[70vh] overflow-y-auto overflow-x-auto w-70 max-w-70 md:w-800 md:max-w-[800px]">
+              <div className="flex justify-start">
+              <p className="font-semibold text-black py-1 text-lg"><UserLock size={20} className="mr-2" /> Match Record to Application</p>
+              </div>
+              <div className="bg-white rounded-lg shadow-lg">
+                {/* Filters */}
+                <div className="py-2 border-b">
+                    <div className="flex flex-wrap gap-4">
+                    <div className="flex-1 min-w-[250px]">
+                        <div className="relative">
+                        <Search
+                            className="absolute left-3 top-7 transform -translate-y-1/2 text-gray-400"
+                            size={20}
+                        />
+                        <input
+                            type="text"
+                            placeholder="Search by applicant name..."
+                            {...dbsRegister('UserName')}
+                            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+                        </div>
+                    </div>
+                    <div className="flex-1 min-w-[250px]">
+                        <div className="relative">
+                        <Search
+                            className="absolute left-3 top-7 transform -translate-y-1/2 text-gray-400"
+                            size={20}
+                        />
+                        <input
+                            type="text"
+                            placeholder="Search by organisation name..."
+                            {...dbsRegister('OrganisationName')}
+                            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+                        </div>
+                    </div>
+                    <select
+                        {...dbsRegister('Status')}
+                        className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                        <option value="">All Status</option>
+                        {
+                        dbsStatus.map((data, index) => (
+                            <option value={data.statusId} key={index}>{data.statusName}</option>
+                        ))
+                        }
+                    </select>
+                    <select
+                        {...dbsRegister('Type')}
+                        className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                        <option value="">All Types</option>
+                        {
+                        dbsType.map((data, index) => (
+                            <option value={data.dbsTypeId} key={index}>{ data.typeName }</option>
+                        ))
+                        }
+                    </select>
+                    </div>
+                </div>
+        
+                {/* Table */}
+                <div className="overflow-x-auto">
+                    <div className="py-2">
+                    <div className="flex flex-wrap justify-between overflow-x-auto">
+                        <table className="min-w-full divide-y divide-secondary-200 dark:divide-secondary-800 border dark:border-secondary-800">
+                        <thead>
+                            <tr className="bg-secondary-100 dark:bg-dark-bg">
+                            <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                                Applicant
+                            </th>
+                            <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                                Status
+                            </th>
+                            <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                                Details
+                            </th>
+                            <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                                Action
+                            </th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-secondary-200 dark:divide-secondary-800">
+                            {
+                            dbsChecks.map((data, index) => (
+                            <tr key={data.dbsApplicationId ?? index}>
+                                <td className="px-6 py-4">
+                                <div className="flex w-50 items-center gap-3">
+                                    <div className="h-12 w-12 border rounded-full" style={{ backgroundColor: colors[index % 4], display: "flex", justifyContent: "center", alignItems: "center", color: "#ffffff"}}>
+                                    { `${data.userFirstName[0]} ${data.userLastName[0]}` }
+                                    </div>
+                                    <div>
+                                    <div className="font-semibold text-gray-900">
+                                        {`${data.userFirstName} ${data.userLastName}`}
+                                    </div>
+                                    </div>
+                                </div>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-gray-900">
+                                    <p
+                                        className={`p-1 px-2 text-center rounded-lg ${
+                                        statusStyles[data.status] ?? 'bg-gray-200'
+                                        } ${statusTextStyles[data.status] ?? 'text-black'} font-bold`}
+                                    >
+                                        {data.statusName}
+                                    </p>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
+                                    <p className="text-sm"><b>Type:</b> {data.dbsType}</p>
+                                    <p className="text-sm"><b>Staff:</b> {data.staffInChargeId ? `${data.staffInChargeFirstName} ${data.staffInChargeLastName}` : 'None Assigned'}</p>
+                                    <p className="text-sm"><b>Admin:</b> {data.adminId ? `${data.adminFirstName} ${data.adminLastName}` : 'None Assigned'}</p>
+                                    <p className="text-sm"><b>Requested By:</b>{data.requestedBy}</p>
+                                    <p className="text-sm"><b>Request Date:</b> {(new Date(data.dateCreated)).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</p>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
+                                <div className="flex items-center list-user-action">
+                                    <Tippy content='Match Application'>
+                                      <button onClick={() => matchIncidentToApplication(data.dbsApplicationId)}
                                         className="btn btn-success"
                                         >
                                             <span className="btn-inner">
@@ -951,6 +1308,219 @@ export default function DBSSearchModule() {
                     (dbsPageNPF * dbsLimitNPF) < totalNPFSearch && <a
                     href="#"
                     onClick={() => { setDbsPageNPF(dbsPageNPF + 1); }}
+                    className="border-r border-t border-b text-primary-500 border-secondary-500 px-4 py-1 rounded-r dark:border-secondary-800"
+                  >
+                    Next
+                  </a>
+                  }
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {activeView === "incident" && (
+        <div className="bg-white rounded-lg shadow-lg">
+          {/* Filters */}
+          <div className="p-6 border-b">
+            <div className="flex flex-wrap gap-4">
+              <div className="flex-1 min-w-[150px]">
+                <div className="relative">
+                  <Search
+                    className="absolute left-3 top-7 transform -translate-y-1/2 text-gray-400"
+                    size={20}
+                  />
+                  <input
+                    type="text"
+                    placeholder="Search by accused name..."
+                    {...regIncident('AccusedName')}
+                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+              </div>
+              <select
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  {
+                      ...regIncident('IncidentTypeId')
+                  }
+              >
+                  <option value="">Select Incident Type</option>
+                  {incidentType.map((data, index) => (
+                      <option key={data.incidentTypeId ?? index} value={data.incidentTypeId}>
+                          {data.name}
+                      </option>
+                  ))}
+              </select>
+              <select
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                {
+                  ...regIncident('CountryId')
+                }
+              >
+                <option value="">Select Country</option>
+                {
+                  countries.map((data, index) => (
+                    <option key={index} value={data.countryId}>{data.name}</option>
+                  ))
+                }
+              </select>
+              <select
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                {
+                  ...regIncident('StateId')
+                }
+                disabled={!states.length}
+              >
+                <option value="">Select State</option>
+                {
+                  states.map((data, index) => (
+                    <option key={index} value={data.stateId}>{data.name}</option>
+                  ))
+                }
+              </select>
+              <select
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                {
+                  ...regIncident('CityId')
+                }
+                disabled={!states.length}
+              >
+                <option value="">Select City</option>
+                {
+                  cities.map((data, index) => (
+                    <option key={index} value={data.cityId}>{data.name}</option>
+                  ))
+                }
+              </select>
+            </div>
+          </div>
+
+          {/* Table */}
+          <div className="overflow-x-auto">
+            <div className="py-3">
+              <div className="flex flex-wrap justify-between mx-5 overflow-x-auto">
+                <table className="min-w-full divide-y divide-secondary-200 dark:divide-secondary-800 border dark:border-secondary-800">
+                  {/* Table headers and rows remain the same */}
+                  <thead>
+                    <tr className="bg-secondary-100 dark:bg-dark-bg">
+                      <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                        S/N
+                      </th>
+                      <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                        Accused
+                      </th>
+                      <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                        Type
+                      </th>
+                      <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                        Location
+                      </th>
+                      <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                        Incident Date
+                      </th>
+                      <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                        Action
+                      </th>
+                    </tr>
+                  </thead>
+
+                  <tbody className="divide-y divide-secondary-200 dark:divide-secondary-800 dark:bg-dark-card dark:text-white">
+                    {incidentReport.map((ir, index) => (
+                      <tr key={ir.incidentReportId}>
+                        {/* Table rows remain the same */}
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="iq-media-group iq-media-group-1">
+                            <h6 className="font-bold dark:text-white">
+                              #{(index + (incidentLimit * (incidentPage - 1))) + 1}
+                            </h6>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex w-50 items-center gap-3">
+                            <div className="h-12 w-12 border rounded-full" style={{ backgroundColor: colors[index % 4], display: "flex", justifyContent: "center", alignItems: "center", color: "#ffffff"}}>
+                              { `${ir.accusedFirstName[0]} ${ir.accusedLastName[0]}` }
+                            </div>
+                            <div>
+                              <div className="font-semibold text-gray-900">
+                                {`${ir.accusedFirstName} ${ir.accusedLastName}`}
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-gray-900">
+                          {ir.incidentType || "_"}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-gray-900">
+                          <p>{ir.incidentLocation}</p>
+                          <p className="text-sm">{`${ir.cityName && ir.cityName + ', '}${ir.stateName && ir.stateName + ', '}${ir.countryName && ir.countryName + '.'}`}</p>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex items-center mb-2">
+                            <h6 className="font-medium dark:text-white">
+                              {ir.incidentDate
+                                ? new Date(
+                                    ir.incidentDate
+                                  ).toLocaleDateString("en-US", {
+                                    day: "numeric",
+                                    month: "long",
+                                    year: "numeric",
+                                  })
+                                : "—"}
+                            </h6>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
+                          <div className="flex items-center list-user-action">
+                            <Tippy content='Match To Application'>
+                              <button onClick={() => { reset(); setIncident(ir); dbsSetValue("UserId", ir.accusedEmployeeId); setIncidentModalState(true); }}
+                                className="btn btn-info btn-icon btn-sm mr-1"
+                              >
+                                <span className="btn-inner">
+                                  <Check />
+                                </span>
+                              </button>
+                            </Tippy>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                {
+                  incidentReport.length === 0 ?
+                    <div className="py-4 whitespace-nowrap w-full">
+                      <span className="px-6 py-4 text-left font-medium text-black dark:text-white">Your search hasn't produced any result</span>
+                    </div> : <></>
+                }
+              </div>
+              <div className="flex flex-wrap justify-between my-6 mx-5">
+                <div className="flex justify-center items-center mb-1">
+                  <p className="text-black">
+                    Showing { incidentReport.length > 0 ? ((incidentPage * incidentLimit) - incidentLimit) + 1 : 0 } to { incidentReport.length > 0 ? (((incidentPage * incidentLimit) - incidentLimit) + 1) + (incidentReport.length - 1) : 0 } of { totalIncidents } entries
+                  </p>
+                </div>
+                <div className="inline-flex flex-wrap">
+                  {
+                    incidentPage > 1 && <a
+                    href="#"
+                    onClick={() => { if (incidentPage > 1) {setIncidentPage(incidentPage - 1);} }}
+                    className="border-t border-b border-l text-primary-500 border-secondary-500 px-2 py-1 rounded-l dark:border-secondary-800"
+                  >
+                    Previous
+                  </a>
+                  }
+                  <a
+                    href="#"
+                    className="border text-white border-secondary-500 cursor-pointer bg-primary-500 px-4 py-1 dark:border-secondary-800"
+                  >
+                    { incidentPage }
+                  </a>
+                  {
+                    (incidentPage * incidentLimit) < totalIncidents && <a
+                    href="#"
+                    onClick={() => { setIncidentPage(incidentPage + 1); }}
                     className="border-r border-t border-b text-primary-500 border-secondary-500 px-4 py-1 rounded-r dark:border-secondary-800"
                   >
                     Next
