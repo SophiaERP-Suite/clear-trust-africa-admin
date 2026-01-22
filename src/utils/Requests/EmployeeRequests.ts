@@ -11,6 +11,17 @@ export const fetchApplicants = async (pageNumber=1, limit=10) => {
   return response
 }
 
+export const fetchAllApplicants = async (pageNumber=1, limit=10) => {
+  const token = localStorage.getItem('accessToken');
+  const response = await fetch(`${BaseURL}/applicants/all?pageNumber=${pageNumber}&limit=${limit}`, {
+    method: 'GET',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  })
+  return response
+}
+
 export const fetchApplicantById = async (applicantId: number) => {
   const token = localStorage.getItem('accessToken');
   const response = await fetch(`${BaseURL}/applicants/${applicantId}`, {

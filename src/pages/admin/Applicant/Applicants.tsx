@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import "../../../assets2/css/choices.min.css";
 import "../../../assets2/css/flatpickr.min.css";
 import "../../../assets2/css/libs.min.css";
@@ -15,355 +16,294 @@ import "../../../assets2/js/libs.min.js";
 import "../../../assets2/js/slider-tabs.js";
 import "../../../assets2/js/sweet-alert.js";
 import "../../../assets2/js/swiper-slider.js";
-import { ChevronRightIcon, Plus, Users, UserPlus, PenSquare, Trash2 } from "lucide-react";
+import {
+  ChevronRightIcon,
+  Users,
+  Eye,
+} from "lucide-react";
+import { fetchAllApplicants } from "../../../utils/Requests/EmployeeRequests.js";
+import Tippy from "@tippyjs/react";
 import { NavLink } from "react-router-dom";
-import female from "../../../assets2/img/female_avatar.jpg";
-import male from "../../../assets2/img/male_avatar.jpg";
+import Hashids from "hashids";
 
-const data = [
-  {
-    image: female,
-    name: "Deborah Ononokpono",
-    contact: "+2349089812359",
-    email: "debbie_ono@gmail.com",
-    address: "2, Osolo Way, Off Iyana Isolo, Lagos",
-    status: "hold",
-    employee: "Little Nest Nursery",
-    joined: "2019-12-01"
-  },
-  {
-    image: male,
-    name: "Tunde Adewale",
-    contact: "+2348164729381",
-    email: "tunde.adewale@gmail.com",
-    address: "14, Awolowo Road, Ikeja, Lagos",
-    status: "active",
-    employee: "Bright Future Academy",
-    joined: "2020-03-15"
-  },
-  {
-    image: female,
-    name: "Ngozi Eze",
-    contact: "+2349034471209",
-    email: "ngozi.eze@yahoo.com",
-    address: "5, Zik Avenue, Uwani, Enugu",
-    status: "inactive",
-    employee: "St. Mary's Secondary School",
-    joined: "2018-06-21"
-  },
-  {
-    image: male,
-    name: "Ibrahim Musa",
-    contact: "+2347019938452",
-    email: "ibrahim.musa@gmail.com",
-    address: "22, Ahmadu Bello Way, Kaduna",
-    status: "pending",
-    employee: "Unity Comprehensive College",
-    joined: "2021-09-10"
-  },
-  {
-    image: female,
-    name: "Aisha Suleiman",
-    contact: "+2348057263145",
-    email: "aisha.suleiman@gmail.com",
-    address: "8, Aminu Kano Crescent, Wuse 2, Abuja",
-    status: "active",
-    employee: "Royal Gate International School",
-    joined: "2019-04-27"
-  },
-  {
-    image: male,
-    name: "Emeka Nwosu",
-    contact: "+2348075326710",
-    email: "emeka.nwosu@gmail.com",
-    address: "17, Okpara Avenue, GRA, Enugu",
-    status: "hold",
-    employee: "Prime Scholars Academy",
-    joined: "2022-01-12"
-  },
-  {
-    image: female,
-    name: "Blessing Akpan",
-    contact: "+2348124439087",
-    email: "blessing.akpan@gmail.com",
-    address: "9, Aka Road, Uyo, Akwa Ibom",
-    status: "pending",
-    employee: "Gracefield Model School",
-    joined: "2020-10-05"
-  },
-  {
-    image: male,
-    name: "David Adebayo",
-    contact: "+2349061182734",
-    email: "david.adebayo@gmail.com",
-    address: "3, Fajuyi Street, Ado-Ekiti, Ekiti State",
-    status: "inactive",
-    employee: "Faith Builders College",
-    joined: "2017-08-18"
-  },
-  {
-    image: female,
-    name: "Chinwe Okafor",
-    contact: "+2348137720945",
-    email: "chinwe.okafor@gmail.com",
-    address: "10, Aba Road, Port Harcourt, Rivers",
-    status: "active",
-    employee: "Cedar Heights Nursery & Primary",
-    joined: "2021-02-09"
-  },
-  {
-    image: male,
-    name: "Joseph Oladipo",
-    contact: "+2349056348790",
-    email: "joseph.oladipo@gmail.com",
-    address: "23, Ring Road, Ibadan, Oyo State",
-    status: "pending",
-    employee: "City Crest College",
-    joined: "2019-11-30"
-  },
-  {
-    image: female,
-    name: "Ruth Ocheme",
-    contact: "+2348145623971",
-    email: "ruth.ocheme@gmail.com",
-    address: "6, High Level, Makurdi, Benue State",
-    status: "active",
-    employee: "Divine Wisdom Academy",
-    joined: "2018-07-23"
-  }
-]
+interface EmployeeData {
+  userId: number;
+  firstName: string;
+  lastName: string;
+  profileImage: string;
+  phone: string;
+  email: string;
+  identificationNumber: string;
+  dateOfBirth: string;
+  gender: string;
+  address: string;
+  organisationId: number;
+  role: string;
+}
 
-function AdminApplicants() {
+export interface DbsTypes {
+  dbsTypeId: number;
+  typeName: string;
+  typeCost: number;
+}
+
+function Applicants() {
+  const [employees, setEmployees] = useState<EmployeeData[]>([]);
+  const [totalEmployees, setTotalEmployees] = useState(0);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const hashIds = new Hashids("ClearTrustAfricaEncode", 10);
+
+  useEffect(() => {
+    fetchAllApplicants(page, limit)
+      .then((res) => {
+        if (res.status === 200) {
+          res.json().then((data) => {
+            console.log(data);
+            setEmployees(data.data.users);
+            setTotalEmployees(data.data.totalCount);
+          });
+        } else {
+          res.text().then((data) => {
+            console.log(JSON.parse(data));
+          });
+        }
+      })
+      .catch((err) => console.log(err));
+  }, [page, limit]);
+
+  const refetchData = async () => {
+    try {
+      const res = await fetchAllApplicants(page, limit);
+      if (res.status === 200) {
+        const data = await res.json();
+        setEmployees(data.data.users);
+        setTotalEmployees(data.data.totalCount);
+      } else {
+        const resText = await res.text();
+        console.log(JSON.parse(resText));
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="w-full mb-8">
-        <div className="row">
-          <div className="col-md-12">
-            <div className="flex flex-wrap items-center justify-between">
-              <div className="flex">
-                <Users className="text-blue-600 mr-2" size={36} />
-                <div>
-                  <h3 className="mb-0 text-black">
-                    Applicant Management
-                  </h3>
-                  <p className="text-secondary-600 text-black">
-                    <NavLink to="/Dashboard">Dashboard</NavLink>{" "}
-                    <ChevronRightIcon size={14} />{" "}
-                    <NavLink to="/ApplicantsMgt">Applicants</NavLink>{" "}
-                  </p>
-                </div>
-              </div>
-              <div className="flex justify-end">
-                <NavLink
-                    to="ApplicantNew" style={{ backgroundColor: "rgb(112 22 208 / 1)" }}
-                    className="text-white btn shadow-md btn-soft-light hover:shadow-xl hover:bg-glass focus:bg-gray-200"
-                  >
-                    <Plus size={18} className="mr-2" />
-                    Add New
-                </NavLink>
-              </div>
+    <>
+      <div
+        className="p-6 lg:p-8 footer-inner mx-auto main-container container"
+        x-bind:className="setting.page_layout"
+      >
+        <div className="flex flex-wrap mb-8 items-center justify-between">
+          <div className="flex">
+            <Users className="text-[rgb(112_22_208/0.9)] mr-2 " size={36} />
+            <div>
+              <h3 className="mb-0 text-black">Applicant Management</h3>
+              <p className="text-secondary-600">
+                <NavLink to="/Dashboard">Dashboard</NavLink>
+                <ChevronRightIcon size={14} />
+                <NavLink to="/ApplicantsMgt">Applicant Mgt </NavLink>
+              </p>
             </div>
           </div>
         </div>
-      </div>
-      <div
-        className="footer-inner mx-auto main-container container"
-        x-bind:className="setting.page_layout"
-      >
-        <div className="flex flex-wrap contet-inner">
+
+        <div className="flex flex-wrap rounded-lg contet-inner">
           <div className="flex-auto w-full">
-            <div className="relative flex flex-col mb-8  bg-white dark:bg-dark-card shadow rounded">
-              <div className="flex justify-between flex-auto p-5 border-b dark:border-secondary-800 rounded">
-                <h4 className="mb-0 dark:text-secondary-200">
-                  Applicants List
-                </h4>
+            <div className="relative flex flex-col mb-8  bg-white dark:bg-dark-card shadow rounded-lg">
+              <div className="flex justify-between flex-auto p-5 border-b dark:border-secondary-800">
+                <h4 className="mb-0 font-bold">Applicants List</h4>
                 <a href="/ApplicantNew"></a>
               </div>
               <div className="pb-6 pt-2 px-0">
-                <div className="overflow-x-auto">
-                  <div className=" overflow-x-auto p-5">
-                    <div className="flex flex-wrap justify-between my-6 mx-5">
+                <div className="overflow-x-hidden">
+                  <div className=" overflow-x-hidden p-5">
+                    <div className="flex flex-wrap justify-between my-2">
                       <div className="flex justify-center items-center mb-1">
                         <label
-                          className="inline-block text-secondary-600 dark:text-white"
+                          className="inline-block text-black dark:text-white"
                           htmlFor="show"
                         >
-                          Show
+                          Display Per Page:
                         </label>
                         <div className="flex">
                           <select
-                            className="block w-full px-2 py-1 ml-2 text-base font-normal rounded text-secondary-500 dark:bg-dark-card dark:border-secondary-800 bg-white border outline-none focus:border-primary-500 focus:shadow"
+                            className="block w-full px-2 py-1 ml-2 text-base font-normal rounded text-black dark:bg-dark-card dark:border-secondary-800 bg-white border outline-none focus:border-primary-500 focus:shadow"
                             aria-label=".form-select-sm example"
                             id="show"
+                            value={limit}
+                            onChange={(e) => {
+                              setLimit(Number(e.target.value));
+                              refetchData();
+                            }}
                           >
-                            <option selected={true}>10</option>
-                            <option value="1">25</option>
-                            <option value="2">50</option>
-                            <option value="3">100</option>
+                            <option value={10}>10</option>
+                            <option value={25}>25</option>
+                            <option value={50}>50</option>
+                            <option value={100}>100</option>
                           </select>
-                          <span className="text-secondary-600 ml-1 dark:text-white">
-                            entries
-                          </span>
                         </div>
-                      </div>
-                      <div className="flex justify-center items-center mb-1">
-                        <label
-                          className="inline-block mb-2 text-secondary-600 dark:text-white"
-                          htmlFor="email"
-                        >
-                          Search:
-                        </label>
-                        <input
-                          type="email"
-                          className="block w-full px-4 py-1 ml-2 text-base font-normal dark:bg-dark-card dark:border-secondary-800 bg-white border rounded outline-none focus:border-primary-500 focus:shadow"
-                          id="email"
-                        />
                       </div>
                     </div>
-                    <table className="min-w-full overflow-hidden divide-y divide-secondary-200 dark:divide-secondary-800 border dark:border-secondary-800">
-                      <thead>
-                        <tr className="bg-secondary-100 dark:bg-dark-bg">
-                          <th className="px-6 py-4 text-left font-medium text-secondary-600 dark:text-white">
-                            Profile
-                          </th>
-                          <th className="px-6 py-4 text-left font-medium text-secondary-600 dark:text-white">
-                            Name
-                          </th>
-                          <th className="px-6 py-4 text-left font-medium text-secondary-600 dark:text-white">
-                            Contact
-                          </th>
-                          <th className="px-6 py-4 text-left font-medium text-secondary-600 dark:text-white">
-                            Email
-                          </th>
-                          <th className="px-6 py-4 text-left font-medium text-secondary-600 dark:text-white">
-                            Address
-                          </th>
-                          <th className="px-6 py-4 text-left font-medium text-secondary-600 dark:text-white">
-                            Status
-                          </th>
-                          <th className="px-6 py-4 text-left font-medium text-secondary-600 dark:text-white">
-                            Company
-                          </th>
-                          <th className="px-6 py-4 text-left font-medium text-secondary-600 dark:text-white">
-                            Join Date
-                          </th>
-                          <th className="px-6 py-4 text-left font-medium text-secondary-600 dark:text-white">
-                            Action
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-secondary-200 dark:divide-secondary-800">
-                        {
-                          data.map((userData) => {
-                            return (<tr className="bg-secondary-100 dark:bg-dark-bg">
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                      <img
-                                        className="w-10 h-10 mr-3 text-primary-400 bg-primary-500/10  rounded-xl"
-                                        src={userData.image}
-                                        style={{ objectFit: "cover" }}
-                                        alt="profile"
-                                      />
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
-                                      { userData.name }
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
-                                      { userData.contact }
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
-                                      { userData.email }
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
-                                      { userData.email }
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-secondary-600">
-                                <span className={`
-                                  ${userData.status == 'inactive' ? 'bg-danger-500' : ''}
-                                  ${userData.status == 'pending' ? 'bg-warning-500' : ''}
-                                  ${userData.status == 'active' ? 'bg-success-500' : ''}
-                                  ${userData.status == 'hold' ? 'bg-info-500' : ''}
-                                  inline-block whitespace-nowrap px-2 py-1 text-xs text-center font-bold leading-none text-white rounded`}>
-                                        { userData.status }
+                    <div className="border dark:border-secondary-800 rounded-lg overflow-x-auto">
+                      <table
+                        id="basic-table"
+                        className="min-w-full overflow-hidden divide-y divide-secondary-200 dark:divide-secondary-800"
+                      >
+                        <thead>
+                          <tr className="bg-secondary-100 dark:bg-dark-bg">
+                            <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                              S/N
+                            </th>
+                            <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                              Name
+                            </th>
+                            <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                              Phone
+                            </th>
+                            <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                              Email
+                            </th>
+                            <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                              Gender
+                            </th>
+                            <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                              Birth Date
+                            </th>
+                            <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                              Action
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-secondary-200 dark:divide-secondary-800">
+                          {employees.map((data: EmployeeData, index) => (
+                            <tr key={data.userId ?? index}>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="iq-media-group iq-media-group-1">
+                                  <h6 className="font-bold dark:text-white">
+                                    {" "}
+                                    #{index + 1}
+                                  </h6>
+                                </div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <NavLink
+                                  to={`/EmployeeProfile/${hashIds.encode(
+                                    String(data.userId)
+                                  )}`}
+                                  className="flex items-center"
+                                >
+                                  <img
+                                    className="w-10 h-10 p-1 mr-3 rtl:mr-0 rtl:ml-3 text-primary-400 bg-primary-500/10 rounded-xl"
+                                    src={data.profileImage}
+                                    alt="profile"
+                                  />
+                                  <h6 className="font-medium pl-1 mt-2 dark:text-white">
+                                    {`${data.firstName} ${data.lastName}`}
+                                  </h6>
+                                </NavLink>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
+                                {data.phone}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
+                                {data.email}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
+                                {data.gender}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
+                                {new Date(data.dateOfBirth).toLocaleDateString(
+                                  "en-GB",
+                                  {
+                                    day: "2-digit",
+                                    month: "short",
+                                    year: "numeric",
+                                  }
+                                )}
+                              </td>
+                              <td className="px-6 py-4">
+                                <div className="flex items-center list-user-action">
+                                  <Tippy content="Preview Applicant Profile">
+                                    <NavLink
+                                      to={`/ApplicantsMgt/${hashIds.encode(
+                                        String(data.userId)
+                                      )}`}
+                                      className="btn btn-info btn-icon btn-sm mr-1"
+                                    >
+                                      <span className="btn-inner">
+                                        <Eye />
                                       </span>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
-                                      { userData.address }
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-secondary-600 dark:text-secondary-500">
-                                      { userData.joined }
-                                    </td>
-                                    <td className="px-6 py-4">
-                                      <div className="flex items-center list-user-action">
-                                        <a
-                                          className="btn btn-success btn-icon btn-sm mr-1"
-                                          href="#"
-                                          type="button"
-                                          data-tp-toggle="tooltip"
-                                          data-tp-placement="top"
-                                          data-tp-title="Add"
-                                        >
-                                          <span className="btn-inner">
-                                            < UserPlus />
-                                          </span>
-                                        </a>
-                                        <a
-                                          className="btn btn-warning btn-icon btn-sm mr-1"
-                                          href="#"
-                                          type="button"
-                                          data-tp-toggle="tooltip"
-                                          data-tp-placement="top"
-                                          data-tp-title="Edit"
-                                        >
-                                          <span className="btn-inner">
-                                            <PenSquare />
-                                          </span>
-                                        </a>
-                                        <a
-                                          className="btn btn-danger btn-icon btn-sm mr-1"
-                                          href="#"
-                                          type="button"
-                                          data-tp-toggle="tooltip"
-                                          data-tp-placement="top"
-                                          data-tp-title="Delet"
-                                        >
-                                          <span className="btn-inner">
-                                            <Trash2 />
-                                          </span>
-                                        </a>
-                                      </div>
-                                    </td>
-                                  </tr>)
-                          })
-                        }
-                      </tbody>
-                    </table>
-                    <div className="border dark:border-secondary-800">
-                      <div className="flex flex-wrap justify-between my-6 mx-5">
-                        <div className="flex justify-center items-center mb-1">
-                          <p className="text-secondary-600">
-                            Showing 1 to 9 of 9 entries
-                          </p>
-                        </div>
-                        <div className="inline-flex flex-wrap">
+                                    </NavLink>
+                                  </Tippy>
+                                </div>
+                              </td>
+                            </tr>
+                            ))
+                          }
+                          {
+                            employees.length === 0 ? <tr>
+                              <div className="px-6 py-4 whitespace-nowrap">
+                                <span  className="px-6 py-4 text-left font-medium text-black dark:text-white">There are currently no registered employees in your organisation</span>
+                              </div>
+                            </tr> : <></>
+                          }
+                        </tbody>
+                      </table>
+                      {employees.length === 0 ? (
+                        <p className="px-6 py-4 text-center whitespace-nowrap">
+                          <span className="px-6 py-4 text-center font-medium text-black dark:text-white">
+                            There are currently no registered applicants
+                          </span>
+                        </p>
+                      ) : (
+                        <></>
+                      )}
+                    </div>
+                    <div className="flex flex-wrap justify-between my-6 mx-5">
+                      <div className="flex justify-center items-center mb-1">
+                        <p className="text-black">
+                          Showing{" "}
+                          {employees.length > 0 ? page * limit - limit + 1 : 0}{" "}
+                          to{" "}
+                          {employees.length > 0
+                            ? page * limit - limit + 1 + (employees.length - 1)
+                            : 0}{" "}
+                          of {totalEmployees} entries
+                        </p>
+                      </div>
+                      <div className="inline-flex flex-wrap">
+                        {page > 1 && (
                           <a
                             href="#"
-                            className="border-t border-b border-l text-primary-500 border-secondary-500 px-2 py-1 rounded-l dark:border-secondary-800"
+                            onClick={() => {
+                              if (page > 1) {
+                                setPage(page - 1);
+                                refetchData();
+                              }
+                            }}
+                            className="border-t border-b border-l rounded-md text-primary-500 border-secondary-500 px-2 py-1 rounded-l dark:border-secondary-800"
                           >
                             Previous
                           </a>
+                        )}
+                        <a
+                          href="#"
+                          className="border text-white border-secondary-500 rounded-md cursor-pointer bg-primary-500 px-4 py-1 dark:border-secondary-800"
+                        >
+                          {page}
+                        </a>
+                        {page * limit < totalEmployees && (
                           <a
                             href="#"
-                            className="border text-white border-secondary-500 cursor-pointer bg-primary-500 px-4 py-1 dark:border-secondary-800"
-                          >
-                            1
-                          </a>
-                          <a
-                            href="#"
-                            className="border-r border-t border-b text-primary-500 border-secondary-500 px-4 py-1 rounded-r dark:border-secondary-800"
+                            onClick={() => {
+                              setPage(page + 1);
+                              refetchData();
+                            }}
+                            className="border-r border-t border-b text-primary-500 border-secondary-500 px-4 py-1 rounded-md dark:border-secondary-800"
                           >
                             Next
                           </a>
-                        </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -373,8 +313,8 @@ function AdminApplicants() {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
-export default AdminApplicants;
+export default Applicants;

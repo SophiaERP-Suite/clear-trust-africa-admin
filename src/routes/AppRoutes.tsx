@@ -29,9 +29,9 @@ function AppRoutes() {
         <Route index element={<Dashboard />} />
         <Route path="Dashboard" element={<Dashboard />} />
         <Route path="ApplicantsMgt" element={<Applicants />} />
-        <Route path="ApplicantsMgt/ApplicantNew" element={<ApplicantNew />} />
+        <Route path="ApplicantsMgt/New" element={<ApplicantNew />} />
         <Route
-          path="ApplicantsMgt/ApplicantProfile"
+          path="ApplicantsMgt/:id"
           element={<ApplicantProfile />}
         />
         <Route path="EmployersMgt" element={<Employers />} />

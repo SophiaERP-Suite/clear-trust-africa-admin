@@ -159,6 +159,18 @@ export const fetchDbsLogsByApplication = async (applicationId: number, filterDat
   return response
 }
 
+export const fetchDbsChecksByUserId = async (userId: number, pageNumber=1, limit=5) => {
+  const token = localStorage.getItem('accessToken');
+  const response = await fetch(`${BaseURL}/dbs-applications/user/${userId}?pageNumber=${pageNumber}&limit=${limit}`, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response;
+  };
+  
+
 export const fetchDbsstats = async () => {
   const token = localStorage.getItem('accessToken');
   const url = `${BaseURL}/dbs-applications/stats`;
