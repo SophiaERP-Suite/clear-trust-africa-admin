@@ -3,7 +3,6 @@ import Dashboard from "../pages/admin/Dashboard";
 import AdminLayout from "../layout/AdminLayout";
 import ApplicantNew from "../pages/admin/Applicant/ApplicantNew";
 import Applicants from "../pages/admin/Applicant/Applicants";
-import ApplicantProfile from "../pages/admin/Applicant/ApplicantProfile";
 import EmployersNew from "../pages/admin/Employer/EmployerNew";
 import Employers from "../pages/admin/Employer/Employers";
 import EmployerProfile from "../pages/admin/Employer/EmployerProfile";
@@ -21,6 +20,7 @@ import PaymentReceipt from "../pages/admin/Payment/PaymentReceipt";
 import Incidents from "../pages/admin/Incident/Incident";
 import IncidentReportForm from "../pages/admin/Incident/IncidentReportForm";
 import IncidentReport from "../pages/admin/Incident/IncidentReport";
+import ApplicantsDetails from "../pages/admin/Applicant/ApplicantDetails";
 
 function AppRoutes() {
   return (
@@ -32,7 +32,7 @@ function AppRoutes() {
         <Route path="ApplicantsMgt/New" element={<ApplicantNew />} />
         <Route
           path="ApplicantsMgt/:id"
-          element={<ApplicantProfile />}
+          element={<ApplicantsDetails />}
         />
         <Route path="EmployersMgt" element={<Employers />} />
         <Route path="EmployersMgt/EmployerNew" element={<EmployersNew />} />

@@ -149,7 +149,6 @@ export const fetchDbsLogsByApplication = async (applicationId: number, filterDat
     }
   })
   const url = `${BaseURL}/dbs-activity-log/${applicationId}?${params}`;
-  console.log(url);
   const response = await fetch(url, {
     method: 'GET',
     headers: {

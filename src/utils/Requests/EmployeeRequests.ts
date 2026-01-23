@@ -11,9 +11,16 @@ export const fetchApplicants = async (pageNumber=1, limit=10) => {
   return response
 }
 
-export const fetchAllApplicants = async (pageNumber=1, limit=10) => {
+export const fetchAllApplicants = async (filterData: object) => {
   const token = localStorage.getItem('accessToken');
-  const response = await fetch(`${BaseURL}/applicants/all?pageNumber=${pageNumber}&limit=${limit}`, {
+  const params = new URLSearchParams();
+  Object.entries(filterData).forEach(([key, value]) => {
+    if (value !== null && value !== undefined && value !== "") {
+      params.append(key, value);
+    }
+  })
+  const url = `${BaseURL}/applicants/all?${params}`;
+  const response = await fetch(url, {
     method: 'GET',
     headers: {
       "Authorization": `Bearer ${token}`
@@ -25,6 +32,24 @@ export const fetchAllApplicants = async (pageNumber=1, limit=10) => {
 export const fetchApplicantById = async (applicantId: number) => {
   const token = localStorage.getItem('accessToken');
   const response = await fetch(`${BaseURL}/applicants/${applicantId}`, {
+    method: 'GET',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  })
+  return response
+}
+
+export const fetchApplicantsPastAddresses = async (applicantId: number, filterData: object) => {
+  const token = localStorage.getItem('accessToken');
+  const params = new URLSearchParams();
+  Object.entries(filterData).forEach(([key, value]) => {
+    if (value !== null && value !== undefined && value !== "") {
+      params.append(key, value);
+    }
+  })
+  const url = `${BaseURL}/applicants/${applicantId}/address?${params}`;
+  const response = await fetch(url, {
     method: 'GET',
     headers: {
       "Authorization": `Bearer ${token}`
