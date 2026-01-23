@@ -830,7 +830,12 @@ export default function DBSTrackerModule() {
                           </div>
                         </td>
                         <td className="px-6 py-4">
-                          <div className="flex w-50 items-center gap-3">
+                          <NavLink
+                              to={`/EmployeeProfile/${hashIds.encode(
+                                String(data.userId)
+                              )}`}
+                              className="flex w-50 items-center gap-3"
+                            >
                             <div className="h-12 w-12 border rounded-full" style={{ backgroundColor: colors[index % 4], display: "flex", justifyContent: "center", alignItems: "center", color: "#ffffff"}}>
                               { `${data.userFirstName[0]} ${data.userLastName[0]}` }
                             </div>
@@ -839,7 +844,7 @@ export default function DBSTrackerModule() {
                                 {`${data.userFirstName} ${data.userLastName}`}
                               </div>
                             </div>
-                          </div>
+                          </NavLink>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
                           {data.requestedBy}

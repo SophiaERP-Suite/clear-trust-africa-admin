@@ -51,6 +51,25 @@ export const fetchAllIncidentReports = async (filterData: object) => {
   return response
 }
 
+export const fetchIncidentReportsAnalytics = async (filterData: object) => {
+  const token = localStorage.getItem('accessToken');
+  const params = new URLSearchParams();
+  Object.entries(filterData).forEach(([key, value]) => {
+    if (value !== null && value !== undefined && value !== "") {
+      params.append(key, value);
+    }
+  })
+  const url = `${BaseURL}/api/employer/IncidentReports/analytics?${params}`;
+  console.log(url);
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  })
+  return response
+}
+
 export const fetchAllIncidentReportsForSearch = async (filterData: object) => {
   const token = localStorage.getItem('accessToken');
   const params = new URLSearchParams();

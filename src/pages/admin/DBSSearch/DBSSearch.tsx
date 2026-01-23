@@ -1438,7 +1438,12 @@ export default function DBSSearchModule() {
                           </div>
                         </td>
                         <td className="px-6 py-4">
-                          <div className="flex w-50 items-center gap-3">
+                          <NavLink
+                            to={`/EmployeeProfile/${hashIds.encode(
+                              String(ir.accusedEmployeeId)
+                            )}`}
+                            className="flex w-50 items-center gap-3"
+                          >
                             <div className="h-12 w-12 border rounded-full" style={{ backgroundColor: colors[index % 4], display: "flex", justifyContent: "center", alignItems: "center", color: "#ffffff"}}>
                               { `${ir.accusedFirstName[0]} ${ir.accusedLastName[0]}` }
                             </div>
@@ -1447,7 +1452,7 @@ export default function DBSSearchModule() {
                                 {`${ir.accusedFirstName} ${ir.accusedLastName}`}
                               </div>
                             </div>
-                          </div>
+                          </NavLink>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-gray-900">
                           {ir.incidentType || "_"}

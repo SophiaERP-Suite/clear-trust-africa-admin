@@ -345,7 +345,7 @@ function ApplicantsDetails() {
                                 >
                                     <div className="flex items-start justify-end mb-4">
                                         <div className="py-3 px-3 bg-white rounded-full border-2">
-                                        <ShieldCheck className="w-6 h-5 text-blue-600" />
+                                            <ShieldCheck className="w-6 h-5 text-blue-600" />
                                         </div>
                                     </div>
                                     <div>
@@ -360,7 +360,7 @@ function ApplicantsDetails() {
                                 >
                                     <div className="flex items-start justify-end mb-4">
                                         <div className="py-3 px-3 bg-white rounded-full border-2">
-                                        <AlertTriangleIcon className="w-6 h-5 text-amber-600" />
+                                            <AlertTriangleIcon className="w-6 h-5 text-amber-600" />
                                         </div>
                                     </div>
                                     <div>

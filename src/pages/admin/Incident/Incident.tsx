@@ -463,14 +463,21 @@ export default function Incidents() {
                             </td>
                             <td className="px-6 py-4">
                               <div className="flex w-50 items-center gap-3">
-                                <div className="h-12 w-12 border rounded-full" style={{ backgroundColor: colors[index % 4], display: "flex", justifyContent: "center", alignItems: "center", color: "#ffffff"}}>
-                                  { `${ir.accusedFirstName[0]} ${ir.accusedLastName[0]}` }
-                                </div>
-                                <div>
-                                  <div className="font-semibold text-gray-900">
-                                    {`${ir.accusedFirstName} ${ir.accusedLastName}`}
-                                  </div>
-                                </div>
+                                <NavLink
+                                  to={`/EmployeeProfile/${hashIds.encode(
+                                    String(ir.accusedEmployeeId)
+                                  )}`}
+                                  className="flex w-50 items-center gap-3"
+                                >
+                                   <div className="h-12 w-12 border rounded-full" style={{ backgroundColor: colors[index % 4], display: "flex", justifyContent: "center", alignItems: "center", color: "#ffffff"}}>
+                                      { `${ir.accusedFirstName[0]} ${ir.accusedLastName[0]}` }
+                                    </div>
+                                    <div>
+                                      <div className="font-semibold text-gray-900">
+                                        {`${ir.accusedFirstName} ${ir.accusedLastName}`}
+                                      </div>
+                                    </div>
+                                </NavLink>
                               </div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-gray-900">
