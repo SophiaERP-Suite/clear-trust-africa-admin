@@ -20,9 +20,7 @@ function NotificationSettings() {
     try {
       const data = await getAllNotificationSettings();
       setSettings(data);
-      console.log("Loaded settings:", data);
     } catch {
-      toast.error("Failed to load notification settings");
     }
   };
 

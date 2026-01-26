@@ -29,6 +29,10 @@ import OrganisationType from "./OrganisationType";
 import RolePermissions from "./RolePermissions";
 import NotificationSettings from "./NotificationSettings";
 import LocationManagement from "./LocationManagement";
+import CountryMgt from "./CountryMgt";
+import StatesManagement from "./StateMgt";
+import CitiesManagement from "./CityMgt";
+import AuditLog from "./AuditLog";
 import DBSStatus from "./DBSStatus";
 import DBSType from "./DBSTypes";
 import DBSStages from "./DBSStages";
@@ -86,6 +90,26 @@ const sidebarItems = [
     icon: <MapPin size={20} />,
     path: "/ControlPanel/locationMgt",
     component: LocationManagement,
+    children: [
+      {
+        id: "countries",
+        label: "Countries",
+        path: "/ControlPanel/locationMgt/countries",
+        component: CountryMgt,
+      },
+      {
+        id: "states",
+        label: "States",
+        path: "/ControlPanel/locationMgt/states",
+        component: StatesManagement,
+      },
+      {
+        id: "cities",
+        label: "Cities",
+        path: "/ControlPanel/locationMgt/cities",
+        component: CitiesManagement,
+      },
+    ],
   },
   {
     id: "incident-type",
@@ -141,7 +165,7 @@ const sidebarItems = [
     label: "Audit Logs",
     icon: <Activity size={20} />,
     path: "/ControlPanel/audit-logs",
-    component: null,
+    component: AuditLog,
   },
 ];
 
@@ -252,6 +276,7 @@ export default function ControlPanel() {
         {/* Main Content Area with Routes */}
         <main className="flex-1 min-h-[500px]">
           <Routes>
+            {/* Parent routes */}
             {sidebarItems.map((item) => (
               <Route
                 key={item.id}
@@ -260,18 +285,23 @@ export default function ControlPanel() {
                   item.component ? (
                     <item.component />
                   ) : (
-                    <div className="text-center py-12">
-                      <h3 className="text-xl font-semibold text-black mb-2">
-                        {item.label}
-                      </h3>
-                      <p className="text-black">
-                        This section is coming soon...
-                      </p>
-                    </div>
+                    <div>Coming soon...</div>
                   )
                 }
               />
             ))}
+
+            {/* Child routes */}
+            {sidebarItems.map((item) =>
+              item.children?.map((child) => (
+                <Route
+                  key={child.id}
+                  path={child.path.replace("/ControlPanel", "")}
+                  element={<child.component />}
+                />
+              ))
+            )}
+
             <Route index element={<Overview />} />
           </Routes>
         </main>

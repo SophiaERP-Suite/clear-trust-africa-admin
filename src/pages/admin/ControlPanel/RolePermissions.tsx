@@ -1,4 +1,4 @@
-import { Tag, Check, Trash2Icon } from "lucide-react";
+import { Tag, Trash2Icon, CheckCheck } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import { getAllRoles } from "../../../api/roleApi";
@@ -11,7 +11,7 @@ import {
   getAllRolePermissions,
 } from "../../../api/rolePermissionApi";
 import type { RolePermissionsDto } from "../../../types/controlPanel/rolePermissions";
-import Modal from "../../utils/modal";
+import Modal from "../../../components/modal";
 
 type ModalType = "add" | "edit" | "delete" | null;
 
@@ -272,7 +272,7 @@ function PermissionsAssign() {
                         "Assigning..."
                       ) : (
                         <span>
-                          <Check /> Assign Permission
+                          <CheckCheck /> Assign Permission
                         </span>
                       )}
                     </button>
