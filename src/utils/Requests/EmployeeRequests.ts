@@ -125,3 +125,15 @@ export const fetchCitiesByStateId = async (stateId: number) => {
   })
   return response
 }
+
+export const fetchOrganizationAnalytics = async () => {
+  const token = localStorage.getItem('accessToken');
+  const url = `${BaseURL}/api/admin/Organisations/analytics`;
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  })
+  return response
+}
