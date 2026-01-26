@@ -38,6 +38,14 @@ const riskLevels: Record<number, string[]> = {
   0: ['No Risk', 'bg-green-200/50', 'text-green-500']
 }
 
+const riskLevels1: Record<string, string[]> = {
+  'High': ['High', 'bg-red-200/50', 'text-red-500'],
+  'Medium': ['Medium', 'bg-orange-200/50', 'text-orange-500'],
+  'Low': ['Low', 'bg-yellow-200/50', 'text-yellow-500'],
+  'No Risk': ['No Risk', 'bg-green-200/50', 'text-green-500']
+}
+
+
 const maritalStatus: Record<number, string> = {
   4: 'Widowed',
   3: 'Divorced',
@@ -96,6 +104,10 @@ const statusTextStyles: Record<number, string> = {
   4: 'text-green-500',
   5: 'text-red-500',
 };
+
+const isNumeric = (str: unknown): boolean => {
+  return typeof str === 'string' && str.trim() !== '' && !isNaN(Number(str));
+}
 
 export default function NPFProfileDetails() {
   const { id } = useParams();
@@ -407,10 +419,20 @@ export default function NPFProfileDetails() {
               <div className="flex flex-wrap">
                 <div>
                     <Tippy content="Risk Level">
-                        <p className={`btn mr-2 mb-2 ${riskLevels[npfDetails.riskLevel][1] ?? 'bg-gray-200'} ${riskLevels[npfDetails.riskLevel][2] ?? 'text-black'} font-bold`}
-                            style={{ cursor: 'auto' }}>
-                            {riskLevels[npfDetails.riskLevel][0]} {npfDetails.wanted && '- Wanted'}
-                        </p>
+                        {
+                            isNumeric(npfDetails.riskLevel) ? (
+                                <p className={`btn mr-2 mb-2 ${riskLevels[Number(npfDetails.riskLevel)][1] ?? 'bg-gray-200'} ${riskLevels[Number(npfDetails.riskLevel)][2] ?? 'text-black'} font-bold`}
+                                    style={{ cursor: 'auto' }}>
+                                    {riskLevels[Number(npfDetails.riskLevel)][0]} {npfDetails.wanted && '- Wanted'}
+                                </p>
+                            ) : (
+                                <p className={`btn mr-2 mb-2 ${riskLevels1[npfDetails.riskLevel][1] ?? 'bg-gray-200'} ${riskLevels1[npfDetails.riskLevel][2] ?? 'text-black'} font-bold`}
+                                    style={{ cursor: 'auto' }}>
+                                    {riskLevels1[npfDetails.riskLevel][0]} {npfDetails.wanted && '- Wanted'}
+                                </p>
+                            )
+                        }
+                        
                     </Tippy>
                 </div>
                 <div className="relative">

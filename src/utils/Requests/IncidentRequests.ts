@@ -21,7 +21,7 @@ export interface ChatParticipant {
 export const fetchIncidentChatMessages = async (incidentReportId: number) => {
   const token = localStorage.getItem("accessToken");
   const response = await fetch(
-    `${BaseURL}/api/employer/IncidentReports/${incidentReportId}/chat`,
+    `${BaseURL}/api/IncidentReports/${incidentReportId}/chat`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -40,7 +40,7 @@ export const fetchAllIncidentReports = async (filterData: object) => {
       params.append(key, value);
     }
   })
-  const url = `${BaseURL}/api/employer/IncidentReports?${params}`;
+  const url = `${BaseURL}/api/IncidentReports?${params}`;
   console.log(url);
   const response = await fetch(url, {
     method: 'GET',
@@ -59,7 +59,7 @@ export const fetchIncidentReportsAnalytics = async (filterData: object) => {
       params.append(key, value);
     }
   })
-  const url = `${BaseURL}/api/employer/IncidentReports/analytics?${params}`;
+  const url = `${BaseURL}/api/IncidentReports/analytics?${params}`;
   console.log(url);
   const response = await fetch(url, {
     method: 'GET',
@@ -78,7 +78,7 @@ export const fetchAllIncidentReportsForSearch = async (filterData: object) => {
       params.append(key, value);
     }
   })
-  const url = `${BaseURL}/api/employer/IncidentReports/cta-search?${params}`;
+  const url = `${BaseURL}/api/IncidentReports/cta-search?${params}`;
   console.log(url);
   const response = await fetch(url, {
     method: 'GET',
@@ -91,7 +91,7 @@ export const fetchAllIncidentReportsForSearch = async (filterData: object) => {
 
 export const matchIncidentDataToApplication = async (data: FormData) => {
   const token = localStorage.getItem('accessToken');
-  const response = await fetch(`${BaseURL}/api/employer/IncidentReports/match-search`, {
+  const response = await fetch(`${BaseURL}/api/IncidentReports/match-search`, {
     method: 'POST',
     headers: {
       "Authorization": `Bearer ${token}`
@@ -107,7 +107,7 @@ export const sendChatMessage = async (
 ) => {
   const token = localStorage.getItem("accessToken");
   const response = await fetch(
-    `${BaseURL}/api/employer/IncidentReports/${incidentReportId}/chat`,
+    `${BaseURL}/api/IncidentReports/${incidentReportId}/chat`,
     {
       method: "POST",
       headers: {
@@ -124,7 +124,7 @@ export const sendChatMessage = async (
 export const markMessagesAsRead = async (incidentReportId: number): Promise<void> => {
   const token = localStorage.getItem("accessToken");
   await fetch(
-    `${BaseURL}/api/employer/IncidentReports/${incidentReportId}/chat/read`,
+    `${BaseURL}/api/IncidentReports/${incidentReportId}/chat/read`,
     {
       method: "PUT",
       headers: {
@@ -137,7 +137,7 @@ export const markMessagesAsRead = async (incidentReportId: number): Promise<void
 export const fetchChatParticipants = async (incidentReportId: number) => {
   const token = localStorage.getItem("accessToken");
   const response = await fetch(
-    `${BaseURL}/api/employer/IncidentReports/${incidentReportId}/chat/participants`,
+    `${BaseURL}/api/IncidentReports/${incidentReportId}/chat/participants`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -150,7 +150,7 @@ export const fetchChatParticipants = async (incidentReportId: number) => {
 
 export const fetchIncidentReports = async (page: number, pageSize: number) => {
   const token = localStorage.getItem('accessToken');
-  const response = await fetch(`${BaseURL}/api/employer/IncidentReports/${page}/${pageSize}/GetAllByAdmin`, {
+  const response = await fetch(`${BaseURL}/api/IncidentReports/${page}/${pageSize}/GetAllByAdmin`, {
     method: 'GET',
     headers: {
       "Authorization": `Bearer ${token}`
@@ -163,7 +163,7 @@ export const UpdateStatus = async (incidentReportId: number) => {
   const token = localStorage.getItem("accessToken");
 
   const response = await fetch(
-    `${BaseURL}/api/employer/IncidentReports/${incidentReportId}/updateStatus`,
+    `${BaseURL}/api/IncidentReports/${incidentReportId}/updateStatus`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -273,7 +273,7 @@ export const fetchEscalations = async (incidentReportId: number) => {
 export const fetchIncidentReportById = async (incidentReportId: number) => {
   const token = localStorage.getItem("accessToken");
 
-  const response = await fetch(`${BaseURL}/api/employer/IncidentReports/${incidentReportId}`, {
+  const response = await fetch(`${BaseURL}/api/IncidentReports/${incidentReportId}`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -287,7 +287,7 @@ export const fetchIncidentReportById = async (incidentReportId: number) => {
 export const createNewIncidentReport = async (data: FormData) => {
   const token = localStorage.getItem("accessToken");
   const response = await fetch(
-    `${BaseURL}/api/employer/IncidentReports`,
+    `${BaseURL}/api/IncidentReports`,
     {
       method: "POST",
       headers: {
@@ -378,7 +378,7 @@ export const updateDBSPartner = async (data: FormData, partnerId: number) => {
 
 export const updateIncidentReportStatus = async (data: FormData, reportId: number) => {
   const token = localStorage.getItem('accessToken');
-  const response = await fetch(`${BaseURL}/api/employer/IncidentReports/${reportId}/updateStatus`, {
+  const response = await fetch(`${BaseURL}/api/IncidentReports/${reportId}/updateStatus`, {
     method: 'PUT',
     headers: {
       "Authorization": `Bearer ${token}`

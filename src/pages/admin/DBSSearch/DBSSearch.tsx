@@ -93,7 +93,7 @@ export interface NPFData {
   maritalStatus: number;
   hasCriminalRecord: boolean;
   wanted: boolean;
-  riskLevel: number;
+  riskLevel: string;
   dateCreated: string;
 }
 
@@ -114,6 +114,13 @@ const riskLevels: Record<number, string[]> = {
   2: ['Medium', 'bg-orange-200/50', 'text-orange-500'],
   1: ['Low', 'bg-yellow-200/50', 'text-yellow-500'],
   0: ['No Risk', 'bg-green-200/50', 'text-green-500']
+}
+
+const riskLevels1: Record<string, string[]> = {
+  'High': ['High', 'bg-red-200/50', 'text-red-500'],
+  'Medium': ['Medium', 'bg-orange-200/50', 'text-orange-500'],
+  'Low': ['Low', 'bg-yellow-200/50', 'text-yellow-500'],
+  'No Risk': ['No Risk', 'bg-green-200/50', 'text-green-500']
 }
 
 const maritalStatus: Record<number, string> = {
@@ -196,6 +203,10 @@ interface CityData {
 interface IncidentType {
   incidentTypeId: number;
   name: string;
+}
+
+const isNumeric = (str: unknown): boolean => {
+  return typeof str === 'string' && str.trim() !== '' && !isNaN(Number(str));
 }
 
 export default function DBSSearchModule() {
@@ -1252,11 +1263,22 @@ export default function DBSSearchModule() {
                         <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
                           {(new Date(data.dateOfBirth)).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-gray-900">
-                            <p className={`p-1 px-2 text-center rounded-lg ${riskLevels[data.riskLevel][1] ?? 'bg-gray-200'} ${riskLevels[data.riskLevel][2] ?? 'text-black'}`}>
-                            {riskLevels[data.riskLevel][0]}  {data.wanted && '- Wanted'}
-                          </p>
-                        </td>
+                        {
+                            isNumeric(data.riskLevel) ? (
+                              <td className="px-6 py-4 whitespace-nowrap text-gray-900">
+                                  <p className={`p-1 px-2 text-center rounded-lg ${riskLevels[Number(data.riskLevel)][1] ?? 'bg-gray-200'} ${riskLevels[Number(data.riskLevel)][2] ?? 'text-black'}`}>
+                                  {riskLevels[Number(data.riskLevel)][0]}  {data.wanted && '- Wanted'}
+                                </p>
+                              </td>
+                            ) : (
+                                <td className="px-6 py-4 whitespace-nowrap text-gray-900">
+                                    <p className={`p-1 px-2 text-center rounded-lg ${riskLevels1[data.riskLevel][1] ?? 'bg-gray-200'} ${riskLevels1[data.riskLevel][2] ?? 'text-black'}`}>
+                                    {riskLevels1[data.riskLevel][0]}  {data.wanted && '- Wanted'}
+                                  </p>
+                                </td>
+                            )
+                        }
+                        
                         <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
                           <div className="flex items-center list-user-action">
                             <Tippy content='Preview NIMC Details'>
