@@ -1,219 +1,320 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from "react";
 import {
   MessageSquare,
   Bell,
-  Users,
   Send,
-  Search,
-  Phone,
-  Video,
-  MoreVertical,
-  Paperclip,
   Shield,
   AlertCircle,
-  CheckCheck,
-  Settings,
+  Plus,
   ChevronRightIcon,
-} from 'lucide-react';
-import { NavLink } from 'react-router-dom';
+  Pen,
+  SendHorizonal,
+  AlarmCheckIcon,
+} from "lucide-react";
+
+import { useAuth } from "../../../utils/useAuth";
+import { toast } from "react-toastify";
+import {
+  getConversations,
+  getMessages,
+  createMessage,
+  createConversation,
+} from "../../../api/MessagingRequest";
+import Modal from "../../../components/modal";
+import { formatMessageTime } from "../../../utils/dateUtils";
+import Loading from "../../utils/Loading";
+import type { OrganisationDto } from "../../../types/controlPanel/organisation";
+import { getEveryOrganisation } from "../../../api/adminApi";
+import { useNavigate } from "react-router-dom";
+import { getNotifications, readNotifications } from "../../../api/NotificationRequest";
+
+type ModalType = "add" | "edit" | "delete" | null;
+
+interface ConversationDto {
+  conversationId: number;
+  subject: string;
+  createdBy: string;
+  sentTo: string;
+  lastMessage: string;
+  lastMessageDate: string;
+}
+
+interface MessageDto {
+  messageId: number;
+  senderId: number;
+  senderName: string;
+  messageBody: string;
+  dateCreated: string;
+}
+
+interface NotificationDto {
+  title: string;
+  icon: string;
+  isRead: boolean;
+  message: string;
+  actionUrl: string;
+  notificationId: number;
+  notificationType: string;
+  dateCreated: string;
+}
 
 export default function CommunicationsPage() {
-  const [activeTab, setActiveTab] = useState('messages');
+  const [activeTab, setActiveTab] = useState("messages");
   const [selectedChat, setSelectedChat] = useState<number | null>(null);
-  const [selectedRoute, setSelectedRoute] = useState('applicant');
+  const [selectedRoute, setSelectedRoute] = useState("institution");
+  const [organisations, setOrganisations] = useState<OrganisationDto[]>([]);
+  const [organisationName, setOrganisationName] = useState<String | null>(null);
+  const [allConversations, setAllConversations] = useState<ConversationDto[]>(
+    [],
+  );
+  const [selectedConversation, setSelectedConversations] = useState<
+    number | null
+  >(null);
+  const [allMessages, setAllMessages] = useState<MessageDto[]>([]);
+  const [modalType, setModalType] = useState<ModalType>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+  const { user } = useAuth();
+  const [messageInput, setMessageInput] = useState("");
+  const organisationId = user?.organisationId;
+  const currentUserId = user?.userId;
+  const [notifications, setNotifications] = useState<NotificationDto[]>();
+  const [notificationCount, setNotificationCount] = useState<number | null>(0);
 
-  const applicantConversations = [
-    { 
-      id: 1, 
-      name: 'Field Operations Team', 
-      type: 'group',
-      lastMessage: 'Surveillance complete. Ready for debrief.',
-      time: '5m ago',
-      unread: 2,
-      status: 'active',
-      avatar: 'FO'
-    },
-    { 
-      id: 2, 
-      name: 'applicant Marcus Chen', 
-      type: 'direct',
-      lastMessage: 'Suspect located at coordinates shared',
-      time: '12m ago',
-      unread: 1,
-      status: 'online',
-      avatar: 'MC'
-    },
-    { 
-      id: 3, 
-      name: 'Case Briefing - Operation Phoenix', 
-      type: 'case',
-      lastMessage: 'New intel from informant confirmed',
-      time: '45m ago',
-      unread: 0,
-      status: 'active',
-      avatar: 'OP'
-    },
-    { 
-      id: 4, 
-      name: 'Undercover Unit', 
-      type: 'group',
-      lastMessage: 'Check-in scheduled for 1800 hours',
-      time: '2h ago',
-      unread: 0,
-      status: 'active',
-      avatar: 'UU'
-    },
-  ];
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
-  const employerConversations = [
-    { 
-      id: 1, 
-      name: 'Evidence Processing Team', 
-      type: 'group',
-      lastMessage: 'Lab results for Case #1847 complete',
-      time: '10m ago',
-      unread: 3,
-      status: 'active',
-      avatar: 'EP'
-    },
-    { 
-      id: 2, 
-      name: 'Sarah Johnson - Records', 
-      type: 'direct',
-      lastMessage: 'Documents requested are ready',
-      time: '25m ago',
-      unread: 1,
-      status: 'online',
-      avatar: 'SJ'
-    },
-    { 
-      id: 3, 
-      name: 'IT Support', 
-      type: 'support',
-      lastMessage: 'System upgrade scheduled for tonight',
-      time: '1h ago',
-      unread: 0,
-      status: 'active',
-      avatar: 'IT'
-    },
-    { 
-      id: 4, 
-      name: 'Administrative Office', 
-      type: 'group',
-      lastMessage: 'Monthly reports due by end of week',
-      time: '3h ago',
-      unread: 0,
-      status: 'active',
-      avatar: 'AO'
-    },
-  ];
+  useEffect(() => {
+    scrollToBottom();
+  }, [allMessages]);
 
-  const adminConversations = [
-    { 
-      id: 1, 
-      name: 'Department Heads', 
-      type: 'group',
-      lastMessage: 'Budget approval meeting tomorrow',
-      time: '8m ago',
-      unread: 2,
-      status: 'active',
-      avatar: 'DH'
-    },
-    { 
-      id: 2, 
-      name: 'Chief Administrator', 
-      type: 'direct',
-      lastMessage: 'Policy review document attached',
-      time: '30m ago',
-      unread: 1,
-      status: 'online',
-      avatar: 'CA'
-    },
-    { 
-      id: 3, 
-      name: 'Compliance Team', 
-      type: 'group',
-      lastMessage: 'Quarterly audit results available',
-      time: '2h ago',
-      unread: 0,
-      status: 'active',
-      avatar: 'CT'
-    },
-    { 
-      id: 4, 
-      name: 'HR Department', 
-      type: 'support',
-      lastMessage: 'New hire orientation next Monday',
-      time: '4h ago',
-      unread: 0,
-      status: 'active',
-      avatar: 'HR'
-    },
-  ];
+  useEffect(() => {
+    fetchOrganisations();
+    fetchConversations();
+    const intervalId = setInterval(() => {
+      refetchMessages;
+    }, 5000);
 
-  const conversations = selectedRoute === 'applicant' ? applicantConversations : 
-                       selectedRoute === 'employer' ? employerConversations : 
-                       adminConversations;
+    return () => clearInterval(intervalId);
+  }, []);
 
-  const applicantNotifications = [
-    { id: 1, type: 'alert', title: 'Urgent: Suspect Movement', message: 'Target has left primary location - backup requested', time: '3m ago', read: false },
-    { id: 2, type: 'message', title: 'New Assignment', message: 'You have been assigned to Operation Phoenix', time: '20m ago', read: false },
-    { id: 3, type: 'evidence', title: 'Intel Update', message: 'New surveillance footage available for review', time: '1h ago', read: true },
-    { id: 4, type: 'system', title: 'Safety Check-In Required', message: 'Please confirm your status by 1800 hours', time: '2h ago', read: true },
-  ];
+  const fetchConversations = async () => {
+    try {
+      const data = await getConversations();
+      console.log("data", data);
+      setAllConversations(data);
+    } catch (err: any) {
+      setError("Failed to fetchconversations");
+    } finally {
+    }
+  };
 
-  const employerNotifications = [
-    { id: 1, type: 'alert', title: 'Evidence Request', message: 'Urgent evidence processing needed for Case #1847', time: '10m ago', read: false },
-    { id: 2, type: 'message', title: 'Document Ready', message: 'Requested case files have been prepared', time: '30m ago', read: false },
-    { id: 3, type: 'evidence', title: 'Lab Results Complete', message: 'Forensic analysis completed for 3 cases', time: '2h ago', read: true },
-    { id: 4, type: 'system', title: 'System Update', message: 'Evidence management system will be updated tonight', time: '3h ago', read: true },
-  ];
+  const fetchOrganisations = async () => {
+    try {
+      const data = await getEveryOrganisation();
+      setOrganisations(data);
+    } catch (err: any) {
+      setError("Failed to fetch users");
+    } finally {
+    }
+  };
 
-  const adminNotifications = [
-    { id: 1, type: 'alert', title: 'Budget Approval Required', message: 'Q4 budget request awaiting your approval', time: '15m ago', read: false },
-    { id: 2, type: 'message', title: 'Compliance Alert', message: 'Monthly compliance report submitted for review', time: '45m ago', read: false },
-    { id: 3, type: 'evidence', title: 'Audit Complete', message: 'Quarterly system audit results available', time: '2h ago', read: true },
-    { id: 4, type: 'system', title: 'Policy Update', message: 'New data protection policy requires approval', time: '4h ago', read: true },
-  ];
+  const handleSelectConversation = async (
+    conversationId: number,
+    orgName: string,
+  ) => {
+    try {
+      setLoading(true);
+      setError(null);
 
-  const notifications = selectedRoute === 'applicant' ? applicantNotifications : 
-                       selectedRoute === 'employer' ? employerNotifications : 
-                       adminNotifications;
+      setSelectedConversations(conversationId);
+      setOrganisationName(orgName);
 
-  const applicantAnnouncements = [
-    { id: 1, title: 'Field Operations Briefing - Friday 0800', content: 'All field applicants required to attend tactical planning session', priority: 'high', date: 'Oct 28, 2025' },
-    { id: 2, title: 'New Safety Protocol Update', content: 'Updated safety procedures for undercover operations', priority: 'high', date: 'Oct 27, 2025' },
-    { id: 3, title: 'Equipment Maintenance Schedule', content: 'Surveillance equipment check required this week', priority: 'medium', date: 'Oct 25, 2025' },
-  ];
+      const response = await getMessages(conversationId);
 
-  const employerAnnouncements = [
-    { id: 1, title: 'Evidence Processing Training', content: 'Mandatory training session on new evidence protocols - Wednesday 2PM', priority: 'high', date: 'Oct 28, 2025' },
-    { id: 2, title: 'Lab Access Schedule Change', content: 'Forensics lab hours extended to accommodate case load', priority: 'medium', date: 'Oct 26, 2025' },
-    { id: 3, title: 'Document Management Update', content: 'New digital filing system implementation next week', priority: 'low', date: 'Oct 23, 2025' },
-  ];
+      if (!response || response.length === 0) {
+        setAllMessages([]);
+        setError("There are no messages for this conversation");
+        return;
+      }
 
-  const adminAnnouncements = [
-    { id: 1, title: 'Executive Committee Meeting - Monday 10AM', content: 'Strategic planning and budget review for next quarter', priority: 'high', date: 'Oct 28, 2025' },
-    { id: 2, title: 'Policy Review Deadline', content: 'All department policies must be reviewed by end of month', priority: 'high', date: 'Oct 27, 2025' },
-    { id: 3, title: 'Annual Audit Preparation', content: 'Documentation preparation for annual compliance audit', priority: 'medium', date: 'Oct 24, 2025' },
-  ];
+      setSelectedChat(conversationId);
+      setAllMessages(response);
+    } catch (err: any) {
+      setError("Failed to load messages");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const announcements = selectedRoute === 'applicant' ? applicantAnnouncements : 
-                       selectedRoute === 'employer' ? employerAnnouncements : 
-                       adminAnnouncements;
+  const openAddModal = () => {
+    setModalType("add");
+  };
 
-  const messages = [
-    { id: 1, sender: 'Det. James Rodriguez', content: 'The surveillance footage has been uploaded to the evidence locker', time: '10:45 AM', isMine: false },
-    { id: 2, sender: 'You', content: 'Thanks. I\'ll review it this afternoon. Have we received the warrant yet?', time: '10:47 AM', isMine: true },
-    { id: 3, sender: 'Det. James Rodriguez', content: 'Yes, it came through 30 minutes ago. All documentation is in the case file.', time: '10:48 AM', isMine: false },
-    { id: 4, sender: 'You', content: 'Perfect. Let\'s schedule a briefing for tomorrow morning.', time: '10:50 AM', isMine: true },
-  ];
+  const closeModal = () => {
+    setModalType(null);
+  };
+
+  const handleSendMessage = async () => {
+    try {
+      const messagePayload = {
+        messageBody: messageInput || " ",
+        conversationId: Number(selectedConversation) || 0,
+      };
+      const newConversation = createMessage(messagePayload);
+
+      if (!newConversation) {
+        toast.error("Could not send message");
+        return;
+      } else {
+        toast.success("Message sent");
+        setModalType(null);
+        setMessageInput("");
+      }
+
+      const newMessage: MessageDto = {
+        messageId: allMessages[allMessages.length - 1].messageId,
+        senderId: currentUserId ?? 0,
+        senderName: `${user?.firstName} ${user?.lastName}`,
+        messageBody: messageInput,
+        dateCreated: new Date().toISOString(),
+      };
+      const newmessages = allMessages;
+      newmessages.push(newMessage);
+      setAllMessages(newmessages);
+    } catch (err: any) {
+      setError(err);
+    }
+  };
+
+  const refetchMessages = async () => {
+    try {
+      const response = await getMessages(Number(selectedConversation));
+
+      if (!response || response.length === 0) {
+        setAllMessages([]);
+        setError("There are no messages for this conversation");
+        return;
+      }
+
+      setAllMessages(response);
+    } catch (err: any) {
+      setError("Failed to load messages");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCreateConversation = async (
+    inputValue?: string,
+    inputValue2?: string,
+  ) => {
+    try {
+      setLoading(true);
+      const conversationPayload = {
+        subject: inputValue || " ",
+        recipientId: 0,
+        messageBody: inputValue2 || " ",
+        organisationId: organisationId || 0,
+      };
+
+      const response = createConversation(conversationPayload);
+
+      if (!response) {
+        toast.error("Could not send message");
+        return;
+      }
+
+      toast.success("Message sent");
+      await fetchConversations();
+      setModalType(null);
+    } catch (error: any) {
+      setError(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
+      e.preventDefault();
+      handleSendMessage();
+    }
+  };
+
+    const navigate = useNavigate();
+
+  useEffect(() => {
+    fetchNotifications();
+
+    const intervalId = setInterval(() => {
+      fetchNotifications();
+    }, 5000);
+
+    return () => clearInterval(intervalId);
+  }, []);
+
+  const fetchNotifications = async () => {
+    const userNotifications = await getNotifications(Number(organisationId));
+    if (!userNotifications) {
+      return;
+    }
+
+    setNotifications(userNotifications);
+    setNotificationCount(userNotifications.length);
+    console.log("userNotifications", userNotifications);
+  };
+
+  const handleReadNotification = async (
+    notificationId: number,
+    actionUrl: string,
+  ) => {
+    const readNotification = await readNotifications(notificationId);
+
+    if (!readNotification) {
+      toast.error("Could not mark notification as read");
+      return;
+    }
+
+    navigate(`../${actionUrl}`);
+  };
 
   return (
     <div
       className="p-6 lg:p-8 footer-inner mx-auto main-container container"
       x-bind:className="setting.page_layout"
     >
+      <Modal
+        isOpen={modalType === "add"}
+        title="Start a conversation"
+        message=""
+        confirmText="Start"
+        confirmColor="green"
+        dropdownLabel="Select a recipient"
+        dropdownPlaceholder="Select a recipient"
+        dropdownOptions={organisations.map((emp) => ({
+          value: emp.organisationId,
+          label: `${emp.name}`,
+        }))}
+        inputLabel="Enter Message Subject"
+        inputPlaceholder="Enter subject here"
+        inputLabel2="Enter Message "
+        inputPlaceholder2="Enter message here"
+        loading={loading}
+        headerIcon={<Pen />}
+        butonIcon={<SendHorizonal />}
+        onConfirm={({
+          inputValue,
+          inputValue2,
+        }: {
+          inputValue?: string;
+          inputValue2?: string;
+        }) => handleCreateConversation(inputValue, inputValue2)}
+        onCancel={closeModal}
+      />
       {/* Header */}
       <div className="flex flex-wrap justify-between gap-4">
         <div className="col-md-12">
@@ -226,66 +327,32 @@ export default function CommunicationsPage() {
               <div>
                 <h3 className="mb-0 text-black">Communication</h3>
                 <p className="text-secondary-600 text-black">
-                  <NavLink to="/Dashboard">Dashboard</NavLink>{" "}
-                  <ChevronRightIcon size={14} />{" "}
-                  <NavLink to="/Communication">Communication</NavLink>{" "}
+                  Dashboard <ChevronRightIcon size={14} /> Communication{" "}
                 </p>
               </div>
             </div>
+
+            <div></div>
           </div>
         </div>
       </div>
 
       <main className="max-w-7xl mx-auto  py-8">
-        {/* Role Selector */}
-        <div className="bg-white rounded-md p-4 border border-slate-200 mb-6">
-          <div className=" flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-slate-900 mb-1">Communication Route</p>
-              <p className="text-xs text-slate-500">Select who you want to communicate with</p>
-            </div>
-            <div className="flex gap-2">
-              {[
-                { id: 'Applicant', label: 'Applicant', icon: Shield },
-                { id: 'Employer', label: 'Employer', icon: Users },
-                { id: 'admin', label: 'Admin', icon: Settings }
-              ].map((route) => {
-                const Icon = route.icon;
-                return (
-                  <a
-                    key={route.id}
-                    onClick={() => setSelectedRoute(route.id)}
-                    className={`px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2 ${
-                      selectedRoute === route.id
-                        ? 'bg-red-500 text-white'
-                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200 cursor-pointer'
-                    }`}
-                  >
-                    <Icon className="w-4 h-4" />
-                    {route.label}
-                  </a>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-
         {/* Tabs */}
-        <div className="flex gap-1 bg-white p-1 rounded-md border border-slate-200 mb-8 w-fit">
+        <div className="flex gap-1 bg-white p-1 rounded-lg border border-slate-200 mb-8 w-fit">
           {[
-            { id: 'messages', label: 'Messages', icon: MessageSquare },
-            { id: 'notifications', label: 'Notifications', icon: Bell },
-            { id: 'announcements', label: 'Announcements', icon: Users }
+            { id: "messages", label: "Messages", icon: MessageSquare },
+            { id: "notifications", label: "Notifications", icon: Bell },
           ].map((tab) => {
             const Icon = tab.icon;
             return (
               <a
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`px-6 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2 ${
+                className={`px-6 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${
                   activeTab === tab.id
-                    ? 'bg-slate-900 text-white'
-                    : 'text-slate-600 hover:text-slate-900 cursor-pointer'
+                    ? "bg-slate-900 text-white"
+                    : "text-slate-600 hover:text-slate-900 cursor-pointer"
                 }`}
               >
                 <Icon className="w-4 h-4" />
@@ -296,48 +363,51 @@ export default function CommunicationsPage() {
         </div>
 
         {/* Messages Tab */}
-        {activeTab === 'messages' && (
+        {activeTab === "messages" && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Conversations List */}
-            <div className="bg-white rounded-md border border-slate-200 overflow-hidden">
+            <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
               <div className="p-4 border-b border-slate-200">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
-                  <input
-                    type="text"
-                    placeholder="Search conversations..."
-                    className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
+                <button
+                  className="btn-sm btn-success btn"
+                  onClick={() => openAddModal()}
+                >
+                  <Plus size={15} /> New Conversation
+                </button>
               </div>
-              <div className="overflow-y-auto" style={{ maxHeight: '600px' }}>
-                {conversations.map((conv) => (
+              <div className="overflow-y-auto">
+                {allConversations.map((conv) => (
                   <div
-                    key={conv.id}
-                    onClick={() => setSelectedChat(conv.id)}
+                    key={conv.conversationId}
+                    onClick={() =>
+                      handleSelectConversation(conv.conversationId, conv.sentTo)
+                    }
                     className={`p-4 border-b border-slate-100 cursor-pointer transition-colors ${
-                      selectedChat === conv.id ? 'bg-blue-50' : 'hover:bg-slate-50'
+                      selectedChat === conv.conversationId
+                        ? "bg-blue-50"
+                        : "hover:bg-slate-50"
                     }`}
                   >
                     <div className="flex items-start gap-3">
-                      <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-semibold ${
-                        conv.type === 'group' ? 'bg-purple-500' :
-                        conv.type === 'case' ? 'bg-blue-500' : 'bg-green-500'
-                      }`}>
-                        {conv.avatar}
+                      <div
+                        className={`w-12 h-12 rounded-full flex items-center bg-blue-500 justify-center text-white font-semibold`}
+                      >
+                        {conv.sentTo.charAt(0)}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between mb-1">
-                          <p className="text-sm font-semibold text-slate-900 truncate">{conv.name}</p>
-                          <span className="text-xs text-slate-500">{conv.time}</span>
+                          <p className="text-sm font-semibold text-black truncate">
+                            {conv.sentTo}
+                            <br /> {conv.subject}
+                          </p>
+                          <span className="text-xs text-black">
+                            {formatMessageTime(conv.lastMessageDate)}
+                          </span>
                         </div>
-                        <p className="text-xs text-slate-600 truncate">{conv.lastMessage}</p>
+                        <p className="text-xs text-black truncate">
+                          {conv.lastMessage}
+                        </p>
                       </div>
-                      {conv.unread > 0 && (
-                        <span className="px-2 py-1 bg-blue-600 text-white text-xs font-medium rounded-full">
-                          {conv.unread}
-                        </span>
-                      )}
                     </div>
                   </div>
                 ))}
@@ -345,103 +415,159 @@ export default function CommunicationsPage() {
             </div>
 
             {/* Chat Window */}
-            <div className="lg:col-span-2 bg-white rounded-md border border-slate-200 flex flex-col" style={{ height: '680px' }}>
-              {selectedChat ? (
+            <div
+              className="lg:col-span-2 bg-white rounded-lg border border-slate-200 flex flex-col"
+              style={{ height: "680px" }}
+            >
+              {allMessages.length > 0 ? (
                 <>
                   {/* Chat Header */}
-                  <div className="p-4 border-b border-slate-200 flex items-center justify-between">
+                  <div className="p-5 border-b border-slate-200 flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold ${
-                        selectedRoute === 'applicant' ? 'bg-blue-500' :
-                        selectedRoute === 'employer' ? 'bg-purple-500' : 'bg-green-500'
-                      }`}>
-                        {conversations[0]?.avatar}
+                      <div
+                        className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold ${
+                          selectedRoute === "institution"
+                            ? "bg-blue-500"
+                            : selectedRoute === "staff"
+                              ? "bg-purple-500"
+                              : "bg-green-500"
+                        }`}
+                      >
+                        {organisationName && organisationName.charAt(0)}
                       </div>
                       <div>
-                        <p className="text-sm font-semibold text-slate-900">{conversations[0]?.name}</p>
-                        <p className="text-xs text-green-600 flex items-center gap-1">
-                          <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-                          {conversations[0]?.status === 'online' ? 'Online' : 'Active'}
+                        <p className="text-sm font-semibold text-slate-900">
+                          {/* {con} */} {organisationName}
                         </p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <button className="p-2 hover:bg-slate-100 rounded-md transition-colors">
-                        <Phone className="w-5 h-5 text-slate-600" />
-                      </button>
-                      <button className="p-2 hover:bg-slate-100 rounded-md transition-colors">
-                        <Video className="w-5 h-5 text-slate-600" />
-                      </button>
-                      <button className="p-2 hover:bg-slate-100 rounded-md transition-colors">
-                        <MoreVertical className="w-5 h-5 text-slate-600" />
-                      </button>
-                    </div>
+                    <div className="flex items-center gap-2"></div>
                   </div>
 
                   {/* Messages */}
                   <div className="flex-1 overflow-y-auto p-4 space-y-4">
                     <div className="flex items-center justify-center">
-                      <div className={`flex items-center gap-2 px-3 py-1 rounded-full ${
-                        selectedRoute === 'applicant' ? 'bg-blue-100' :
-                        selectedRoute === 'employer' ? 'bg-purple-100' : 'bg-green-100'
-                      }`}>
-                        <Shield className={`w-3 h-3 ${
-                          selectedRoute === 'applicant' ? 'text-blue-700' :
-                          selectedRoute === 'employer' ? 'text-purple-700' : 'text-green-700'
-                        }`} />
-                        <span className={`text-xs font-medium ${
-                          selectedRoute === 'applicant' ? 'text-blue-700' :
-                          selectedRoute === 'employer' ? 'text-purple-700' : 'text-green-700'
-                        }`}>
-                          Secure {selectedRoute.charAt(0).toUpperCase() + selectedRoute.slice(1)} Communication
+                      <div
+                        className={`flex items-center gap-2 px-3 py-1 rounded-full ${
+                          selectedRoute === "institution"
+                            ? "bg-blue-100"
+                            : selectedRoute === "staff"
+                              ? "bg-purple-100"
+                              : "bg-green-100"
+                        }`}
+                      >
+                        <Shield
+                          className={`w-3 h-3 ${
+                            selectedRoute === "institution"
+                              ? "text-blue-700"
+                              : selectedRoute === "staff"
+                                ? "text-purple-700"
+                                : "text-green-700"
+                          }`}
+                        />
+                        <span
+                          className={`text-xs font-medium ${
+                            selectedRoute === "institution"
+                              ? "text-blue-700"
+                              : selectedRoute === "staff"
+                                ? "text-purple-700"
+                                : "text-green-700"
+                          }`}
+                        >
+                          Secure Communication
                         </span>
                       </div>
                     </div>
-                    {messages.map((msg) => (
-                      <div key={msg.id} className={`flex ${msg.isMine ? 'justify-end' : 'justify-start'}`}>
-                        <div className={`max-w-md ${msg.isMine ? 'order-2' : 'order-1'}`}>
-                          {!msg.isMine && (
-                            <p className="text-xs text-slate-500 mb-1 ml-1">{msg.sender}</p>
-                          )}
-                          <div className={`p-3 rounded-md ${
-                            msg.isMine 
-                              ? selectedRoute === 'applicant' ? 'bg-blue-600 text-white' :
-                                selectedRoute === 'employer' ? 'bg-purple-600 text-white' : 'bg-green-600 text-white'
-                              : 'bg-slate-100 text-slate-900'
-                          }`}>
-                            <p className="text-sm">{msg.content}</p>
-                          </div>
-                          <div className="flex items-center gap-1 mt-1 ml-1">
-                            <span className="text-xs text-slate-400">{msg.time}</span>
-                            {msg.isMine && (
-                              <CheckCheck className={`w-3 h-3 ${
-                                selectedRoute === 'applicant' ? 'text-blue-600' :
-                                selectedRoute === 'employer' ? 'text-purple-600' : 'text-green-600'
-                              }`} />
+
+                    {!loading && error && (
+                      <p className="text-sm text-slate-500">{error}</p>
+                    )}
+
+                    {loading && <Loading />}
+                    <div
+                      ref={chatContainerRef}
+                      className="flex-1 overflow-y-auto p-4 space-y-4"
+                    ></div>
+                    {allMessages.map((msg) => {
+                      const isOwnMessage =
+                        Number(msg.senderId) === Number(currentUserId);
+
+                      return (
+                        <div
+                          key={msg.messageId}
+                          className={`flex ${isOwnMessage ? "justify-end" : "justify-start"}`}
+                        >
+                          <div
+                            className={`max-w-md ${isOwnMessage ? "order-2" : "order-1"}`}
+                          >
+                            {!isOwnMessage && (
+                              <p className="text-xs text-slate-500 mb-1 ml-1">
+                                {msg.senderName}
+                              </p>
                             )}
+                            <div
+                              className={`p-3 rounded-lg ${
+                                isOwnMessage
+                                  ? selectedRoute === "institution"
+                                    ? "bg-blue-600 text-white"
+                                    : selectedRoute === "staff"
+                                      ? "bg-purple-600 text-white"
+                                      : "bg-green-600 text-white"
+                                  : "bg-slate-100 text-slate-900"
+                              }`}
+                            >
+                              <p className="text-sm">{msg.messageBody}</p>
+                            </div>
+                            <div className="flex items-center gap-1 mt-1 ml-1">
+                              <span className="text-xs text-slate-400">
+                                {" "}
+                                {new Date(msg.dateCreated).toLocaleDateString(
+                                  "en-GB",
+                                  {
+                                    month: "short",
+                                    day: "numeric",
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                  },
+                                )}
+                              </span>
+                              {/* {isOwnMessage && (
+                                <CheckCheck
+                                  className={`w-3 h-3 ${
+                                    selectedRoute === "institution"
+                                      ? "text-blue-600"
+                                      : selectedRoute === "staff"
+                                        ? "text-purple-600"
+                                        : "text-green-600"
+                                  }`}
+                                />
+                              )} */}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
+                    <div ref={messagesEndRef} />
                   </div>
 
                   {/* Message Input */}
                   <div className="p-4 border-t border-slate-200">
                     <div className="flex items-end gap-2">
-                      <button className="p-2 hover:bg-slate-100 rounded-md transition-colors">
-                        <Paperclip className="w-5 h-5 text-slate-600" />
-                      </button>
                       <div className="flex-1">
                         <textarea
                           placeholder="Type your message..."
                           rows={2}
-                          className="w-full px-4 py-2 border border-slate-200 rounded-md text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          value={messageInput}
+                          onChange={(e) => setMessageInput(e.target.value)}
+                          onKeyDown={handleKeyPress}
+                          className="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                       </div>
-                      <button className={`p-3 rounded-md hover:opacity-90 transition-colors ${
-                        selectedRoute === 'applicant' ? 'bg-blue-600' :
-                        selectedRoute === 'employer' ? 'bg-purple-600' : 'bg-green-600'
-                      } text-white`}>
+                      <button
+                        onClick={handleSendMessage}
+                        disabled={!messageInput.trim() || !selectedConversation}
+                        className="btn btn-success"
+                      >
                         <Send className="w-5 h-5" />
                       </button>
                     </div>
@@ -451,8 +577,12 @@ export default function CommunicationsPage() {
                 <div className="flex-1 flex items-center justify-center">
                   <div className="text-center">
                     <MessageSquare className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-                    <p className="text-slate-600 font-medium">Select a conversation to start messaging</p>
-                    <p className="text-sm text-slate-400 mt-1">Choose from your conversations on the left</p>
+                    <p className="text-slate-600 font-medium">
+                      Select a conversation to start messaging
+                    </p>
+                    <p className="text-sm text-slate-400 mt-1">
+                      Choose from your conversations on the left
+                    </p>
                   </div>
                 </div>
               )}
@@ -461,135 +591,119 @@ export default function CommunicationsPage() {
         )}
 
         {/* Notifications Tab */}
-        {activeTab === 'notifications' && (
+        {activeTab === "notifications" && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 space-y-3">
+            <div className="lg:col-span-3 space-y-3">
               <div className="bg-white rounded-md p-4 border border-slate-200 flex items-center justify-between">
-                <p className="text-sm font-medium text-slate-900">You have {notifications.filter(n => !n.read).length} unread notifications</p>
-                <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">
+                <p className="text-sm font-medium text-slate-900">
+                  {notificationCount === 0
+                    ? "No notifications available"
+                    : `You have ${notificationCount} unread notification(s)`}
+                </p>
+                <button className="hidden text-sm text-blue-600 hover:text-blue-700 font-medium">
                   Mark all as read
                 </button>
               </div>
-              {notifications.map((notif) => (
-                <div
-                  key={notif.id}
-                  className={`bg-white rounded-md p-4 border transition-colors ${
-                    notif.read ? 'border-slate-200' : 'border-blue-300 bg-blue-50'
-                  }`}
-                >
-                  <div className="flex items-start gap-3">
-                    <div className={`p-2 rounded-md ${
-                      notif.type === 'alert' ? 'bg-red-100' :
-                      notif.type === 'message' ? 'bg-blue-100' :
-                      notif.type === 'evidence' ? 'bg-purple-100' : 'bg-slate-100'
-                    }`}>
-                      {notif.type === 'alert' && <AlertCircle className="w-5 h-5 text-red-600" />}
-                      {notif.type === 'message' && <MessageSquare className="w-5 h-5 text-blue-600" />}
-                      {notif.type === 'evidence' && <Shield className="w-5 h-5 text-purple-600" />}
-                      {notif.type === 'system' && <Bell className="w-5 h-5 text-slate-600" />}
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between mb-1">
-                        <p className="text-sm font-semibold text-slate-900">{notif.title}</p>
-                        <span className="text-xs text-slate-500">{notif.time}</span>
+              {notifications ? (
+                notifications.length > 0 ? (
+                  notifications.map((notif) => (
+                    <div
+                      key={notif.notificationId}
+                      className={`bg-white rounded-md p-4 border transition-colors ${
+                        notif.isRead
+                          ? "border-slate-200"
+                          : "border-blue-300 bg-blue-50"
+                      }`}
+                    >
+                      <div
+                        onClick={() =>
+                          handleReadNotification(
+                            notif.notificationId,
+                            notif.actionUrl,
+                          )
+                        }
+                        className="flex items-start gap-3 cursor-pointer"
+                      >
+                        <div
+                          className={`p-2 rounded-md ${
+                            notif.notificationType === "Action"
+                              ? "bg-red-100"
+                              : notif.notificationType === "Information"
+                                ? "bg-blue-100"
+                                : notif.notificationType === "Warning"
+                                  ? "bg-purple-100"
+                                  : "bg-slate-100"
+                          }`}
+                        >
+                          {notif.notificationType === "Warning" && (
+                            <AlertCircle className="w-5 h-5 text-red-600" />
+                          )}
+                          {notif.notificationType === "Action" && (
+                            <AlarmCheckIcon className="w-5 h-5 text-blue-600" />
+                          )}
+                          {notif.notificationType === "Information" && (
+                            <Bell className="w-5 h-5 text-slate-600" />
+                          )}
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center justify-between mb-1">
+                            <p className="text-sm font-semibold text-slate-900">
+                              {notif.title}
+                            </p>
+                            <span className="text-xs text-slate-500">
+                              {formatMessageTime(notif.dateCreated)}
+                              {}
+                            </span>
+                          </div>
+                          <p className="text-sm text-slate-600">
+                            {notif.message}
+                          </p>
+                        </div>
+                        {!notif.isRead && (
+                          <span className="w-2 h-2 bg-blue-600 rounded-full mt-2"></span>
+                        )}
                       </div>
-                      <p className="text-sm text-slate-600">{notif.message}</p>
                     </div>
-                    {!notif.read && (
-                      <span className="w-2 h-2 bg-blue-600 rounded-full mt-2"></span>
-                    )}
-                  </div>
+                  ))
+                ) : (
+                  <></>
+                )
+              ) : (
+                <div className="txet-sm text-gray-700 text-center">
+                  Could not get any notification
                 </div>
-              ))}
+              )}
             </div>
 
             {/* Notification Settings */}
-            <div className="bg-white rounded-md p-6 border border-slate-200">
-              <h3 className="text-lg font-semibold text-slate-900 mb-4">Notification Preferences</h3>
+            <div className="hidden bg-white rounded-md p-6 border border-slate-200">
+              <h3 className="text-lg font-semibold text-slate-900 mb-4">
+                Notification Preferences
+              </h3>
               <div className="space-y-4">
                 {[
-                  { label: 'Case Updates', enabled: true },
-                  { label: 'New Messages', enabled: true },
-                  { label: 'Evidence Submissions', enabled: true },
-                  { label: 'Team Mentions', enabled: true },
-                  { label: 'System Alerts', enabled: false },
-                  { label: 'Daily Digest', enabled: true },
+                  { label: "Case Updates", enabled: true },
+                  { label: "New Messages", enabled: true },
+                  { label: "Evidence Submissions", enabled: true },
+                  { label: "Team Mentions", enabled: true },
+                  { label: "System Alerts", enabled: false },
+                  { label: "Daily Digest", enabled: true },
                 ].map((pref, idx) => (
                   <div key={idx} className="flex items-center justify-between">
                     <span className="text-sm text-slate-700">{pref.label}</span>
                     <button
                       className={`relative w-11 h-6 rounded-full transition-colors ${
-                        pref.enabled ? 'bg-blue-600' : 'bg-slate-300'
+                        pref.enabled ? "bg-blue-600" : "bg-slate-300"
                       }`}
                     >
                       <span
                         className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform ${
-                          pref.enabled ? 'translate-x-5' : 'translate-x-0'
+                          pref.enabled ? "translate-x-5" : "translate-x-0"
                         }`}
                       />
                     </button>
                   </div>
                 ))}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Announcements Tab */}
-        {activeTab === 'announcements' && (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 space-y-4">
-              {announcements.map((announcement) => (
-                <div key={announcement.id} className="bg-white rounded-md p-6 border border-slate-200">
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex items-center gap-3">
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                        announcement.priority === 'high' ? 'bg-red-100 text-red-700' :
-                        announcement.priority === 'medium' ? 'bg-yellow-100 text-yellow-700' :
-                        'bg-slate-100 text-slate-700'
-                      }`}>
-                        {announcement.priority.toUpperCase()}
-                      </span>
-                      <span className="text-xs text-slate-500">{announcement.date}</span>
-                    </div>
-                  </div>
-                  <h3 className="text-lg font-semibold text-slate-900 mb-2">{announcement.title}</h3>
-                  <p className="text-sm text-slate-600">{announcement.content}</p>
-                </div>
-              ))}
-            </div>
-
-            {/* Create Announcement */}
-            <div className="bg-white rounded-md p-6 border border-slate-200">
-              <h3 className="text-lg font-semibold text-slate-900 mb-4">Post Announcement</h3>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Title</label>
-                  <input
-                    type="text"
-                    placeholder="Announcement title"
-                    className="w-full px-4 py-2 border border-slate-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Priority</label>
-                  <select className="w-full px-4 py-2 border border-slate-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option>Low</option>
-                    <option>Medium</option>
-                    <option>High</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Message</label>
-                  <textarea
-                    rows={4}
-                    placeholder="Type your announcement..."
-                    className="w-full px-4 py-2 border border-slate-200 rounded-md text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors">
-                  Post Announcement
-                </button>
               </div>
             </div>
           </div>

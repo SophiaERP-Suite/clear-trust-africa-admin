@@ -15,6 +15,11 @@ export const getAllOrganisations = async (status?: string, page = 1, pageSize = 
   return response.data;
 };
 
+export const getEveryOrganisation = async () => {
+  const response = await api.get<OrganisationDto[]>(`/api/admin/organisations/allOrganisations`);
+  return response.data;
+};
+
 export const getPendingOrganisations = async () => {
   const response = await api.get<OrganisationDto[]>('/api/admin/organisations/pending');
   return response.data;
