@@ -1,9 +1,6 @@
-// ChatPanel.tsx
 import { useState, useEffect, useRef } from "react";
-import { Send, Paperclip, Smile, MoreVertical, Check, CheckCheck } from "lucide-react";
-import { type ChatMessage, type ChatParticipant, markMessagesAsRead, fetchIncidentChatMessages, fetchChatParticipants, sendChatMessage } from "../api/IncidentChatRequests";
-
-
+import { Send, Paperclip, Smile, Check, CheckCheck } from "lucide-react";
+import { type ChatMessage, type ChatParticipant, markMessagesAsRead, fetchIncidentChatMessages, fetchChatParticipants, sendChatMessage } from "../utils/Requests/IncidentRequests";
 
 interface ChatPanelProps {
   incidentReportId: number;
@@ -14,8 +11,7 @@ interface ChatPanelProps {
 
 export default function ChatPanel({ 
   incidentReportId, 
-  currentUserId, 
-  currentUserName,
+  currentUserId,
   onClose 
 }: ChatPanelProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -29,8 +25,6 @@ export default function ChatPanel({
   useEffect(() => {
     loadChatData();
     markMessagesAsRead(incidentReportId);
-    
-    // Set up polling for new messages (or use WebSocket for real-time)
     const interval = setInterval(loadChatData, 5000);
     
     return () => clearInterval(interval);
@@ -38,13 +32,18 @@ export default function ChatPanel({
 
   const loadChatData = async () => {
     try {
-      const [fetchedMessages, fetchedParticipants] = await Promise.all([
+      const [resMessages, resParticipants] = await Promise.all([
         fetchIncidentChatMessages(incidentReportId),
         fetchChatParticipants(incidentReportId)
       ]);
-      
-      setMessages(fetchedMessages);
-      setParticipants(fetchedParticipants);
+      if (resMessages.status === 200) {
+        const fetchedMessages: ChatMessage[] = await resMessages.json()
+        setMessages(fetchedMessages);
+      }
+      if (resParticipants.status === 200) {
+          const fetchedParticipants: ChatParticipant[] = await resParticipants.json();
+          setParticipants(fetchedParticipants);
+      }
     } catch (error) {
       console.error("Error loading chat:", error);
     } finally {
@@ -66,8 +65,11 @@ export default function ChatPanel({
 
     setIsSending(true);
     try {
-      const sentMessage = await sendChatMessage(incidentReportId, newMessage);
-      setMessages(prev => [...prev, sentMessage]);
+      const resSent = await sendChatMessage(incidentReportId, newMessage);
+      if (resSent.status === 200) {
+        const sentMessage: ChatMessage = await resSent.json()
+        setMessages(prev => [...prev, sentMessage]);
+      }
       setNewMessage("");
     } catch (error) {
       console.error("Error sending message:", error);

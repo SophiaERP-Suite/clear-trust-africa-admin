@@ -8,6 +8,7 @@ import {
   CircleCheckBig,
   ClipboardClock,
   ClipboardList,
+  FileCheck,
   FileIcon,
   FolderCog,
   Mail,
@@ -30,20 +31,24 @@ import { NavLink, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { fetchApplicantDocsById } from "../../../utils/Requests/EmployeeRequests.js";
 import Hashids from "hashids";
-import { fetchDbsCheckById, fetchDbsLogsByApplication, fetchDbsStages, fetchStageByApplicationAndStage, markStageAsApproved, markStageAsCompleted, submitDbsActivityLog, updateDbsApplications, updateDocStatus } from "../../../utils/Requests/DbsRequests.js";
+import { fetchDbsCheckById, fetchDbsLogsByApplication, fetchDbsStages, fetchStageByApplicationAndStage, generateNewDBSCertificate, getDBSApplicationComment, markStageAsApproved, markStageAsCompleted, submitDbsActivityLog, submitNewComment, updateDbsApplications, updateDocStatus } from "../../../utils/Requests/DbsRequests.js";
 import { toast, ToastContainer } from "react-toastify";
 import Modal from 'react-modal';
-import { useForm, useWatch } from "react-hook-form";
-import { fetchOrgCaseAdmins } from "../../../utils/Requests/AuthRequests.js";
+import { useForm, useWatch, Controller } from "react-hook-form";
+import { fetchOrgCaseAdmins, fetchOrgMembers } from "../../../utils/Requests/AuthRequests.js";
 import { useAuth } from "../../../utils/useAuth.js";
 import { handleCreateEmployee } from "../../../utils/ResponseHandlers/EmployeeResponse.js";
+import { calculateAge } from "../../../utils/extraFunctions.js";
 import Tippy from "@tippyjs/react";
 import type { DBSStagesData } from "../ControlPanel/DBSStages.js";
+import RichTextEditor from "../../../layout/RichTextEditor.js";
+import HtmlRenderer from "../../../layout/HTMLRenderer.js";
 
 interface EmployeeData {
   userId: number;
   firstName: string;
   lastName: string;
+  otherNames: string;
   profileImage: string;
   phone: string;
   email: string;
@@ -53,6 +58,12 @@ interface EmployeeData {
   address: string;
   organisationId: number;
   role: string;
+  countryName: string;
+  stateName: string;
+  cityName: string;
+  birthPlace: string;
+  lastAddress: string;
+  currentAddressDuration: string;
 }
 
 interface DbsChecks {
@@ -93,6 +104,12 @@ interface UserDocumentValues {
   dateCreated: string;
 }
 
+interface CommentFormValues {
+  Comment: string;
+  To: string;
+  ToId: string;
+}
+
 interface ActivityLogData {
   activityLogId: number;
   action: string;
@@ -104,6 +121,20 @@ interface ActivityLogData {
   staffFistName: string;
   status: number;
   staffLastName: string;
+  dateCreated: string;
+}
+
+interface CommentLogData {
+  commentLogId: number;
+  comment: string;
+  fromId: number;
+  fromFirstName: string;
+  fromLastName: string;
+  to: number;
+  toId: string;
+  toFirstName: string;
+  toLastName: string;
+  dbsApplicationId: number;
   dateCreated: string;
 }
 
@@ -184,20 +215,35 @@ type ActivityFilterForm = {
   StageLevel: number;
 }
 
+type CommentFilterForm = {
+  Sender: string;
+  DateCreated: string;
+}
+
 export default function TrackerDetails() {
   const { id } = useParams();
   const { user } = useAuth();
   const [dbsDetails, setDbsDetails] = useState<DbsChecks | null>(null);
   const [orgCaseAdmins, setOrgCaseAdmins] = useState<UserData[]>([]);
+  const [orgMembers, setOrgMembers] = useState<UserData[]>([]);
   const [activityLog, setActivityLog] = useState<ActivityLogData[]>([]);
+  const [commentLog, setCommentLog] = useState<CommentLogData[]>([]);
   const [totalActivityLog, setTotalActivityLog] = useState(0);
+  const [totalCommentLog, setTotalCommentLog] = useState(0);
   const [activityPage, setActivityPage] = useState(1);
   const activityLimit = 3;
+  const [commentPage, setCommentPage] = useState(1);
+  const commentLimit = 3;
   const {
     register: activityFilterReg,
     control,
   } = useForm<ActivityFilterForm>();
   const activityFilters = useWatch({ control });
+  const {
+    register: commentFilterReg,
+    control: commentFilterControl,
+  } = useForm<CommentFilterForm>();
+  const commentFilters = useWatch({ control: commentFilterControl });
   const [dbsStages, setDbsStages] = useState<DBSStagesData[]>([]);
   const hashIds = new Hashids('ClearTrustAfricaEncode', 10);
   const hashedId = id ? Number(hashIds.decode(id)[0]) : 0;
@@ -208,6 +254,7 @@ export default function TrackerDetails() {
   const [adminModalState, setAdminModalState] = useState(false);
   const [staffModalState, setStaffModalState] = useState(false);
   const [activityModalState, setActivityModalState] = useState(false);
+  const [commentModalState, setCommentModalState] = useState(false);
   const [completeModalState, setCompleteModalState] = useState(false);
   const [approvedModalState, setApprovedModalState] = useState(false);
   const colors = ["#5d009bff", "#ff8800ff", "#ff0000", "#003000ff", "#00006dff"];
@@ -221,10 +268,10 @@ export default function TrackerDetails() {
   } = useForm<StaffFormValues>();
   const { errors: staffErrors } = staffForm;
   const {
-    register: activityReg,
     handleSubmit: submitActivity,
     reset: resetActivity,
-    formState: activityForm
+    formState: activityForm,
+    control: activityControl
   } = useForm<ActivityLogForm>();
   const { errors: activityErrors } = activityForm;
   const {
@@ -241,6 +288,17 @@ export default function TrackerDetails() {
     formState: approvedForm
   } = useForm<ApprovedStageFormValues>();
   const { errors: approvedErrors } = approvedForm;
+  const {
+    register: commentReg,
+    handleSubmit: submitComment,
+    reset: resetComment,
+    control: commentControl,
+    formState: commentForm,
+    watch
+  } = useForm<CommentFormValues>();
+  const { errors: commentErrors } = commentForm;
+  const [certificate, setCertificate] = useState(false);
+  const selectedRecipientGroup = watch('To');
 
   useEffect(() => {
       fetchDbsCheckById(hashedId)
@@ -248,7 +306,8 @@ export default function TrackerDetails() {
         if (res.status === 200) {
           res.json()
           .then(data => {
-            setDbsDetails(data.data);
+            setDbsDetails(data.data.application);
+            setCertificate(data.data.certificate);
           })
         } else {
           res.text()
@@ -267,6 +326,7 @@ export default function TrackerDetails() {
           if (res.status === 200) {
             res.json()
             .then(data => {
+              console.log("Stage Status", data)
               setCurrentStageStatus(data.data);
             })
           } else {
@@ -284,7 +344,20 @@ export default function TrackerDetails() {
     const res = await fetchDbsCheckById(hashedId);
     if (res.status === 200) {
       const data = await res.json();
-      setDbsDetails(data.data)
+      setDbsDetails(data.data.application);
+      setCertificate(data.data.certificate)
+    } else {
+      const resText = await res.text();
+      console.log(JSON.parse(resText));
+    }
+  }
+
+  const refetchComments = async () => {
+    const res = await getDBSApplicationComment(hashedId, { pageNumber: commentPage, limit: commentLimit, ...commentFilters});
+    if (res.status === 200) {
+      const data = await res.json();
+      setTotalCommentLog(data.data.totalCount)
+      setCommentLog(data.data.comments);
     } else {
       const resText = await res.text();
       console.log(JSON.parse(resText));
@@ -322,6 +395,25 @@ export default function TrackerDetails() {
     })
   }, [activityPage, activityLimit, activityFilters, hashedId]);
 
+  useEffect(() => {
+    getDBSApplicationComment(hashedId, { pageNumber: commentPage, limit: commentLimit, ...commentFilters})
+    .then(res => {
+      if (res.status === 200) {
+        res.json()
+        .then(data => {
+          console.log(data);
+          setTotalCommentLog(data.data.totalCount)
+          setCommentLog(data.data.comments);
+        })
+      } else {
+        res.text()
+        .then(data => {
+          console.log(JSON.parse(data));
+        })
+      }
+    })
+  }, [hashedId, commentPage, commentLimit, commentFilters]);
+
   const refetchActivityLog = async () => {
     const res = await fetchDbsLogsByApplication(hashedId, { pageNumber: activityPage, limit: activityLimit, ...activityFilters });
     if (res.status === 200) {
@@ -333,19 +425,6 @@ export default function TrackerDetails() {
       console.log(JSON.parse(resText));
     }
   }
-
-  const calculateAge = (dateOfBirth: Date) => {
-    const today = new Date();
-    const dob = new Date(dateOfBirth);
-
-    let age = today.getFullYear() - dob.getFullYear();
-    const birthdayPassed = today.getMonth() > dob.getMonth()
-      || (today.getMonth() === dob.getMonth() && today.getDate() >= dob.getDate());
-    if (!birthdayPassed) {
-      age--;
-    }
-    return age > 1 ? `${age} Years` : `${age} Year`;
-  }
     
   useEffect(() => {
       fetchOrgCaseAdmins()
@@ -354,6 +433,23 @@ export default function TrackerDetails() {
           res.json()
           .then(data => {
             setOrgCaseAdmins(data.data);
+          })
+        } else {
+          res.text()
+          .then(data => {
+            console.log(JSON.parse(data));
+          })
+        }
+      })
+  }, []);
+  
+  useEffect(() => {
+      fetchOrgMembers()
+      .then(res => {
+        if (res.status === 200) {
+          res.json()
+          .then(data => {
+            setOrgMembers(data.data);
           })
         } else {
           res.text()
@@ -520,7 +616,7 @@ export default function TrackerDetails() {
     }
   };
 
-  const markStageApproved = async (data: ApprovedStageFormValues) => {
+  const markStageApproved = async (data: ApprovedStageFormValues | null) => {
     if (!approvedErrors.NextStageId && dbsDetails) {
       const loader = document.getElementById('query-loader-4');
       const text = document.getElementById('query-text-4');
@@ -530,16 +626,57 @@ export default function TrackerDetails() {
       if (text) {
         text.style.display = 'none';
       }
+      if (!data) {
+        setOpenMoreAction(false);
+        toast.success("Your request is being processed");
+      }
       const formData = new FormData();
-      formData.append('NextStageId', String(data.NextStageId));
-      formData.append('FinalStage', String(data.FinalStage));
       formData.append('DBSStageId', String(dbsDetails.dbsStageId));
+      if (data) {
+        formData.append('NextStageId', String(data.NextStageId));
+        formData.append('FinalStage', String(data.FinalStage));
+      }
       const res = await markStageAsApproved(formData, hashedId);
       handleCreateEmployee(res, loader, text, { toast }, resetApproved)
       .finally(async () => {
         setApprovedModalState(false);
         await refetchDbsDetails();
         await refetchApplicationStage();
+      });
+    }
+  };
+
+  const generateCertificate = async () => {
+    setOpenMoreAction(!openMoreAction);
+    toast.success("Your Certificate is being generated");
+    const res = await generateNewDBSCertificate(hashedId);
+    handleCreateEmployee(res, null, null, { toast }, null)
+    .finally(async () => {
+      await refetchDbsDetails();
+    });
+  };
+
+  const logComment = async (data: CommentFormValues) => {
+    if (!commentErrors.Comment && !commentErrors.ToId && !commentErrors.To) {
+      const loader = document.getElementById('query-loader-6');
+      const text = document.getElementById('query-text-6');
+      if (loader) {
+        loader.style.display = 'flex';
+      }
+      if (text) {
+        text.style.display = 'none';
+      }
+      const formData = new FormData();
+      formData.append('Comment', data.Comment);
+      formData.append('To', data.To)
+      if (selectedRecipientGroup == '5') {
+        formData.append('ToId', data.ToId);
+      }
+      const res = await submitNewComment(formData, hashedId);
+      handleCreateEmployee(res, loader, text, { toast }, resetComment)
+      .finally(async () => {
+        setCommentModalState(false);
+        refetchComments();
       });
     }
   };
@@ -737,15 +874,17 @@ export default function TrackerDetails() {
                      Action Taken
                     </label>
                     <div>
-                      <textarea
-                        className="w-full h-30 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-black placeholder-secondary-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                        {
-                          ...activityReg('Action', {
-                            required: 'Required',
-                          })
-                        }
-                      >
-                      </textarea>
+                      <Controller
+                          name="Action"
+                          control={activityControl}
+                          rules={{ required: 'Required' }}
+                          render={({ field }) => (
+                            <RichTextEditor
+                              value={field.value}
+                              onChange={field.onChange}
+                            />
+                          )}
+                        />
                       <p className='error-msg'>{activityErrors.Action?.message}</p>
                     </div>
                   </div>
@@ -765,6 +904,142 @@ export default function TrackerDetails() {
                       <span id="query-text-3">
                         <CheckCheck size={18} className="mr-2" />
                         Log Activity
+                      </span>
+                   </button>
+                  </div>
+              </form>
+          </div>
+      </Modal>
+      <Modal isOpen={commentModalState} onRequestClose={() => { setCommentModalState(false); }}
+          style={{
+          content: {
+          width: 'fit-content',
+          height: 'fit-content',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          backgroundColor: 'rgb(255 255 255)',
+          borderRadius: '0.5rem',
+          boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)'
+          },
+          overlay: {
+          backgroundColor: 'rgba(255, 255, 255, 0.7)'
+          }
+      }}
+      >
+          <div className="h-fit max-h-[70vh] overflow-y-auto  w-70 md:w-100">
+              <div className="flex justify-start">
+              <p className="font-semibold text-black py-1 text-lg"><MessageSquareShare size={20} className="mr-2" /> Add New Comment</p>
+              </div>
+              <form
+                  onSubmit={submitComment(logComment)}
+                  noValidate
+              >
+                  <div className="grid grid-cols-1 gap-x-8 gap-y-5 mt-2">
+                    <div>
+                      <label
+                      className="inline-block mb-2 text-secondary-600 dark:text-white"
+                      htmlFor="email"
+                      >
+                      Select Recipient Group
+                      </label>
+                      <div>
+                        <select
+                          className="w-full h-12 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-black placeholder-secondary-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                          {
+                            ...commentReg('To', {
+                              required: 'Required',
+                              pattern: {
+                                value: /^(?!default$).+$/,
+                                message: 'Required'
+                              }
+                            })
+                          }
+                        >
+                          <option value="default">Select Recipient Group</option>
+                          <option value="1">CTA Organization</option>
+                          <option value="2">Request Employer</option>
+                          <option value="3">Administrator</option>
+                          <option value="4">Staff In Charge</option>
+                          <option value="5">Specific User</option>
+                        </select>
+                        <p className='error-msg'>{commentErrors.To?.message}</p>
+                      </div>
+                    </div>
+                    {
+                      selectedRecipientGroup == '5' && (
+                        <div>
+                          <label
+                          className="inline-block mb-2 text-secondary-600 dark:text-white"
+                          htmlFor="email"
+                          >
+                          Select User
+                          </label>
+                          
+                          <div>
+                            <select
+                              className="w-full h-12 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-black placeholder-secondary-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                              {
+                                ...commentReg('ToId', {
+                                  required: selectedRecipientGroup == '5' ? 'Required' : false,
+                                  pattern: {
+                                    value: /^(?!default$).+$/,
+                                    message: 'Required'
+                                  }
+                                })
+                              }
+                            >
+                              <option value="default">Select User</option>
+                              {
+                                orgMembers.map((data, index) => (
+                                  <option key={index} value={data.userId}>{`${data.firstName} ${data.lastName}`}</option>
+                                ))
+                              }
+                            </select>
+                            <p className='error-msg'>{commentErrors.ToId?.message}</p>
+                          </div>
+                        </div>
+                      )
+                    }
+                    
+                    <div>
+                      <label
+                      className="inline-block mb-2 text-secondary-600 dark:text-white"
+                      htmlFor="email"
+                      >
+                      Comment
+                      </label>
+                      <div>
+                        <Controller
+                            name="Comment"
+                            control={commentControl}
+                            rules={{ required: 'Required' }}
+                            render={({ field }) => (
+                              <RichTextEditor
+                                value={field.value}
+                                onChange={field.onChange}
+                              />
+                            )}
+                        />
+                        <p className='error-msg'>{commentErrors.Comment?.message}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <hr className="mt-5" />
+                  <div className="flex justify-end my-2 gap-2">
+                    <button className="btn text-white bg-black" onClick={() => setCommentModalState(false) }>
+                      <X size={18} className="mr-2" />
+                      Cancel
+                    </button>
+                    <button className="btn btn-success">
+                      <div className="dots hidden" id="query-loader-6">
+                        <div className="dot"></div>
+                        <div className="dot"></div>
+                        <div className="dot"></div>
+                      </div>
+                      <span id="query-text-6">
+                        <CheckCheck size={18} className="mr-2" />
+                        Log Comment
                       </span>
                    </button>
                   </div>
@@ -943,14 +1218,14 @@ export default function TrackerDetails() {
             <ClipboardList className="text-blue-600 mr-2" size={36} />
             <div>
             <h3 className="mb-0 text-black">
-                DBS Application Details
+              Application Details
             </h3>
             <p className="text-secondary-600 text-black">
                 <NavLink to="/Dashboard">Dashboard</NavLink>{" "}
                 <ChevronRightIcon size={14} />{" "}
-                <NavLink to="/Tracker">DBS Tracker</NavLink>{" "}
+                <NavLink to="/Tracker">CTA Tracker</NavLink>{" "}
                 <ChevronRightIcon size={14} />{" "}
-                <NavLink to={`/Tracker/${id}`}>DBS Details</NavLink>{" "}
+                <NavLink to={`/Tracker/${id}`}>CTA Details</NavLink>{" "}
             </p>
             </div>
           </div>
@@ -971,51 +1246,81 @@ export default function TrackerDetails() {
                     </p>
                   </Tippy>
                 </div>
-                <div className="relative">
-                  <button className="btn btn-info mr-2 mb-2" onClick={() => setOpenMoreAction(!openMoreAction)}>
-                    More Actions
-                    <ChevronDown size={18} className="ml-2" />
-                  </button>
-                  {openMoreAction && (
-                    <div className="absolute mt-2 top-8 right-2 w-60 bg-white border shadow-lg z-1">
-                      {
-                        (user?.userId === dbsDetails.staffInChargeId || user?.userRole === "SuperAdmin") && user?.roleScope === 1 && user?.userRole.endsWith("Admin") && (
-                          <button className="block w-full px-4 py-2 hover:bg-secondary-200 text-left text-black" onClick={() => { setStaffModalState(true); setOpenMoreAction(!openMoreAction); }}>
-                            <UserStar size={18} className="mr-2" /> Re-Assign To Staff
-                          </button>
-                        )
-                      }
-                      {
-                        user?.roleScope === 1 && user?.userRole === "SuperAdmin" && !dbsDetails.adminId && (
-                          <button className="block w-full px-4 py-2 hover:bg-secondary-200 text-left text-black" onClick={() => { setAdminModalState(true); setOpenMoreAction(!openMoreAction); }}>
-                            <UserCog size={18} className="mr-2" /> Assign Administrator
-                          </button>
-                        )
-                      }
-                      {
-                        user?.roleScope === 1 && user?.userRole === "SuperAdmin" && dbsDetails.adminId && (
-                          <button className="block w-full px-4 py-2 hover:bg-secondary-200 text-left text-black" onClick={() => { setAdminModalState(true); setOpenMoreAction(!openMoreAction); }}>
-                            <UserCog size={18} className="mr-2" /> Re-Assign Administrator
-                          </button>
-                        )
-                      }
-                      {
-                        (dbsDetails.dbsStageAdminId == user?.userId || dbsDetails.staffInChargeId == user?.userId) && (!currentStageStatus || currentStageStatus.status == 1) && (
-                          <button className="block w-full px-4 py-2 hover:bg-secondary-200 text-left text-black" onClick={() => { setCompleteModalState(true); setOpenMoreAction(!openMoreAction); }}>
-                            <CircleCheckBig size={18} className="mr-2" /> Mark Stage Completed
-                          </button>
-                        )
-                      }
-                      {
-                        currentStageStatus && currentStageStatus.status == 2 && ((currentStageStatus.finalStage && dbsDetails.adminId == user?.userId) || (!currentStageStatus.finalStage && (dbsDetails.adminId == user?.userId || dbsDetails.dbsStageAdminId == user?.userId))) && (
-                          <button className="block w-full px-4 py-2 hover:bg-secondary-200 text-left text-black" onClick={() => { setApprovedModalState(true); setOpenMoreAction(!openMoreAction); }}>
-                            <SquareCheckBig size={18} className="mr-2" /> Mark Stage Approved
-                          </button>
-                        )
-                      }
+                {
+                  dbsDetails.status != 4 ? (
+                    <div className="relative">
+                      <button className="btn btn-info mr-2 mb-2" onClick={() => setOpenMoreAction(!openMoreAction)}>
+                        More Actions
+                        <ChevronDown size={18} className="ml-2" />
+                      </button>
+                      {openMoreAction && (
+                        <div className="absolute mt-2 top-8 right-2 w-60 bg-white border shadow-lg z-1">
+                          {
+                            (user?.userId === dbsDetails.staffInChargeId || user?.userRole === "SuperAdmin") && user?.roleScope === 1 && user?.userRole.endsWith("Admin") && (
+                              <button className="block w-full px-4 py-2 hover:bg-secondary-200 text-left text-black" onClick={() => { setStaffModalState(true); setOpenMoreAction(!openMoreAction); }}>
+                                <UserStar size={18} className="mr-2" /> Re-Assign To Staff
+                              </button>
+                            )
+                          }
+                          {user?.roleScope === 1 && user?.userRole === "SuperAdmin" && !dbsDetails.adminId && (
+                              <button className="block w-full px-4 py-2 hover:bg-secondary-200 text-left text-black" onClick={() => { setAdminModalState(true); setOpenMoreAction(!openMoreAction); }}>
+                                <UserCog size={18} className="mr-2" /> Assign Administrator
+                              </button>
+                            )
+                          }
+                          {user?.roleScope === 1 && user?.userRole === "SuperAdmin" && dbsDetails.adminId && (
+                              <button className="block w-full px-4 py-2 hover:bg-secondary-200 text-left text-black" onClick={() => { setAdminModalState(true); setOpenMoreAction(!openMoreAction); }}>
+                                <UserCog size={18} className="mr-2" /> Re-Assign Administrator
+                              </button>
+                            )
+                          }
+                          {
+                            certificate && currentStageStatus && currentStageStatus.finalStage &&  (
+                              <NavLink className="block w-full px-4 py-2 hover:bg-secondary-200 text-left text-black"  to={`/Tracker/Certificate/${id}`}>
+                                <FileCheck size={18} className="mr-2" /> Go To Certificate
+                              </NavLink>
+                            )
+                          }
+                          {
+                            !certificate && currentStageStatus && currentStageStatus.finalStage &&  (
+                              <button className="block w-full px-4 py-2 hover:bg-secondary-200 text-left text-black" onClick={() => generateCertificate()}>
+                                <FileCheck size={18} className="mr-2" /> Generate Certificate
+                              </button>
+                            )
+                          }
+                          {
+                            
+                            (dbsDetails.dbsStageAdminId == user?.userId || dbsDetails.staffInChargeId == user?.userId) && (!currentStageStatus || currentStageStatus.status == 1) && (
+                              <button className="block w-full px-4 py-2 hover:bg-secondary-200 text-left text-black" onClick={() => { setCompleteModalState(true); setOpenMoreAction(!openMoreAction); }}>
+                                <CircleCheckBig size={18} className="mr-2" /> Mark Stage Completed
+                              </button>
+                            )
+                          }
+                          {
+                            currentStageStatus && currentStageStatus.status == 2 && ((!currentStageStatus.finalStage && (dbsDetails.adminId == user?.userId || dbsDetails.dbsStageAdminId == user?.userId))) && (
+                            <button className="block w-full px-4 py-2 hover:bg-secondary-200 text-left text-black" onClick={() => { setApprovedModalState(true); setOpenMoreAction(!openMoreAction); }}>
+                                <SquareCheckBig size={18} className="mr-2" /> Mark Stage Approved
+                              </button>
+                            )
+                          }
+                          {
+                            currentStageStatus && currentStageStatus.status == 2 && ((currentStageStatus.finalStage && dbsDetails.adminId == user?.userId)) && (
+                            <button className="block w-full px-4 py-2 hover:bg-secondary-200 text-left text-black" onClick={() => { markStageApproved(null); }}>
+                                <SquareCheckBig size={18} className="mr-2" /> Mark Stage Approved
+                              </button>
+                            )
+                          }
+                          
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
+                    ) : (
+                      <NavLink className="btn btn-success mr-2 mb-2" to={`/Tracker/Certificate/${id}`}>
+                        <FileCheck size={18} className="ml-2" /> Go To Certificate
+                      </NavLink>
+                    )
+                }
+                
               </div>
             )}
         </div>
@@ -1142,7 +1447,7 @@ export default function TrackerDetails() {
                                       <span>Uploaded On - {(new Date(data.dateCreated)).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
                                   </p>
                                   {
-                                    Number(data.status) === 1 && (
+                                    Number(data.status) === 1 && dbsDetails.status != 4 && (
                                       <div className="flex justify-end items-center gap-3 my-1">
                                         <Tippy content="Mark As Rejected">
                                           <button className="btn text-white btn-danger py-1 px-2" onClick={() => docStatusUpdate(3, data.userDocumentId)}>
@@ -1214,7 +1519,7 @@ export default function TrackerDetails() {
                         </div>
                       </div>
                       <div
-                        className="bg-gradient-to-r from-red-600 to-red-500 rounded-xl p-6 border border-slate-200 hover:shadow-lg transition-shadow"
+                        className={`${!currentStageStatus?.finalStage ? 'bg-gradient-to-r from-red-600 to-red-500' : 'bg-gradient-to-r from-green-600 to-green-500'} rounded-xl p-6 border border-slate-200 hover:shadow-lg transition-shadow`}
                       >
                         <div className="flex items-start justify-end mb-4">
                           <div className="py-3 px-3 bg-white rounded-full">
@@ -1238,6 +1543,7 @@ export default function TrackerDetails() {
                           </h4>
                         </div>
                         {
+                          dbsDetails.status != 4 &&
                           user?.roleScope === 1 &&
                           ( user?.userRole === 'SuperAdmin' ||
                             user?.userId === dbsDetails.adminId ||
@@ -1319,7 +1625,7 @@ export default function TrackerDetails() {
                                       </div>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
-                                      <p>{data.action}</p>
+                                      <p><HtmlRenderer html={data.action} /></p>
                                       <span className="text-sm">Stage: {data.dbsStageName}</span>
                                       <br />
                                       <span className="text-sm">Date: {(new Date(data.dateCreated)).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
@@ -1381,18 +1687,46 @@ export default function TrackerDetails() {
                           </h4>
                         </div>
                         {
+                          dbsDetails.status != 4 &&
                           user?.roleScope === 1 &&
                           ( user?.userRole === 'SuperAdmin' ||
                             user?.userId === dbsDetails.adminId ||
                             user?.userId === dbsDetails.staffInChargeId
                           ) &&
-                          (<button className="btn btn-success mr-2 mb-2">
+                          (<button className="btn btn-success mr-2 mb-2" onClick={() => setCommentModalState(true)}>
                             <Plus size={18} className="mr-2" />
                             Add New Comment
                           </button>)
                         }
                       </div>
-                      <div className="p-6">
+                      <div className="p-5">
+                        <div className="flex flex-wrap gap-4">
+                          <div className="flex-1 min-w-[330px]">
+                            <div className="relative">
+                              <Search
+                                className="absolute left-3 top-7 transform -translate-y-1/2 text-gray-400"
+                                size={20}
+                              />
+                              <input
+                                type="text"
+                                placeholder="Search by sender name..."
+                                {...commentFilterReg('Sender')}
+                                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              />
+                            </div>
+                          </div>
+                          <div className="flex-1">
+                            <div className="relative">
+                              <input
+                                type="date"
+                                {...commentFilterReg('DateCreated')}
+                                className="w-full pl-2 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="p-5">
                         <div className="flex flex-wrap justify-between overflow-x-auto h-fit">
                           <table className="min-w-full divide-y divide-secondary-200 dark:divide-secondary-800 border dark:border-secondary-800">
                             <thead>
@@ -1401,24 +1735,86 @@ export default function TrackerDetails() {
                                   S/N
                                 </th>
                                 <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
-                                  Staff
+                                  Sender
                                 </th>
                                 <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
                                   Comment
                                 </th>
-                                <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
-                                  Stage Level
-                                </th>
-                                <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
-                                  Date
-                                </th>
                               </tr>
                             </thead>
+                            {
+                                commentLog.map((data, index) => (
+                                <tr key={data.commentLogId ?? index}>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                    <div className="iq-media-group iq-media-group-1">
+                                        <h6 className="font-bold dark:text-white">
+                                          {" "}
+                                          #{(index + (activityLimit * (activityPage - 1))) + 1}
+                                        </h6>
+                                    </div>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
+                                      <div className="flex w-50 items-center gap-3">
+                                        <div className="h-12 w-12 border rounded-full" style={{ backgroundColor: colors[index % 4], display: "flex", justifyContent: "center", alignItems: "center", color: "#ffffff"}}>
+                                          { `${data.fromFirstName[0]} ${data.fromLastName[0]}` }
+                                        </div>
+                                        <div>
+                                          <div className="font-semibold text-gray-900">
+                                            {`${data.fromFirstName} ${data.fromLastName}`}
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
+                                      <p><HtmlRenderer html={data.comment} /></p>
+                                      <span className="text-xs">Date: {(new Date(data.dateCreated)).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+                                    </td>
+                                </tr>
+                                ))
+                              }
                           </table>
-                          <div className="py-4 whitespace-nowrap w-full">
-                            <span className="px-6 py-4 text-left font-medium text-black dark:text-white">There hasn't been any comment added for this application</span>
-                          </div> 
+                          {
+                            commentLog.length === 0 && (
+                              <div className="py-4 whitespace-nowrap w-full">
+                                <span className="px-6 py-4 text-left font-medium text-black dark:text-white">There hasn't been any comment added for this application</span>
+                              </div>
+                            )
+                          }
                         </div>
+                        <div className="flex flex-wrap justify-between mt-6">
+                      <div className="flex justify-center items-center mb-1">
+                        <p className="text-black">
+                          Showing { commentLog.length > 0 ? ((commentPage * commentLimit) - commentLimit) + 1 : 0 } to { commentLog.length > 0 ? (((commentPage * commentLimit) - commentLimit) + 1) + (commentLog.length - 1) : 0 } of { totalCommentLog } entries
+                        </p>
+                      </div>
+                        <div className="inline-flex flex-wrap">
+                          {
+                            commentPage > 1 && <a
+                            href="#"
+                            onClick={() => { if (commentPage > 1) {setCommentPage(commentPage - 1);} }}
+                            className="border-t border-b border-l text-primary-500 border-secondary-500 px-2 py-1 rounded-l dark:border-secondary-800"
+                          >
+                            Previous
+                          </a>
+                          }
+                          <a
+                            href="#"
+                            className="border text-white border-secondary-500 cursor-pointer bg-primary-500 px-4 py-1 dark:border-secondary-800"
+                          >
+                            { commentPage }
+                          </a>
+                          {
+                            (commentPage * activityLimit) < totalCommentLog && <a
+                            href="#"
+                            onClick={() => { setCommentPage(commentPage + 1); }}
+                            className="border-r border-t border-b text-primary-500 border-secondary-500 px-4 py-1 rounded-r dark:border-secondary-800"
+                          >
+                            Next
+                          </a>
+                          }
+                          
+                        </div>
+                      </div>
                       </div>
                     </div>
                   </div>

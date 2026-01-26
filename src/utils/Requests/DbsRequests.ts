@@ -55,7 +55,6 @@ export const fetchDbsChecks = async (filterData: object) => {
     }
   })
   const url = `${BaseURL}/dbs-applications?${params}`;
-  console.log(url);
   const response = await fetch(url, {
     method: 'GET',
     headers: {
@@ -68,6 +67,28 @@ export const fetchDbsChecks = async (filterData: object) => {
 export const fetchDbsCheckById = async (id: number) => {
   const token = localStorage.getItem('accessToken');
   const response = await fetch(`${BaseURL}/dbs-applications/${id}`, {
+    method: 'GET',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  })
+  return response
+}
+
+export const generateNewDBSCertificate = async (id: number) => {
+  const token = localStorage.getItem('accessToken');
+  const response = await fetch(`${BaseURL}/dbs-applications/${id}/certificate`, {
+    method: 'POST',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  })
+  return response
+}
+
+export const getDBSCertificateByApplicationId = async (id: number) => {
+  const token = localStorage.getItem('accessToken');
+  const response = await fetch(`${BaseURL}/dbs-applications/${id}/certificate`, {
     method: 'GET',
     headers: {
       "Authorization": `Bearer ${token}`
@@ -128,7 +149,66 @@ export const fetchDbsLogsByApplication = async (applicationId: number, filterDat
     }
   })
   const url = `${BaseURL}/dbs-activity-log/${applicationId}?${params}`;
-  console.log(url);
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  })
+  return response
+}
+
+export const fetchDbsChecksByUserId = async (userId: number, pageNumber=1, limit=5) => {
+  const token = localStorage.getItem('accessToken');
+  const response = await fetch(`${BaseURL}/dbs-applications/user/${userId}?pageNumber=${pageNumber}&limit=${limit}`, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response;
+  };
+  
+
+export const fetchDbsstats = async () => {
+  const token = localStorage.getItem('accessToken');
+  const url = `${BaseURL}/dbs-applications/stats`;
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  })
+  return response
+}
+
+export const fetchDbsChecksAwaitingAssignemnt = async () => {
+  const token = localStorage.getItem('accessToken');
+  const url = `${BaseURL}/dbs-applications/awaiting-assignment`;
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  })
+  return response
+}
+
+export const fetchDbsChecksAwaitingApproval = async () => {
+  const token = localStorage.getItem('accessToken');
+  const url = `${BaseURL}/dbs-stage-status/awaiting-approval`;
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  })
+  return response
+}
+
+export const fetchOverdueChecks = async () => {
+  const token = localStorage.getItem('accessToken');
+  const url = `${BaseURL}/dbs-stage-status/overdue`;
   const response = await fetch(url, {
     method: 'GET',
     headers: {
@@ -150,6 +230,54 @@ export const submitDbsActivityLog = async (applicationId: number, data: FormData
   return response
 }
 
+export const fetchCTASettings = async () => {
+  const token = localStorage.getItem('accessToken');
+  const url = `${BaseURL}/cta-settings`;
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  })
+  return response
+}
+
+export const fetchExpiredCertificates = async () => {
+  const token = localStorage.getItem('accessToken');
+  const url = `${BaseURL}/dbs-certificate/expired`;
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  })
+  return response
+}
+
+export const fetchSoonExpiringCertificates = async () => {
+  const token = localStorage.getItem('accessToken');
+  const url = `${BaseURL}/dbs-certificate/expiring-soon`;
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  })
+  return response
+}
+
+export const updateCTASettings = async (data: FormData) => {
+  const token = localStorage.getItem('accessToken');
+  const response = await fetch(`${BaseURL}/cta-settings`, {
+    method: 'PATCH',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    },
+    body: data
+  })
+  return response
+}
+
 export const submitDbsStage = async (data: FormData) => {
   const token = localStorage.getItem('accessToken');
   const response = await fetch(`${BaseURL}/dbs-stages`, {
@@ -158,6 +286,35 @@ export const submitDbsStage = async (data: FormData) => {
       "Authorization": `Bearer ${token}`
     },
     body: data
+  })
+  return response
+}
+
+export const submitNewComment = async (data: FormData, dbsApplicationId: number) => {
+  const token = localStorage.getItem('accessToken');
+  const response = await fetch(`${BaseURL}/comment-log/dbs-application/${dbsApplicationId}`, {
+    method: 'POST',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    },
+    body: data
+  })
+  return response
+}
+
+export const getDBSApplicationComment = async (dbsApplicationId: number, filterData: object) => {
+  const token = localStorage.getItem('accessToken');
+  const params = new URLSearchParams();
+  Object.entries(filterData).forEach(([key, value]) => {
+    if (value !== null && value !== undefined && value !== "") {
+      params.append(key, value);
+    }
+  })
+  const response = await fetch(`${BaseURL}/comment-log/dbs-application/${dbsApplicationId}?${params}`, {
+    method: 'GET',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
   })
   return response
 }
@@ -232,3 +389,50 @@ export const fetchStageByApplicationAndStage = async (applicationId: number, sta
   })
   return response
 }
+
+export const fetchDbsSearchData = async (dbsSearchId: number) => {
+  const token = localStorage.getItem('accessToken');
+  const response = await fetch(`${BaseURL}/dbs-search/${dbsSearchId}`, {
+    method: 'GET',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  })
+  return response
+}
+
+export const removeDbsSearchData = async (dbsSearchId: number) => {
+  const token = localStorage.getItem('accessToken');
+  const response = await fetch(`${BaseURL}/dbs-search/${dbsSearchId}`, {
+    method: 'DELETE',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  })
+  return response
+}
+
+export const matchDbsSearchData = async (dbsSearchId: number) => {
+  const token = localStorage.getItem('accessToken');
+  const response = await fetch(`${BaseURL}/dbs-search/${dbsSearchId}/match`, {
+    method: 'PATCH',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  })
+  return response
+}
+
+export const fetchDbsPartners = async () => {
+  const token = localStorage.getItem("accessToken");
+
+  const response = await fetch(`${BaseURL}/api/admin/DbsPartners/GetAll`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+
+  return response;
+};

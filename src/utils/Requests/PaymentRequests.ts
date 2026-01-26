@@ -1,6 +1,6 @@
 const BaseURL = "http://localhost:5181";
 
-export const fetchNIMCSearch = async (filterData: object) => {
+export const fetchPayments = async (filterData: object) => {
   const token = localStorage.getItem('accessToken');
   const params = new URLSearchParams();
   Object.entries(filterData).forEach(([key, value]) => {
@@ -8,7 +8,7 @@ export const fetchNIMCSearch = async (filterData: object) => {
       params.append(key, value);
     }
   })
-  const url = `${BaseURL}/nimc-search/?${params}`;
+  const url = `${BaseURL}/api/payments?${params}`;
   console.log(url);
   const response = await fetch(url, {
     method: 'GET',
@@ -19,14 +19,13 @@ export const fetchNIMCSearch = async (filterData: object) => {
   return response
 }
 
-export const matchNIMCSearchToApplication = async (data: FormData) => {
+export const fetcPaymentById = async (id: number) => {
   const token = localStorage.getItem('accessToken');
-  const response = await fetch(`${BaseURL}/nimc-search/dbs-search`, {
-    method: 'POST',
+  const response = await fetch(`${BaseURL}/api/payments/${id}`, {
+    method: 'GET',
     headers: {
       "Authorization": `Bearer ${token}`
-    },
-    body: data
+    }
   })
   return response
 }

@@ -15,6 +15,10 @@ import {
   BookKey,
   FolderKey,
   IdCard,
+  ShieldCheck,
+  AlertTriangleIcon,
+  OctagonAlertIcon,
+  AlertCircleIcon,
 } from "lucide-react";
 import { Link, useLocation, Routes, Route } from "react-router-dom";
 
@@ -32,6 +36,10 @@ import AuditLog from "./AuditLog";
 import DBSStatus from "./DBSStatus";
 import DBSType from "./DBSTypes";
 import DBSStages from "./DBSStages";
+import CTASettings from "./CTASettings";
+import IncidentType from "./IncidentType";
+import IncidentActionType from "./IncidentActionType";
+import CTAPartnerType from "./CTAPartners";
 
 const sidebarItems = [
   {
@@ -104,25 +112,53 @@ const sidebarItems = [
     ],
   },
   {
-    id: "dbsStatus",
-    label: "DBS Status",
+    id: "incident-type",
+    label: "Incident Type",
+    icon: <AlertTriangleIcon size={20} />,
+    path: "/ControlPanel/Incident-Type",
+    component: IncidentType,
+  },
+  {
+    id: "action-type",
+    label: "Action Type",
+    icon: <OctagonAlertIcon size={20} />,
+    path: "/ControlPanel/Incident-Action-Type",
+    component: IncidentActionType,
+  },
+  {
+    id: "third-party",
+    label: "Third Party",
+    icon: <AlertCircleIcon size={20} />,
+    path: "/ControlPanel/Third-Party",
+    component: CTAPartnerType,
+  },
+  {
+    id: "check-status",
+    label: "Check Status",
     icon: <BookKey size={20} />,
-    path: "/ControlPanel/DBSStatus",
+    path: "/ControlPanel/Check-Status",
     component: DBSStatus,
   },
   {
-    id: "dbsType",
-    label: "DBS Type",
+    id: "check-type",
+    label: "Check Type",
     icon: <FolderKey size={20} />,
-    path: "/ControlPanel/DBSType",
+    path: "/ControlPanel/Check-Type",
     component: DBSType,
   },
   {
-    id: "dbsStage",
-    label: "DBS Stage & SLA",
+    id: "check-stage",
+    label: "Check Stage & SLA",
     icon: <IdCard size={20} />,
-    path: "/ControlPanel/DBSStage",
+    path: "/ControlPanel/Check-Stage",
     component: DBSStages,
+  },
+  {
+    id: "cta-certificate",
+    label: "CTA Certificate Settings",
+    icon: <ShieldCheck size={20} />,
+    path: "/ControlPanel/CTA-Certificate",
+    component: CTASettings,
   },
   {
     id: "audit",

@@ -1,28 +1,32 @@
 import { useEffect, useState } from "react";
 import { toast, ToastContainer } from 'react-toastify';
 import Modal from 'react-modal';
-import { BookKey, CheckCheck, Pen, Plus, X,} from "lucide-react";
-import { fetchDbsStatus, submitDbsStatus, updateDbsStatus } from "../../../utils/Requests/DbsRequests";
-import type { DBSStatus } from "../Tracker/DbsTracker";
+import { AlertTriangleIcon, CheckCheck, Pen, Plus, X,} from "lucide-react";
 import { useForm } from "react-hook-form";
 import { handleCreateEmployee } from "../../../utils/ResponseHandlers/EmployeeResponse";
+import { fetchIncidentType, submitIncidentType, updateIncidentType } from "../../../utils/Requests/IncidentRequests";
 
-interface DBSStatusFormValues {
-  StatusName: string;
+interface IncidentTypeFormValues {
+  Name: string;
 }
 
-export default function DBSStatus() {
+interface IncidentType {
+    name: string;
+    incidentTypeId: number;
+}
+
+export default function IncidentType() {
   const [loading, setLoading] = useState(true);
-  const [dbsStatus, setDbsStatus] = useState<DBSStatus[]>([]);
-  const [dbsStatusEdit, setDbsStatusEdit] = useState<DBSStatus | null>(null);
-  const { register, reset, handleSubmit, formState } = useForm<DBSStatusFormValues>();
+  const [incidentType, setIncidentType] = useState<IncidentType[]>([]);
+  const [incidentTypeEdit, setIncidentTypeEdit] = useState<IncidentType | null>(null);
+  const { register, reset, handleSubmit, formState } = useForm<IncidentTypeFormValues>();
   const {
     register: regEdit,
     reset: resetEdit,
     handleSubmit: submitEdit,
     formState: editFormState,
     setValue,
-  } = useForm<DBSStatusFormValues>();
+  } = useForm<IncidentTypeFormValues>();
   const [error, setError] = useState<string | null>(null);
   const [addModalState, setAddModalState] = useState(false);
   const [editModalState, setEditModalState] = useState(false);
@@ -30,13 +34,13 @@ export default function DBSStatus() {
   const { errors: editErrors } = editFormState;
 
   useEffect(() => {
-    fetchDbsStatus()
+    fetchIncidentType()
     .then(res => {
       if (res.status === 200) {
         res.json()
         .then(data => {
           console.log(data);
-          setDbsStatus(data.data);
+          setIncidentType(data.data);
         })
       } else {
         res.text()
@@ -49,19 +53,19 @@ export default function DBSStatus() {
   }, []);
     
   useEffect(() => {
-    if (dbsStatusEdit) {
-      setValue('StatusName', dbsStatusEdit.statusName);
+    if (incidentTypeEdit) {
+      setValue('Name', incidentTypeEdit.name);
     }
-  }, [dbsStatusEdit, setValue])
+  }, [incidentTypeEdit, setValue])
 
-  const refetchDbsStatus = async () => {
+  const refetchIncidentType = async () => {
     try {
       setLoading(true);
-      const res = await fetchDbsStatus();
+      const res = await fetchIncidentType();
       if (res.status === 200) {
         const data = await res.json()
         console.log(data);
-        setDbsStatus(data.data);
+        setIncidentType(data.data);
       } else {
         const resText = await res.text();
         console.log(JSON.parse(resText));
@@ -69,14 +73,14 @@ export default function DBSStatus() {
       
     } catch (err) {
       console.error(err);
-      setError("Failed to fetch DBS Status");
+      setError("Failed to fetch Incident Type");
     } finally {
       setLoading(false);
     }
   };
   
-  const addNewStatus = async (data: DBSStatusFormValues) =>{
-    if (!errors.StatusName){
+  const addNewIncidentType = async (data: IncidentTypeFormValues) =>{
+    if (!errors.Name){
       const loader = document.getElementById('query-loader');
       const text = document.getElementById('query-text');
       if (loader) {
@@ -86,18 +90,18 @@ export default function DBSStatus() {
         text.style.display = 'none';
       }
       const formData = new FormData();
-      formData.append("StatusName", data.StatusName);
-      const res = await submitDbsStatus(formData);
+      formData.append("Name", data.Name);
+      const res = await submitIncidentType(formData);
       handleCreateEmployee(res, loader, text, { toast }, reset)
       .finally(async () => {
         setAddModalState(false);
-        await refetchDbsStatus();
+        await refetchIncidentType();
       });
     }
   }
   
-  const updateStatus = async (data: DBSStatusFormValues) =>{
-    if (!editErrors.StatusName && dbsStatusEdit){
+  const editIncidentType = async (data: IncidentTypeFormValues) =>{
+    if (!editErrors.Name && incidentTypeEdit){
       const loader = document.getElementById('query-loader');
       const text = document.getElementById('query-text');
       if (loader) {
@@ -107,12 +111,12 @@ export default function DBSStatus() {
         text.style.display = 'none';
       }
       const formData = new FormData();
-      formData.append("StatusName", data.StatusName);
-      const res = await updateDbsStatus(formData, dbsStatusEdit.statusId);
+      formData.append("Name", data.Name);
+      const res = await updateIncidentType(formData, incidentTypeEdit.incidentTypeId);
       handleCreateEmployee(res, loader, text, { toast }, resetEdit)
       .finally(async () => {
         setEditModalState(false);
-        await refetchDbsStatus();
+        await refetchIncidentType();
       });
     }
   }
@@ -143,10 +147,10 @@ export default function DBSStatus() {
         
           <div className="h-fit w-100">
             <div className="flex justify-start">
-              <p className="font-semibold text-black py-1 text-lg"><BookKey size={20} className="mr-2" /> Add New Status</p>
+              <p className="font-semibold text-black py-1 text-lg"><AlertTriangleIcon size={20} className="mr-2" /> Add New Incident Type</p>
             </div>
             <form
-                  onSubmit={handleSubmit(addNewStatus)}
+                  onSubmit={handleSubmit(addNewIncidentType)}
                   noValidate
                 >
               <div className="grid grid-cols-1 gap-x-8 gap-y-5 mt-2">
@@ -155,20 +159,20 @@ export default function DBSStatus() {
                     className="inline-block mb-2 text-secondary-600 dark:text-white"
                     htmlFor="email"
                   >
-                    Status Name
+                    Incident Type Name
                   </label>
                   <div>
                     <input
                       type="text"
                       className="w-full h-12 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-black placeholder-secondary-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
                         {
-                        ...register('StatusName', {
+                        ...register('Name', {
                           required: 'Required'
                         })
                       }
                       required
                     />
-                    <p className='error-msg'>{errors.StatusName?.message}</p>
+                    <p className='error-msg'>{errors.Name?.message}</p>
                   </div>
                 </div>
               </div>
@@ -186,7 +190,7 @@ export default function DBSStatus() {
                   </div>
                   <span id="query-text">
                     <CheckCheck size={18} className="mr-2" />
-                    Add Status
+                    Add Incident Type
                   </span>
                 </button>
               </div>
@@ -211,13 +215,13 @@ export default function DBSStatus() {
       }}
       >
         {
-            dbsStatusEdit && (
+            incidentTypeEdit && (
                 <div className="h-fit w-100">
                     <div className="flex justify-start">
-                    <p className="font-semibold text-black py-1 text-lg"><BookKey size={20} className="mr-2" /> Update DBS Status</p>
+                    <p className="font-semibold text-black py-1 text-lg"><AlertTriangleIcon size={20} className="mr-2" /> Update Incident Type</p>
                     </div>
                     <form
-                        onSubmit={submitEdit(updateStatus)}
+                        onSubmit={submitEdit(editIncidentType)}
                         noValidate
                         >
                     <div className="grid grid-cols-1 gap-x-8 gap-y-5 mt-2">
@@ -226,20 +230,20 @@ export default function DBSStatus() {
                             className="inline-block mb-2 text-secondary-600 dark:text-white"
                             htmlFor="email"
                         >
-                            Status Name
+                            Incident Type Name
                         </label>
                         <div>
                             <input
                             type="text"
                             className="w-full h-12 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-black placeholder-secondary-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
                                 {
-                                ...regEdit('StatusName', {
+                                ...regEdit('Name', {
                                 required: 'Required'
                                 })
                             }
                             required
                             />
-                            <p className='error-msg'>{editErrors.StatusName?.message}</p>
+                            <p className='error-msg'>{editErrors.Name?.message}</p>
                         </div>
                         </div>
                     </div>
@@ -257,7 +261,7 @@ export default function DBSStatus() {
                         </div>
                         <span id="query-text">
                             <Pen size={18} className="mr-2" />
-                            Edit Status
+                            Edit Incident Type
                         </span>
                         </button>
                     </div>
@@ -271,7 +275,7 @@ export default function DBSStatus() {
           <div className="relative flex flex-col mb-8  bg-white dark:bg-dark-card shadow rounded">
             <div className="flex justify-between flex-auto p-5 border-b dark:border-secondary-800 rounded">
               <h4 className="mb-0 dark:text-secondary-200">
-                <BookKey /> Check Status
+                <AlertTriangleIcon /> Incident Type
               </h4>
             </div>
             <div className="py-2 px-3">
@@ -284,7 +288,7 @@ export default function DBSStatus() {
                         className="btn btn-success"
                         onClick={() => setAddModalState(true)}
                       >
-                        <Plus /> Add New Check Status
+                        <Plus /> Add New Incident Type
                       </button>
                     </div>
                   </div>
@@ -327,25 +331,25 @@ export default function DBSStatus() {
                       Error: {error}
                     </div>
                   )}
-                  {!loading && !error && dbsStatus.length === 0 && (
+                  {!loading && !error && incidentType.length === 0 && (
                     <div className="no-roles flex justify-center text-center mt-[25%]">
-                      No DBS Status found.
+                      No Incident Type found.
                     </div>
                   )}
-                  {!loading && !error && dbsStatus.length > 0 && (
+                  {!loading && !error && incidentType.length > 0 && (
                     <ul className="space-y-3">
-                      {dbsStatus.map((data) => (
+                      {incidentType.map((data) => (
                         <li
-                          key={data.statusId}
+                          key={data.incidentTypeId}
                           className="flex items-center justify-between bg-gray-50 p-3 rounded-lg"
                         >
-                          <span>{data.statusName}</span>
+                          <span>{data.name}</span>
                           <div>
                             <button
                               className="btn btn-warning btn-icon btn-sm mr-1"
                               type="button"
                               onClick={() =>{
-                                setDbsStatusEdit(data);
+                                setIncidentTypeEdit(data);
                                 setEditModalState(true);
                               }
                               }

@@ -33,17 +33,17 @@ function AdminLayout() {
     {
       path: "/Tracker",
       icon: <ClipboardList size={25} />,
-      label: "DBS Tracker",
+      label: "CTA Tracker",
     },
     {
-      path: "/DBSSearch",
+      path: "/CTASearch",
       icon: <ClipboardPaste size={25} />,
-      label: "DBS Search",
+      label: "CTA Search",
     },
     {
       path: "/IncidentMgt",
       icon: <AlertTriangle size={25} />,
-      label: "Incident Mgt",
+      label: "Incident/Offence Mgt",
     },
 
     {

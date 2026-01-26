@@ -3,18 +3,17 @@ import Dashboard from "../pages/admin/Dashboard";
 import AdminLayout from "../layout/AdminLayout";
 import ApplicantNew from "../pages/admin/Applicant/ApplicantNew";
 import Applicants from "../pages/admin/Applicant/Applicants";
-import ApplicantProfile from "../pages/admin/Applicant/ApplicantProfile";
 import EmployersNew from "../pages/admin/Employer/EmployerNew";
 import Employers from "../pages/admin/Employer/Employers";
 import EmployerProfile from "../pages/admin/Employer/EmployerProfile";
 import DbsTracker from "../pages/admin/Tracker/DbsTracker";
 import PaymentDashboard from "../pages/admin/Payment/Payment";
 import InvestigationPortal from "../pages/admin/Report/Report";
-import CommunicationsPage from "../pages/admin/Communication/Communication";
+import CommunicationsPage from "../pages/admin/Communication/Communication2";
 import ControlPanel from "../pages/admin/ControlPanel/ControlPanel";
 import TrackerDetails from "../pages/admin/Tracker/TrackerDetails";
 import DBSSearchModule from "../pages/admin/DBSSearch/DBSSearch";
-import Incidents from "../pages/admin/Incident/incident";
+import Incidents from "../pages/admin/Incident/Incident";
 import IncidentReportDetails from "../pages/admin/Incident/IncidentReportDetails";
 
 function AppRoutes() {
@@ -25,10 +24,10 @@ function AppRoutes() {
         <Route path="Dashboard" element={<Dashboard />} />
         <Route path="ApplicantsMgt" element={<Applicants />} />
         <Route path="ApplicantsMgt/ApplicantNew" element={<ApplicantNew />} />
-        <Route
+        {/* <Route
           path="ApplicantsMgt/ApplicantProfile"
           element={<ApplicantProfile />}
-        />
+        /> */}
         <Route path="EmployersMgt" element={<Employers />} />
         <Route path="EmployersMgt/EmployerNew" element={<EmployersNew />} />
         <Route

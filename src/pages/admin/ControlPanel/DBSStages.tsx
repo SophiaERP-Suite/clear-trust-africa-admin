@@ -6,7 +6,7 @@ import { fetchDbsStages, fetchDbsTypes, submitDbsStage, updateDbsStage } from ".
 import { useForm, useWatch } from "react-hook-form";
 import { handleCreateEmployee } from "../../../utils/ResponseHandlers/EmployeeResponse";
 import Tippy from "@tippyjs/react";
-import { fetchOrgMembers } from "../../../utils/Requests/AuthRequests";
+import { fetchOrgCaseAdmins } from "../../../utils/Requests/AuthRequests";
 import type { DBSTypes } from "../Tracker/DbsTracker";
 
 interface DBSStagesFormValues {
@@ -88,7 +88,7 @@ export default function DBSStages() {
   }, [editStage, setValue])
   
   useEffect(() => {
-    fetchOrgMembers()
+    fetchOrgCaseAdmins()
     .then(res => {
       if (res.status === 200) {
         res.json()
@@ -253,7 +253,7 @@ export default function DBSStages() {
         
           <div className="h-fit max-h-[70vh] overflow-y-auto w-100">
             <div className="flex justify-start">
-              <p className="font-semibold text-black py-1 text-lg"><IdCard size={20} className="mr-2" /> Add New DBS Stage</p>
+              <p className="font-semibold text-black py-1 text-lg"><IdCard size={20} className="mr-2" /> Add New Stage</p>
             </div>
             <form
                   onSubmit={handleSubmit(addNewStage)}
@@ -307,7 +307,7 @@ export default function DBSStages() {
                     className="inline-block mb-2 text-secondary-600 dark:text-white"
                     htmlFor="email"
                   >
-                    DBS Type
+                    Type
                   </label>
                   <div>
                     <select
@@ -474,7 +474,7 @@ export default function DBSStages() {
             editStage && (
                 <div className="h-fit max-h-[70vh] overflow-y-auto w-100">
                     <div className="flex justify-start">
-                    <p className="font-semibold text-black py-1 text-lg"><IdCard size={20} className="mr-2" /> Update DBS Stage</p>
+                    <p className="font-semibold text-black py-1 text-lg"><IdCard size={20} className="mr-2" /> Update Stage</p>
                     </div>
                     <form
                   onSubmit={submitEdit(updateStage)}
@@ -528,7 +528,7 @@ export default function DBSStages() {
                     className="inline-block mb-2 text-secondary-600 dark:text-white"
                     htmlFor="email"
                   >
-                    DBS Type
+                    Type
                   </label>
                   <div>
                     <select
@@ -681,7 +681,7 @@ export default function DBSStages() {
           <div className="relative flex flex-col mb-8  bg-white dark:bg-dark-card shadow rounded">
             <div className="flex justify-between flex-auto p-5 border-b dark:border-secondary-800 rounded">
               <h4 className="mb-0 dark:text-secondary-200">
-                <IdCard /> DBS Stage
+                <IdCard /> Check Stage
               </h4>
             </div>
             <div className="py-2 px-3">
@@ -694,7 +694,7 @@ export default function DBSStages() {
                         className="btn btn-success"
                         onClick={() => setAddModalState(true)}
                       >
-                        <Plus /> Add New DBS Stage
+                        <Plus /> Add New Check Stage
                       </button>
                     </div>
                   </div>
@@ -774,7 +774,7 @@ export default function DBSStages() {
                             {...filterReg('DBSTypeId')}
                             className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                           >
-                            <option value="">All DBS Type</option>
+                            <option value="">All Check Type</option>
                             {
                               dbsType.map((data, index) => (
                                 <option value={data.dbsTypeId} key={index}>{data.typeName}</option>
@@ -800,7 +800,7 @@ export default function DBSStages() {
                                       Description
                                   </th>
                                   <th className="px-6 py-4 min-w-30 text-left font-medium text-black dark:text-white">
-                                      DBS Type
+                                      Type
                                   </th>
                                   <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
                                       Stage Admin
@@ -873,7 +873,7 @@ export default function DBSStages() {
                         {
                         dbsStages.length === 0 ?
                             <div className="py-4 whitespace-nowrap w-full">
-                                <span className="px-6 py-4 text-left font-medium text-black dark:text-white">There hasn't been any dbs stage added</span>
+                                <span className="px-6 py-4 text-left font-medium text-black dark:text-white">There hasn't been any stage added</span>
                             </div> : <></>
                         }
                     </div>

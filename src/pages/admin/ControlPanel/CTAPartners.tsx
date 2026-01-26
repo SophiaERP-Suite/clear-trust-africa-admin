@@ -1,48 +1,72 @@
 import { useEffect, useState } from "react";
 import { toast, ToastContainer } from 'react-toastify';
 import Modal from 'react-modal';
-import { FolderKey, CheckCheck, Pen, Plus, X,} from "lucide-react";
-import { fetchDbsTypes, submitDbsType, updateDbsType } from "../../../utils/Requests/DbsRequests";
-import type { DBSTypes } from "../Tracker/DbsTracker";
-import { useForm, Controller } from "react-hook-form";
+import { AlertCircleIcon, CheckCheck, Pen, Plus, X,} from "lucide-react";
+import { useForm, useWatch } from "react-hook-form";
 import { handleCreateEmployee } from "../../../utils/ResponseHandlers/EmployeeResponse";
+import { fetchDBSPartner, submitDBSPartner, updateDBSPartner } from "../../../utils/Requests/IncidentRequests";
+import { fetchCountries } from "../../../utils/Requests/EmployeeRequests";
 import Tippy from "@tippyjs/react";
-import RichTextEditor from "../../../layout/RichTextEditor";
-import HtmlRenderer from "../../../layout/HTMLRenderer";
 
-interface DBSTypesFormValues {
-  TypeName: string;
-  TypeCost: number;
-  Description: string;
+interface DBSPartnerFormValues {
+  PartnerName: string;
+  CountryId: string;
 }
 
-export default function DBSType() {
+interface DBSPartner {
+    partnerId: number;
+    partnerName: string;
+    countryId: string;
+    countryName: string;
+}
+
+interface CountryData {
+  countryId: number;
+  name: string;
+  code: string;
+}
+
+type FilterForm = {
+  CountryId: string;
+}
+
+
+export default function CTAPartnerType() {
   const [loading, setLoading] = useState(true);
-  const [dbsType, setDbsType] = useState<DBSTypes[]>([]);
-  const [dbsTypeEdit, setDbsTypeEdit] = useState<DBSTypes | null>(null);
-  const { register, reset, handleSubmit, formState, control } = useForm<DBSTypesFormValues>();
+  const [ctaPartner, setCTAPartner] = useState<DBSPartner[]>([]);
+  const [ctaPartnerEdit, setCTAPartnerEdit] = useState<DBSPartner | null>(null);
+  const { register, reset, handleSubmit, formState } = useForm<DBSPartnerFormValues>();
+  const [countries, setCountries] = useState<CountryData[]>([]);
   const {
     register: regEdit,
     reset: resetEdit,
     handleSubmit: submitEdit,
     formState: editFormState,
-    control: editControl,
     setValue,
-  } = useForm<DBSTypesFormValues>();
+  } = useForm<DBSPartnerFormValues>();
   const [error, setError] = useState<string | null>(null);
   const [addModalState, setAddModalState] = useState(false);
   const [editModalState, setEditModalState] = useState(false);
   const { errors } = formState;
   const { errors: editErrors } = editFormState;
+  const {
+    register: filterReg,
+    control,
+  } = useForm<FilterForm>();
+  const filters = useWatch({ control });
+  const [page, setPage] = useState(1);
+  const [totalPartners, setTotalPartners] = useState(0);
+  const limit = 4;
 
   useEffect(() => {
-    fetchDbsTypes()
+    fetchDBSPartner({ pageNumber: page, limit, ...filters })
     .then(res => {
       if (res.status === 200) {
         res.json()
         .then(data => {
           console.log(data);
-          setDbsType(data.data);
+          setCTAPartner(data.data.thirdParty);
+          setTotalPartners(data.data.totalCount);
         })
       } else {
         res.text()
@@ -52,24 +76,42 @@ export default function DBSType() {
       }
     })
     .finally(() => setLoading(false))
-  }, []);
+  }, [page, limit, filters]);
+  
+  useEffect(() => {
+    fetchCountries()
+    .then(res => {
+    if (res.status === 200) {
+        res.json()
+        .then(data => {
+        setCountries(data);
+        })
+    } else {
+        res.text()
+        .then(data => {
+        console.log(JSON.parse(data));
+        })
+    }
+    })
+    .catch((err) => console.log(err))
+}, []);
     
   useEffect(() => {
-    if (dbsTypeEdit) {
-      setValue('TypeName', dbsTypeEdit.typeName);
-      setValue('TypeCost', dbsTypeEdit.typeCost);
-      setValue('Description', dbsTypeEdit.description);
+    if (ctaPartnerEdit) {
+      setValue('PartnerName', ctaPartnerEdit.partnerName);
+      setValue('CountryId', ctaPartnerEdit.countryId);
     }
-  }, [dbsTypeEdit, setValue])
+  }, [ctaPartnerEdit, setValue])
 
-  const refetchDbsType = async () => {
+  const refetchctaPartners = async () => {
     try {
       setLoading(true);
-      const res = await fetchDbsTypes();
+      const res = await fetchDBSPartner({ pageNumber: page, limit, ...filters });
       if (res.status === 200) {
         const data = await res.json()
         console.log(data);
-        setDbsType(data.data);
+        setCTAPartner(data.data.thirdParty);
+        setTotalPartners(data.data.totalCount);
       } else {
         const resText = await res.text();
         console.log(JSON.parse(resText));
@@ -77,14 +119,14 @@ export default function DBSType() {
       
     } catch (err) {
       console.error(err);
-      setError("Failed to fetch DBS Types");
+      setError("Failed to fetch Incident Action Types");
     } finally {
       setLoading(false);
     }
   };
   
-  const addNewStatus = async (data: DBSTypesFormValues) =>{
-    if (!errors.TypeName && !errors.TypeCost && !errors.Description){
+  const addNewctaPartnerType = async (data: DBSPartnerFormValues) =>{
+    if (!errors.PartnerName && !errors.CountryId){
       const loader = document.getElementById('query-loader');
       const text = document.getElementById('query-text');
       if (loader) {
@@ -94,22 +136,19 @@ export default function DBSType() {
         text.style.display = 'none';
       }
       const formData = new FormData();
-      formData.append("TypeName", data.TypeName);
-      formData.append("TypeCost", String(data.TypeCost));
-      formData.append("Description", data.Description);
-      // console.log("I got here")
-      const res = await submitDbsType(formData);
+      formData.append("PartnerName", data.PartnerName);
+      formData.append("CountryId", data.CountryId);
+      const res = await submitDBSPartner(formData);
       handleCreateEmployee(res, loader, text, { toast }, reset)
       .finally(async () => {
         setAddModalState(false);
-        await refetchDbsType();
+        await refetchctaPartners();
       });
     }
   }
   
-  const updateType = async (data: DBSTypesFormValues) =>{
-    if (!editErrors.TypeName && !editErrors.TypeCost &&
-        !editErrors.Description && dbsTypeEdit){
+  const updateAction = async (data: DBSPartnerFormValues) =>{
+    if (!editErrors.PartnerName && !editErrors.CountryId && ctaPartnerEdit){
       const loader = document.getElementById('query-loader');
       const text = document.getElementById('query-text');
       if (loader) {
@@ -119,14 +158,13 @@ export default function DBSType() {
         text.style.display = 'none';
       }
       const formData = new FormData();
-      formData.append("TypeName", data.TypeName);
-      formData.append("TypeCost", String(data.TypeCost));
-      formData.append("Description", data.Description);
-      const res = await updateDbsType(formData, dbsTypeEdit.dbsTypeId);
+      formData.append("PartnerName", data.PartnerName);
+      formData.append("CountryId", data.CountryId);
+      const res = await updateDBSPartner(formData, ctaPartnerEdit.partnerId);
       handleCreateEmployee(res, loader, text, { toast }, resetEdit)
       .finally(async () => {
         setEditModalState(false);
-        await refetchDbsType();
+        await refetchctaPartners();
       });
     }
   }
@@ -157,10 +195,10 @@ export default function DBSType() {
         
           <div className="h-fit w-100">
             <div className="flex justify-start">
-              <p className="font-semibold text-black py-1 text-lg"><FolderKey size={20} className="mr-2" /> Add New Type</p>
+              <p className="font-semibold text-black py-1 text-lg"><AlertCircleIcon size={20} className="mr-2" /> Add New Third Party</p>
             </div>
             <form
-                  onSubmit={handleSubmit(addNewStatus)}
+                  onSubmit={handleSubmit(addNewctaPartnerType)}
                   noValidate
                 >
               <div className="grid grid-cols-1 gap-x-8 gap-y-5 mt-2">
@@ -169,64 +207,51 @@ export default function DBSType() {
                     className="inline-block mb-2 text-secondary-600 dark:text-white"
                     htmlFor="email"
                   >
-                    Type Name
+                    Third Party Name
                   </label>
                   <div>
                     <input
                       type="text"
                       className="w-full h-12 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-black placeholder-secondary-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
                         {
-                        ...register('TypeName', {
+                        ...register('PartnerName', {
                           required: 'Required'
                         })
                       }
                       required
                     />
-                    <p className='error-msg'>{errors.TypeName?.message}</p>
+                    <p className='error-msg'>{errors.PartnerName?.message}</p>
                   </div>
                 </div>
                 <div>
-                  <label
-                    className="inline-block mb-2 text-secondary-600 dark:text-white"
-                    htmlFor="email"
-                  >
-                    Type Cost
-                  </label>
-                  <div>
-                    <input
-                      type="number"
-                      className="w-full h-12 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-black placeholder-secondary-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                        {
-                        ...register('TypeCost', {
-                          required: 'Required'
-                        })
-                      }
-                      required
-                    />
-                    <p className='error-msg'>{errors.TypeCost?.message}</p>
-                  </div>
-                </div>
-                <div>
-                  <label
-                    className="inline-block mb-2 text-secondary-600 dark:text-white"
-                    htmlFor="email"
-                  >
-                    Description
-                  </label>
-                  <div>
-                    <Controller
-                        name="Description"
-                        control={control}
-                        rules={{ required: 'Required' }}
-                        render={({ field }) => (
-                          <RichTextEditor
-                            value={field.value}
-                            onChange={field.onChange}
-                          />
-                        )}
-                    />
-                    <p className='error-msg'>{errors.Description?.message}</p>
-                  </div>
+                    <label
+                        className="inline-block mb-2 text-secondary-600 dark:text-white"
+                        htmlFor="email"
+                      >
+                        Country
+                      </label>
+                      <div>
+                        <select
+                            className="w-full h-12 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-black placeholder-secondary-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                            {
+                            ...register('CountryId', {
+                                required: 'Required',
+                                pattern: {
+                                value: /^(?!default$).+$/,
+                                message: 'Required'
+                                }
+                            })
+                            }
+                        >
+                            <option value="default">Select Country</option>
+                            {
+                            countries.map((data, index) => (
+                                <option key={index} value={data.countryId}>{data.name}</option>
+                            ))
+                            }
+                        </select>
+                        <p className='error-msg'>{errors.CountryId?.message}</p>
+                    </div>
                 </div>
               </div>
               <hr className="mt-5" />
@@ -243,7 +268,7 @@ export default function DBSType() {
                   </div>
                   <span id="query-text">
                     <CheckCheck size={18} className="mr-2" />
-                    Add Type
+                    Add Third Party
                   </span>
                 </button>
               </div>
@@ -268,80 +293,67 @@ export default function DBSType() {
       }}
       >
         {
-            dbsTypeEdit && (
+            ctaPartnerEdit && (
                 <div className="h-fit w-100">
                     <div className="flex justify-start">
-                    <p className="font-semibold text-black py-1 text-lg"><FolderKey size={20} className="mr-2" /> Update Type</p>
+                    <p className="font-semibold text-black py-1 text-lg"><AlertCircleIcon size={20} className="mr-2" /> Update Third Party</p>
                     </div>
                     <form
-                        onSubmit={submitEdit(updateType)}
+                        onSubmit={submitEdit(updateAction)}
                         noValidate
                         >
                     <div className="grid grid-cols-1 gap-x-8 gap-y-5 mt-2">
                         <div>
-                        <label
-                            className="inline-block mb-2 text-secondary-600 dark:text-white"
-                            htmlFor="email"
-                        >
-                            Type Name
-                        </label>
-                        <div>
-                            <input
-                            type="text"
-                            className="w-full h-12 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-black placeholder-secondary-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                                {
-                                ...regEdit('TypeName', {
-                                required: 'Required'
-                                })
-                            }
-                            required
-                            />
-                            <p className='error-msg'>{editErrors.TypeName?.message}</p>
-                        </div>
-                        </div>
-                        <div>
-                        <label
-                            className="inline-block mb-2 text-secondary-600 dark:text-white"
-                            htmlFor="email"
-                        >
-                            Type Cost
-                        </label>
-                        <div>
-                            <input
-                            type="number"
-                            className="w-full h-12 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-black placeholder-secondary-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                                {
-                                ...regEdit('TypeCost', {
-                                required: 'Required'
-                                })
-                            }
-                            required
-                            />
-                            <p className='error-msg'>{editErrors.TypeCost?.message}</p>
-                        </div>
-                        </div>
-                        <div>
-                        <label
-                            className="inline-block mb-2 text-secondary-600 dark:text-white"
-                            htmlFor="email"
-                        >
-                            Description
-                        </label>
-                        <div>
-                          <Controller
-                              name="Description"
-                              control={editControl}
-                              rules={{ required: 'Required' }}
-                              render={({ field }) => (
-                                <RichTextEditor
-                                  value={field.value}
-                                  onChange={field.onChange}
+                            <label
+                                className="inline-block mb-2 text-secondary-600 dark:text-white"
+                                htmlFor="email"
+                            >
+                                Third Party Name
+                            </label>
+                            <div>
+                                <input
+                                type="text"
+                                className="w-full h-12 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-black placeholder-secondary-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                                    {
+                                    ...regEdit('PartnerName', {
+                                    required: 'Required'
+                                    })
+                                }
+                                required
                                 />
-                              )}
-                          />
-                            <p className='error-msg'>{editErrors.Description?.message}</p>
+                                <p className='error-msg'>{editErrors.PartnerName?.message}</p>
+                            </div>
                         </div>
-                        </div>
+                        <div>
+                    <label
+                        className="inline-block mb-2 text-secondary-600 dark:text-white"
+                        htmlFor="email"
+                      >
+                        Country
+                      </label>
+                      <div>
+                        <select
+                            className="w-full h-12 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-black placeholder-secondary-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                            {
+                            ...regEdit('CountryId', {
+                                required: 'Required',
+                                pattern: {
+                                value: /^(?!default$).+$/,
+                                message: 'Required'
+                                }
+                            })
+                            }
+                        >
+                            <option value="default">Select Country</option>
+                            {
+                            countries.map((data, index) => (
+                                <option key={index} value={data.countryId}>{data.name}</option>
+                            ))
+                            }
+                        </select>
+                        <p className='error-msg'>{editErrors.CountryId?.message}</p>
+                    </div>
+                </div>
                     </div>
                     <hr className="mt-5" />
                     <div className="flex justify-end my-2 gap-2">
@@ -357,7 +369,7 @@ export default function DBSType() {
                         </div>
                         <span id="query-text">
                             <Pen size={18} className="mr-2" />
-                            Edit Type
+                            Edit Third Party
                         </span>
                         </button>
                     </div>
@@ -371,7 +383,7 @@ export default function DBSType() {
           <div className="relative flex flex-col mb-8  bg-white dark:bg-dark-card shadow rounded">
             <div className="flex justify-between flex-auto p-5 border-b dark:border-secondary-800 rounded">
               <h4 className="mb-0 dark:text-secondary-200">
-                <FolderKey /> Check Type
+                <AlertCircleIcon /> Third Party
               </h4>
             </div>
             <div className="py-2 px-3">
@@ -379,12 +391,23 @@ export default function DBSType() {
                 <div className=" overflow-x-auto p-5">
                   
                   <div className="flex justify-end mb-2">
-                    <div className="flex justify-center gap-2 mb-4">
+                    <div className="flex justify-center gap-4 mb-4">
+                    <select
+                        {...filterReg('CountryId')}
+                        className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        >
+                        <option value="">All Countries</option>
+                        {
+                            countries.map((data, index) => (
+                            <option value={data.countryId} key={index}>{data.name}</option>
+                            ))
+                        }
+                        </select>
                       <button
                         className="btn btn-success"
                         onClick={() => setAddModalState(true)}
                       >
-                        <Plus /> Add New Check Type
+                        <Plus /> Add Third Party
                       </button>
                     </div>
                   </div>
@@ -427,14 +450,9 @@ export default function DBSType() {
                       Error: {error}
                     </div>
                   )}
-                  {!loading && !error && dbsType.length === 0 && (
-                    <div className="no-roles flex justify-center text-center mt-[25%]">
-                      No Type found.
-                    </div>
-                  )}
-                  {!loading && !error && dbsType.length > 0 && (
-                    <div className="overflow-x-auto">
-                        <div className="flex flex-wrap justify-between overflow-x-auto">
+                  {!loading && !error && (
+                    <>
+                        <div className="overflow-x-auto">
                             <table className="min-w-full divide-y divide-secondary-200 dark:divide-secondary-800 border dark:border-secondary-800">
                                 <thead>
                                     <tr className="bg-secondary-100 dark:bg-dark-bg">
@@ -445,10 +463,7 @@ export default function DBSType() {
                                             Name
                                         </th>
                                         <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
-                                            Cost
-                                        </th>
-                                        <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
-                                            Description
+                                            Country
                                         </th>
                                         <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
                                             Action
@@ -457,56 +472,86 @@ export default function DBSType() {
                                 </thead>
                                 <tbody className="divide-y divide-secondary-200 dark:divide-secondary-800">
                                 {
-                                    dbsType.map((data, index) => (
-                                    <tr key={data.dbsTypeId ?? index}>
+                                    ctaPartner.map((data, index) => (
+                                    <tr key={data.partnerId ?? index}>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                         <div className="iq-media-group iq-media-group-1">
                                             <h6 className="font-bold dark:text-white">
                                             {" "}
-                                            #{index + 1}
+                                            #{index}
                                             </h6>
                                         </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
-                                        {data.typeName}
+                                        {data.partnerName}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
-                                        { `NGN ${data.typeCost.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2})}` }
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
-                                          <HtmlRenderer html={data.description} />
+                                        {data.countryName}
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className="flex items-center list-user-action">
-                                            <Tippy content='Edit DBS Type'>
+                                            <Tippy content='Edit Third party'>
                                                 <button
                                                     className="btn btn-warning btn-icon btn-sm mr-1"
                                                     type="button"
-                                                    onClick={() =>{
-                                                        setDbsTypeEdit(data);
+                                                    onClick={() => {
+                                                        setCTAPartnerEdit(data);
                                                         setEditModalState(true);
-                                                    }
-                                                    }
+                                                    }}
                                                     >
                                                     <Pen />
-                                                    </button>
+                                                </button>
                                             </Tippy>
                                             </div>
                                         </td>
                                     </tr>
                                     ))
                                 }
-                                
-                            </tbody>
+                                    
+                                </tbody>
                             </table>
                             {
-                            dbsType.length === 0 ?
-                                <div className="py-4 whitespace-nowrap w-full">
-                                    <span className="px-6 py-4 text-left font-medium text-black dark:text-white">There hasn't been any types added</span>
-                                </div> : <></>
+                                ctaPartner.length === 0 ?
+                                    <div className="py-4 whitespace-nowrap w-full">
+                                        <span className="px-6 py-4 text-left font-medium text-black dark:text-white">There hasn't been any third party added</span>
+                                    </div> : <></>
                             }
                         </div>
-                    </div>
+                        <div className="flex flex-wrap justify-between mt-6">
+                            <div className="flex justify-center items-center mb-1">
+                                <p className="text-black">
+                                    Showing { ctaPartner.length > 0 ? ((page * limit) - limit) + 1 : 0 } to { ctaPartner.length > 0 ? (((page * limit) - limit) + 1) + (ctaPartner.length - 1) : 0 } of { totalPartners } entries
+                                </p>
+                            </div>
+                            <div className="inline-flex flex-wrap">
+                                {
+                                page > 1 && <a
+                                href="#"
+                                onClick={() => { if (page > 1) {setPage(page - 1);} }}
+                                className="border-t border-b border-l text-primary-500 border-secondary-500 px-2 py-1 rounded-l dark:border-secondary-800"
+                                >
+                                Previous
+                                </a>
+                                }
+                                <a
+                                href="#"
+                                className="border text-white border-secondary-500 cursor-pointer bg-primary-500 px-4 py-1 dark:border-secondary-800"
+                                >
+                                { page }
+                                </a>
+                                {
+                                (page * limit) < totalPartners && <a
+                                href="#"
+                                onClick={() => { setPage(page + 1); }}
+                                className="border-r border-t border-b text-primary-500 border-secondary-500 px-4 py-1 rounded-r dark:border-secondary-800"
+                                >
+                                Next
+                                </a>
+                                }
+                                
+                            </div>
+                        </div>
+                    </>
                   )}
                 </div>
               </div>
