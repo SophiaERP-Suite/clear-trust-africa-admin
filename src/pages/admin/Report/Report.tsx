@@ -54,6 +54,37 @@ interface IncidentTypeGroup {
   percentage: number;
 }
 
+interface IncidentCountryGroup {
+  country: string;
+  totalReport: number;
+  percentage: number;
+}
+
+interface IncidentStateGroup {
+  state: string;
+  totalReport: number;
+  percentage: number;
+}
+
+interface IncidentAccussedGroup {
+  accusedEmplyeerF: string;
+  accusedEmplyeerL: string;
+  totalReport: number;
+  percentage: number;
+}
+
+interface IncidentOrgGroup {
+  organization: string;
+  totalReport: number;
+  percentage: number;
+}
+
+interface IncidentOrgGroup {
+  organization: string;
+  totalReport: number;
+  percentage: number;
+}
+
 interface ReportData {
   reported: number;
   convicted: number;
@@ -63,6 +94,11 @@ interface ReportData {
   incidentThusFar: IncidentChartData[];
   lastFourIncidents: IncidentReport[];
   incidentTypeGroup: IncidentTypeGroup[];
+  incidentCountryGroup: IncidentCountryGroup;
+  incidentStateGroup: IncidentStateGroup;
+  incidentAccussedGroup: IncidentAccussedGroup;
+  incidentOrgGroup: IncidentOrgGroup;
+  incidentTypeConvictGroup: IncidentTypeGroup;
 }
 
 interface CountryData {
@@ -470,20 +506,46 @@ export default function InvestigationPortal() {
                         {(report.reported !== 0 || report.vindicated !== 0) ? (Math.ceil((report.vindicated / report.reported) * 100 * 100) / 100) : 0} %
                       </p>
                     </div>
-                    <div
-                        className="p-4 bg-slate-50 rounded-lg text-center"
-                      >
-                      <p className="text-sm text-slate-600 mb-1">Country With Most Cases</p>
-                      <p className="text-2xl font-bold text-slate-900">
-                        0
-                      </p>
-                    </div>
+                    {
+                      (filters.CountryId === undefined || filters.CountryId === "") && (
+                        <div
+                            className="p-4 bg-slate-50 rounded-lg text-center"
+                          >
+                          <p className="text-sm text-slate-600 mb-1">Country With Most Cases</p>
+                          <p className="text-2xl font-bold text-slate-900">
+                            {report.incidentCountryGroup ? report.incidentCountryGroup.country : 'None Specified'}
+                          </p>
+                          <p className="text-sm font-bold text-slate-900">
+                            {report.incidentCountryGroup ? `${report.incidentCountryGroup.percentage}%` : '0%'}
+                          </p>
+                        </div>
+                      )
+                    }
+                    {
+                      (filters.CountryId !== undefined && filters.CountryId !== "") && (
+                        <div
+                            className="p-4 bg-slate-50 rounded-lg text-center"
+                          >
+                          <p className="text-sm text-slate-600 mb-1">State With Most Cases</p>
+                          <p className="text-2xl font-bold text-slate-900">
+                            {report.incidentStateGroup ? report.incidentStateGroup.state : 'None Specified'}
+                          </p>
+                          <p className="text-sm font-bold text-slate-900">
+                            {report.incidentStateGroup ? `${report.incidentStateGroup.percentage}%` : '0%'}
+                          </p>
+                        </div>
+                      )
+                    }
+                    
                     <div
                         className="p-4 bg-slate-50 rounded-lg text-center"
                       >
                       <p className="text-sm text-slate-600 mb-1">Organization With Most Cases</p>
                       <p className="text-2xl font-bold text-slate-900">
-                        0
+                        {report.incidentOrgGroup ? report.incidentOrgGroup.organization : 'None Specified'}
+                      </p>
+                      <p className="text-sm font-bold text-slate-900">
+                        {report.incidentOrgGroup ? `${report.incidentOrgGroup.percentage}%` : '0%'}
                       </p>
                     </div>
                     <div
@@ -491,7 +553,10 @@ export default function InvestigationPortal() {
                       >
                       <p className="text-sm text-slate-600 mb-1">Applicants with Most Reports</p>
                       <p className="text-2xl font-bold text-slate-900">
-                        0
+                        {report.incidentAccussedGroup ? `${report.incidentAccussedGroup.accusedEmplyeerF} ${report.incidentAccussedGroup.accusedEmplyeerL}` : 'None Specified'}
+                      </p>
+                      <p className="text-sm font-bold text-slate-900">
+                        {report.incidentAccussedGroup ? `${report.incidentAccussedGroup.percentage}%` : '0%'}
                       </p>
                     </div>
                     <div
@@ -499,7 +564,10 @@ export default function InvestigationPortal() {
                       >
                       <p className="text-sm text-slate-600 mb-1">Incident Type with most convictions</p>
                       <p className="text-2xl font-bold text-slate-900">
-                        0
+                        {report.incidentTypeConvictGroup ? report.incidentTypeConvictGroup.incidentType : 'None Specified'}
+                      </p>
+                      <p className="text-sm font-bold text-slate-900">
+                        {report.incidentTypeConvictGroup ? `${report.incidentTypeConvictGroup.percentage}%` : '0%'}
                       </p>
                     </div>
                   </div>
