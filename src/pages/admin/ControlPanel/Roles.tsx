@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
-import Modal from "../../utils/modal";
 import {
   createRole,
   deleteRole,
@@ -8,7 +7,8 @@ import {
   updateRole,
 } from "../../../api/roleApi";
 import type { RolesDto } from "../../../types/controlPanel/roles";
-import { Check, Pen, Plus, Shield, Trash, Trash2Icon } from "lucide-react";
+import { CheckCheck, Pen, Plus, Shield, Trash, Trash2Icon } from "lucide-react";
+import Modal from "../../../components/modal";
 
 type ModalType = "add" | "edit" | "delete" | null;
 
@@ -160,8 +160,10 @@ function Roles() {
                     inputLabel="New Role Name"
                     inputPlaceholder="Enter Role Name..."
                     headerIcon={<Shield />}
-                    butonIcon={<Check />}
-                    onConfirm={handleNewRole}
+                    butonIcon={<CheckCheck />}
+                    onConfirm={({ inputValue }: { inputValue?: string }) =>
+                      handleNewRole(inputValue)
+                    }
                     onCancel={closeModal}
                   />
 
@@ -190,9 +192,12 @@ function Roles() {
                     defaultInputValue={selectedRole?.name || ""}
                     headerIcon={<Shield />}
                     butonIcon={<Pen />}
-                    onConfirm={handleUpdateRole}
+                    onConfirm={({ inputValue }: { inputValue?: string }) =>
+                      handleUpdateRole(inputValue)
+                    }
                     onCancel={closeModal}
                   />
+                  
                   <div className="flex justify-end mb-2">
                     <div className="flex justify-center gap-2 mb-4">
                       <button

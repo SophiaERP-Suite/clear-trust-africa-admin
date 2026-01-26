@@ -32,7 +32,8 @@ import {
 } from "../../../api/adminApi.js";
 import type { OrganisationDto } from "../../../types/controlPanel/organisation.js";
 import { ToastContainer, toast } from "react-toastify";
-import Modal from "../../utils/modal.js";
+import Loading from "../../utils/Loading.js";
+import Modal from "../../../components/modal.js";
 
 type ModalType = "suspend" | "approve" | "reject" | null;
 
@@ -184,7 +185,7 @@ function Employers() {
         headerIcon={<X />}
         butonIcon={<X />}
         loading={loading}
-        onConfirm={handleReject}
+        onConfirm={({ inputValue }) => handleReject(inputValue)}
         onCancel={closeModal}
       />
 
@@ -199,7 +200,7 @@ function Employers() {
         headerIcon={<AlertCircle />}
         butonIcon={<Check />}
         loading={loading}
-        onConfirm={handleSuspend}
+        onConfirm={({ inputValue }) => handleSuspend(inputValue)}
         onCancel={closeModal}
       />
       <div
@@ -266,70 +267,72 @@ function Employers() {
             Error: {error}
           </div>
         )}
-
-        <div
-          className="footer-inner mx-auto main-container container"
-          x-bind:className="setting.page_layout"
-        >
-          <div className="flex flex-wrap contet-inner">
-            <div className="flex-auto w-full">
-              <div className="relative flex flex-col mb-8  bg-white dark:bg-dark-card shadow rounded">
-                <div className="flex justify-between flex-auto p-5 border-b dark:border-secondary-800 rounded">
-                  <h4 className="mb-0 dark:text-secondary-200">
-                    Employers List
-                  </h4>
-                  <a href="/ApplicantNew"></a>
-                </div>
-                <div className="pb-6 pt-2 px-0">
-                  <div className="overflow-x-auto">
-                    <div className=" overflow-x-auto p-5">
-                      <div className="flex justify-between my-6 mx-0">
-                        <div className="flex justify-center items-center gap-2 mb-1">
-                          <label
-                            className="inline-block text-black text-md dark:text-white"
-                            htmlFor="status"
-                          >
-                            Status:
-                          </label>
-                          <div className="flex">
-                            <select
-                              id="status"
-                              value={statusFilter}
-                              onChange={(e) => setStatusFilter(e.target.value)}
-                              className="form-control"
+        {!loading && !error && organisations.length > 0 ? (
+          <div
+            className="footer-inner mx-auto main-container container"
+            x-bind:className="setting.page_layout"
+          >
+            <div className="flex flex-wrap contet-inner">
+              <div className="flex-auto w-full">
+                <div className="relative flex flex-col mb-8  bg-white dark:bg-dark-card shadow rounded">
+                  <div className="flex justify-between flex-auto p-5 border-b dark:border-secondary-800 rounded">
+                    <h4 className="mb-0 dark:text-secondary-200">
+                      Employers List
+                    </h4>
+                    <a href="/ApplicantNew"></a>
+                  </div>
+                  <div className="pb-6 pt-2 px-0">
+                    <div className="overflow-x-auto">
+                      <div className=" overflow-x-auto p-5">
+                        <div className="flex justify-between my-6 mx-0">
+                          <div className="flex justify-center items-center gap-2 mb-1">
+                            <label
+                              className="inline-block text-black text-md dark:text-white"
+                              htmlFor="status"
                             >
-                              <option value="">All</option>
-                              <option value="Active">Active</option>
-                              <option value="Pending">Pending</option>
-                              <option value="Suspended">Suspended</option>
-                            </select>
+                              Status:
+                            </label>
+                            <div className="flex">
+                              <select
+                                id="status"
+                                value={statusFilter}
+                                onChange={(e) =>
+                                  setStatusFilter(e.target.value)
+                                }
+                                className="form-control"
+                              >
+                                <option value="">All</option>
+                                <option value="Active">Active</option>
+                                <option value="Pending">Pending</option>
+                                <option value="Suspended">Suspended</option>
+                              </select>
+                            </div>
                           </div>
-                        </div>
-                        <div className="flex  items-center mb-1 ml-4">
-                          {/* <label
+                          <div className="flex  items-center mb-1 ml-4">
+                            {/* <label
                             className="inline-block text-black text-md dark:text-white"
                             htmlFor="status"
                           >
                             Page-Size:
                           </label> */}
 
-                          <select
-                            id="show"
-                            value={pageSize}
-                            onChange={(e) =>
-                              setPageSize(Number(e.target.value))
-                            }
-                            className="form-control"
-                          >
-                            <option selected={true}>Select page size</option>
-                            <option value={10}>10</option>
-                            <option value={25}>25</option>
-                            <option value={50}>50</option>
-                            <option value={100}>100</option>
-                          </select>
-                        </div>
+                            <select
+                              id="show"
+                              value={pageSize}
+                              onChange={(e) =>
+                                setPageSize(Number(e.target.value))
+                              }
+                              className="form-control"
+                            >
+                              <option selected={true}>Select page size</option>
+                              <option value={10}>10</option>
+                              <option value={25}>25</option>
+                              <option value={50}>50</option>
+                              <option value={100}>100</option>
+                            </select>
+                          </div>
 
-                        {/* <div className="flex justify-center items-center mb-1">
+                          {/* <div className="flex justify-center items-center mb-1">
                           <label
                             className="inline-block mb-2 text-black dark:text-white"
                             htmlFor="email"
@@ -342,40 +345,40 @@ function Employers() {
                             id="email"
                           />
                         </div> */}
-                      </div>
-                      {!loading && !error && organisations.length > 0 ? (
-                        <table className="min-w-full overflow-hidden divide-y divide-secondary-200 dark:divide-secondary-800 border text-sm dark:border-secondary-800">
-                          <thead>
-                            <tr className="bg-secondary-100 dark:bg-dark-bg">
-                              <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
-                                Name
-                              </th>
+                        </div>
+                        {!loading && !error && organisations.length > 0 ? (
+                          <table className="min-w-full overflow-hidden divide-y divide-secondary-200 dark:divide-secondary-800 border text-sm dark:border-secondary-800">
+                            <thead>
+                              <tr className="bg-secondary-100 dark:bg-dark-bg">
+                                <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                                  Name
+                                </th>
 
-                              <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
-                                Org Type
-                              </th>
-                              <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
-                                Address
-                              </th>
-                              <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
-                                Status
-                              </th>
-                              <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
-                                Reg No
-                              </th>
-                              <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
-                                Join Date
-                              </th>
-                              <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
-                                Action
-                              </th>
-                            </tr>
-                          </thead>
-                          <tbody className="divide-y divide-secondary-200 dark:divide-secondary-800">
-                            {organisations.map((orgData) => {
-                              return (
-                                <tr>
-                                  {/* <td className="px-6 py-4 whitespace-nowrap">
+                                <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                                  Org Type
+                                </th>
+                                <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                                  Address
+                                </th>
+                                <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                                  Status
+                                </th>
+                                <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                                  Reg No
+                                </th>
+                                <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                                  Join Date
+                                </th>
+                                <th className="px-6 py-4 text-left font-medium text-black dark:text-white">
+                                  Action
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-secondary-200 dark:divide-secondary-800">
+                              {organisations.map((orgData) => {
+                                return (
+                                  <tr>
+                                    {/* <td className="px-6 py-4 whitespace-nowrap">
                                   <a href="employerProfile">
                                     <img
                                       className="w-10 h-10 mr-3 text-primary-400 bg-primary-500/10 rounded-xl"
@@ -386,20 +389,20 @@ function Employers() {
                                   </a>
                                 </td> */}
 
-                                  <td className="px-6 py-4 whitespace-nowrap text-black dark:text-black">
-                                    {orgData.name}
-                                  </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-black dark:text-black">
+                                      {orgData.name}
+                                    </td>
 
-                                  <td className="px-6 py-4 whitespace-nowrap text-black dark:text-black">
-                                    {orgData.organisationTypeName}
-                                  </td>
-                                  <td className="px-6 py-4 whitespace-nowrap text-black dark:text-black">
-                                    {orgData.address}
-                                  </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-black dark:text-black">
+                                      {orgData.organisationTypeName}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-black dark:text-black">
+                                      {orgData.address}
+                                    </td>
 
-                                  <td className="px-6 py-4">
-                                    <span
-                                      className={`
+                                    <td className="px-6 py-4">
+                                      <span
+                                        className={`
                                     ${
                                       orgData.statusDisplay == "Active"
                                         ? "bg-success-500"
@@ -416,20 +419,77 @@ function Employers() {
                                         : ""
                                     }
                                     inline-block whitespace-nowrap px-2 py-1 text-xs text-center font-bold leading-none text-white rounded`}
-                                    >
-                                      {orgData.statusDisplay}
-                                    </span>
-                                  </td>
-                                  <td className="px-6 py-4 whitespace-nowrap text-black dark:text-black">
-                                    {orgData.registrationNumber}
-                                  </td>
-                                  <td className="px-6 py-4 whitespace-nowrap text-black dark:text-black">
-                                    {orgData.dateCreated.slice(0, 10)}
-                                  </td>
-                                  <td className="px-6 py-4">
-                                    <div className="flex items-center list-user-action">
-                                      {orgData.statusDisplay === "Pending" && (
-                                        <div>
+                                      >
+                                        {orgData.statusDisplay}
+                                      </span>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-black dark:text-black">
+                                      {orgData.registrationNumber}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-black dark:text-black">
+                                      {orgData.dateCreated.slice(0, 10)}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                      <div className="flex items-center list-user-action">
+                                        {orgData.statusDisplay ===
+                                          "Pending" && (
+                                          <div>
+                                            <button
+                                              className="btn btn-success btn-icon btn-sm mr-1"
+                                              type="button"
+                                              onClick={() =>
+                                                openApproveModal(
+                                                  orgData.organisationId
+                                                )
+                                              }
+                                              data-tp-toggle="tooltip"
+                                              data-tp-placement="top"
+                                              data-tp-title="Add"
+                                            >
+                                              <span className="btn-inner">
+                                                <Check />
+                                              </span>
+                                            </button>
+
+                                            <button
+                                              className="btn btn-danger btn-icon btn-sm mr-1"
+                                              type="button"
+                                              data-tp-toggle="tooltip"
+                                              data-tp-placement="top"
+                                              data-tp-title="Delete"
+                                              onClick={() =>
+                                                openRejectModal(
+                                                  orgData.organisationId
+                                                )
+                                              }
+                                            >
+                                              <span className="btn-inner">
+                                                <X />
+                                              </span>
+                                            </button>
+                                          </div>
+                                        )}
+                                        {orgData.statusDisplay === "Active" && (
+                                          <button
+                                            className="btn btn-warning btn-icon btn-sm mr-1"
+                                            type="button"
+                                            data-tp-toggle="tooltip"
+                                            data-tp-placement="top"
+                                            data-tp-title="Suspend"
+                                            onClick={() =>
+                                              openSuspendModal(
+                                                orgData.organisationId
+                                              )
+                                            }
+                                          >
+                                            <span className="btn-inner">
+                                              <AlertCircle />
+                                            </span>
+                                          </button>
+                                        )}
+
+                                        {orgData.statusDisplay ===
+                                          "Suspended" && (
                                           <button
                                             className="btn btn-success btn-icon btn-sm mr-1"
                                             type="button"
@@ -446,113 +506,69 @@ function Employers() {
                                               <Check />
                                             </span>
                                           </button>
-
-                                          <button
-                                            className="btn btn-danger btn-icon btn-sm mr-1"
-                                            type="button"
-                                            data-tp-toggle="tooltip"
-                                            data-tp-placement="top"
-                                            data-tp-title="Delete"
-                                            onClick={() =>
-                                              openRejectModal(
-                                                orgData.organisationId
-                                              )
-                                            }
-                                          >
-                                            <span className="btn-inner">
-                                              <X />
-                                            </span>
-                                          </button>
-                                        </div>
-                                      )}
-                                      {orgData.statusDisplay === "Active" && (
-                                        <button
-                                          className="btn btn-warning btn-icon btn-sm mr-1"
-                                          type="button"
-                                          data-tp-toggle="tooltip"
-                                          data-tp-placement="top"
-                                          data-tp-title="Suspend"
-                                          onClick={() =>
-                                            openSuspendModal(
-                                              orgData.organisationId
-                                            )
-                                          }
-                                        >
-                                          <span className="btn-inner">
-                                            <AlertCircle />
-                                          </span>
-                                        </button>
-                                      )}
-
-                                      {orgData.statusDisplay ===
-                                        "Suspended" && (
-                                        <button
-                                          className="btn btn-success btn-icon btn-sm mr-1"
-                                          type="button"
-                                          onClick={() =>
-                                            openApproveModal(
-                                              orgData.organisationId
-                                            )
-                                          }
-                                          data-tp-toggle="tooltip"
-                                          data-tp-placement="top"
-                                          data-tp-title="Add"
-                                        >
-                                          <span className="btn-inner">
-                                            <Check />
-                                          </span>
-                                        </button>
-                                      )}
-                                    </div>
-                                  </td>
-                                </tr>
-                              );
-                            })}
-                          </tbody>
-                        </table>
-                      ) : (
-                        <div className="text-center text-black dark:text-white mt-10 mb-10">
-                          No organisations found.
-                        </div>
-                      )}
-                      <div className="border dark:border-secondary-800">
-                        <div className="flex flex-wrap justify-between my-6 mx-5">
-                          <div className="flex justify-center items-center mb-1">
-                            <p className="text-black">
-                              Showing {start} to {end} of {totalCount} entries
-                            </p>
+                                        )}
+                                      </div>
+                                    </td>
+                                  </tr>
+                                );
+                              })}
+                            </tbody>
+                          </table>
+                        ) : (
+                          <div className="text-center text-black dark:text-white mt-10 mb-10">
+                            No organisations found.
                           </div>
+                        )}
+                        <div className="border dark:border-secondary-800">
+                          <div className="flex flex-wrap justify-between my-6 mx-5">
+                            <div className="flex justify-center items-center mb-1">
+                              <p className="text-black">
+                                Showing {start} to {end} of {totalCount} entries
+                              </p>
+                            </div>
 
-                          <div className="inline-flex flex-wrap">
-                            <button
-                              disabled={page === 1}
-                              onClick={() => setPage(page - 1)}
-                              className="border-t border-b border-l px-2 py-1 rounded-l disabled:opacity-50"
-                            >
-                              Previous
-                            </button>
+                            <div className="border dark:border-secondary-800">
+                              <div className="flex flex-wrap justify-between my-6 mx-5">
+                                <div className="flex justify-center items-center mb-1">
+                                  <p className="text-black">
+                                    Showing {start} to {end} of {totalCount}{" "}
+                                    entries
+                                  </p>
+                                </div>
 
-                            {[...Array(totalPages)].map((_, i) => (
-                              <button
-                                key={i}
-                                onClick={() => setPage(i + 1)}
-                                className={`border px-4 py-1 ${
-                                  page === i + 1
-                                    ? "bg-primary-500 text-white"
-                                    : "text-primary-500"
-                                }`}
-                              >
-                                {i + 1}
-                              </button>
-                            ))}
+                                <div className="inline-flex flex-wrap">
+                                  <button
+                                    disabled={page === 1}
+                                    onClick={() => setPage(page - 1)}
+                                    className="border-t border-b border-l px-2 py-1 rounded-l disabled:opacity-50"
+                                  >
+                                    Previous
+                                  </button>
 
-                            <button
-                              disabled={page === totalPages}
-                              onClick={() => setPage(page + 1)}
-                              className="border-t border-b border-r px-2 py-1 rounded-r disabled:opacity-50"
-                            >
-                              Next
-                            </button>
+                                  {[...Array(totalPages)].map((_, i) => (
+                                    <button
+                                      key={i}
+                                      onClick={() => setPage(i + 1)}
+                                      className={`border px-4 py-1 ${
+                                        page === i + 1
+                                          ? "bg-primary-500 text-white"
+                                          : "text-primary-500"
+                                      }`}
+                                    >
+                                      {i + 1}
+                                    </button>
+                                  ))}
+
+                                  <button
+                                    disabled={page === totalPages}
+                                    onClick={() => setPage(page + 1)}
+                                    className="border-t border-b border-r px-2 py-1 rounded-r disabled:opacity-50"
+                                  >
+                                    Next
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -562,7 +578,11 @@ function Employers() {
               </div>
             </div>
           </div>
-        </div>
+        ) : (
+          <div className="text-center text-black dark:text-white mt-0 mb-10">
+            No organizations found.
+          </div>
+        )}
       </div>
     </div>
   );

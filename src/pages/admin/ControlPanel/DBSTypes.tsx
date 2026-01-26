@@ -97,6 +97,7 @@ export default function DBSType() {
       formData.append("TypeName", data.TypeName);
       formData.append("TypeCost", String(data.TypeCost));
       formData.append("Description", data.Description);
+      // console.log("I got here")
       const res = await submitDbsType(formData);
       handleCreateEmployee(res, loader, text, { toast }, reset)
       .finally(async () => {

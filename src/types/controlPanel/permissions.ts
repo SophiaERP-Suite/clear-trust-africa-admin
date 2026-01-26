@@ -5,7 +5,7 @@ export interface CreatePermissionsDto {
 }
 
 export interface UpdatePermissionsDto {
-   name: string;
+  name: string;
   description?: string;
   organisationTypeId?: number;
 }

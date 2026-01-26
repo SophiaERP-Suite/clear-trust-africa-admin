@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
-import Modal from "../../utils/modal";
+
 import type { OrganisationTypeDto } from "../../../types/controlPanel/organisationType";
 import { Building, CheckCheck, Pen, Plus, Trash } from "lucide-react";
 import {
@@ -9,6 +9,7 @@ import {
   getAllOrganisationTypes,
   updateOrganisationType,
 } from "../../../api/orgTypeApi";
+import Modal from "../../../components/modal";
 
 type ModalType = "add" | "edit" | "delete" | null;
 
@@ -170,7 +171,9 @@ function OrganisationTypes() {
                     butonIcon={<CheckCheck />}
                     inputLabel="New OrganisationType Name"
                     inputPlaceholder="Enter OrganisationType Name..."
-                    onConfirm={handleNewOrganisationType}
+                    onConfirm={({ inputValue }) =>
+                      handleNewOrganisationType(inputValue)
+                    }
                     onCancel={closeModal}
                   />
 
@@ -199,7 +202,9 @@ function OrganisationTypes() {
                     headerIcon={<Building />}
                     butonIcon={<Pen />}
                     defaultInputValue={selectedOrganisationType?.name || ""}
-                    onConfirm={handleUpdateOrganisationType}
+                    onConfirm={({ inputValue }) =>
+                      handleUpdateOrganisationType(inputValue)
+                    }
                     onCancel={closeModal}
                   />
 

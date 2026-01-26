@@ -111,7 +111,7 @@ function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
           </div>
 
           <div className="nav-item static-item border-b">
-            <p className="nav-link static-item disabled">
+            <div className="nav-link static-item disabled">
               {isOpen ? (
                 <a
                   className="py-0 flex items-center p-2 ml-2 hover:text-primary-500 active:text-primary-500 focus:text-primary-500 focus"
@@ -136,7 +136,7 @@ function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
                   </span>
                 </a>
               )}
-            </p>
+            </div>
           </div>
 
           <div className="sidebar-body data-scrollbar mt-4">
@@ -200,7 +200,7 @@ function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
           <div className="sidebar-body data-scrollbar">
             <div className="nav-item static-item mb-2">
               <div className="nav-item static-item">
-                <p className="nav-link static-item disabled">
+                <div className="nav-link static-item disabled">
                   <a
                     className="py-0 flex items-center p-2 ml-2 hover:text-primary-500 active:text-primary-500 focus:text-primary-500 focus"
                     href="#"
@@ -217,7 +217,7 @@ function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
                       </span>
                     </div>
                   </a>
-                </p>
+                </div>
               </div>
               <ul className="sidebar-main-menu">
                 {navItems.map((item) => (

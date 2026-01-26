@@ -1,9 +1,6 @@
-// ChatPanel.tsx
 import { useState, useEffect, useRef } from "react";
 import { Send, Paperclip, Smile, Check, CheckCheck } from "lucide-react";
 import { type ChatMessage, type ChatParticipant, markMessagesAsRead, fetchIncidentChatMessages, fetchChatParticipants, sendChatMessage } from "../utils/Requests/IncidentRequests";
-
-
 
 interface ChatPanelProps {
   incidentReportId: number;

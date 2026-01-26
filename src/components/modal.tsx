@@ -21,13 +21,20 @@ type ModalProps = {
   defaultInputValue?: string;
   defaultInputValue2?: string;
   defaultDropdownValue?: string;
-  onConfirm: (
-    inputValue?: string,
-    inputValue2?: string,
-    dropdownValue?: string
-  ) => void;
+  onConfirm: (data: {
+    inputValue?: string;
+    inputValue2?: string;
+    dropdownValue?: string;
+  }) => void;
+
   onCancel: () => void;
 };
+
+interface ModalConfirmPayload {
+  inputValue?: string;
+  inputValue2?: string;
+  dropdownValue?: string;
+}
 
 const colorMap = {
   red: "btn-danger",
@@ -87,7 +94,7 @@ const Modal: React.FC<ModalProps> = ({
       />
 
       {/* Modal */}
-      <div className="relative z-10 w-5/6 md:max-w-md rounded-lg bg-white p-6 shadow-lg">
+      <div className="relative z-10 w-5/6 md:max-w-md rounded-md bg-white p-6 shadow-lg">
         <h2 className="text-lg font-semibold text-gray-800">
           {headerIcon} {title}
         </h2>
@@ -155,7 +162,13 @@ const Modal: React.FC<ModalProps> = ({
             <X /> {cancelText}
           </button>
           <button
-            onClick={() => onConfirm(inputValue, inputValue2, dropdownValue)}
+            onClick={() =>
+              onConfirm({
+                inputValue,
+                inputValue2,
+                dropdownValue,
+              })
+            }
             disabled={loading}
             className={`rounded px-4 py-2 text-sm text-white disabled:opacity-50 ${
               colorMap[confirmColor as keyof typeof colorMap]
