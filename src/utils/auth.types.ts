@@ -9,6 +9,12 @@ export interface User {
   organisationName: string;
   organisationType: string;
   roleScope: string;
+  tin: string;
+  registrationNumber: string;
+  organisationAddress: string;
+  dateOfBirth: string;
+  gender: string;
+  address: string;
 }
 
 export interface AuthData {

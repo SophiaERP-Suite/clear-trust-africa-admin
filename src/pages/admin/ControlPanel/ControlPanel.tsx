@@ -19,8 +19,9 @@ import {
   AlertTriangleIcon,
   OctagonAlertIcon,
   AlertCircleIcon,
+  ChevronRightIcon,
 } from "lucide-react";
-import { Link, useLocation, Routes, Route } from "react-router-dom";
+import { Link, useLocation, Routes, Route, NavLink } from "react-router-dom";
 
 import Overview from "./Overview";
 import Roles from "./Roles";
@@ -194,8 +195,10 @@ export default function ControlPanel() {
               <h3 className="mb-0 text-black text-2xl font-semibold">
                 Control Panel
               </h3>
-              <p className="text-black text-sm flex items-center gap-1">
-                Dashboard <ChevronRight size={14} /> Control Panel
+              <p className="text-secondary-600 text-black">
+                <NavLink to="/Dashboard">Dashboard</NavLink>{" "}
+                <ChevronRightIcon size={14} />{" "}
+                <NavLink to={location.pathname}>Control Panel</NavLink>{" "}
               </p>
             </div>
           </div>

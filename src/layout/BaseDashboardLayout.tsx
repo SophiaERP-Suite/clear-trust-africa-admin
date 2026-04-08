@@ -265,11 +265,13 @@ function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
                             <ArrowRight
                               size={18}
                               onClick={handleSideBarToggle}
+                              color="black"
                             />
                           ) : (
                             <ArrowLeft
                               size={18}
                               onClick={handleSideBarToggle}
+                              color="black"
                             />
                           )}
                         </small>
@@ -948,10 +950,7 @@ function BaseDashboardLayout({ navItems, title }: BaseDashboardLayoutProps) {
                                       </p>
                                       <ul className="py-2">
                                         <li className="w-full px-4 py-2 text-left rounded-md text-sm text-gray-700 hover:bg-gray-100">
-                                          <a>Organisation Profile</a>
-                                        </li>
-                                        <li className="w-full px-4 py-2 text-left rounded-md text-sm text-gray-700 hover:bg-gray-100">
-                                          <a>Settings</a>
+                                          <NavLink onClick={() => setOpen(!open)} to="/OrganizationProfile">Organisation Profile</NavLink>
                                         </li>
                                         <li className="w-full px-4 py-2 text-left rounded-md text-sm text-gray-700 hover:bg-gray-100">
                                           <button onClick={logout}>Logout</button>

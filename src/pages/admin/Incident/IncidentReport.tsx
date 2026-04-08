@@ -155,9 +155,9 @@ const statuses = [
 ]
 
 export default function IncidentReport() {
-  const { id } = useParams();
+  const { irid } = useParams();
   const hashIds = new Hashids('ClearTrustAfricaEncode', 10);
-  const hashedId = id ? Number(hashIds.decode(id)[0]) : 0;
+  const hashedId = irid ? Number(hashIds.decode(irid)[0]) : 0;
   const [accused, setAccused] = useState<EmployeeData | null>(null);
   const [incident, setIncident] = useState<IncidentReport | null>(null);
   const [incidentActionType, setIncidentActionType] = useState<IncidentType[]>([]);
@@ -732,7 +732,7 @@ export default function IncidentReport() {
                 <ChevronRightIcon size={14} />
                 <NavLink to="/IncidentMgt">Incident/Offence Management </NavLink>
                 <ChevronRightIcon size={14} />
-                <NavLink to={`/IncidentMgt/Report/${id}`}>Report Details</NavLink>{" "}
+                <NavLink to={`/IncidentMgt/Report/${irid}`}>Report Details</NavLink>{" "}
             </p>
             </div>
           </div>

@@ -113,14 +113,14 @@ const riskLevels: Record<number, string[]> = {
   3: ['High', 'bg-red-200/50', 'text-red-500'],
   2: ['Medium', 'bg-orange-200/50', 'text-orange-500'],
   1: ['Low', 'bg-yellow-200/50', 'text-yellow-500'],
-  0: ['No Risk', 'bg-green-200/50', 'text-green-500']
+  0: ['None', 'bg-green-200/50', 'text-green-500']
 }
 
 const riskLevels1: Record<string, string[]> = {
   'High': ['High', 'bg-red-200/50', 'text-red-500'],
   'Medium': ['Medium', 'bg-orange-200/50', 'text-orange-500'],
   'Low': ['Low', 'bg-yellow-200/50', 'text-yellow-500'],
-  'No Risk': ['No Risk', 'bg-green-200/50', 'text-green-500']
+  'None': ['No Risk', 'bg-green-200/50', 'text-green-500']
 }
 
 const maritalStatus: Record<number, string> = {
@@ -1461,7 +1461,7 @@ export default function DBSSearchModule() {
                         </td>
                         <td className="px-6 py-4">
                           <NavLink
-                            to={`/EmployeeProfile/${hashIds.encode(
+                            to={`/ApplicantsMgt/${hashIds.encode(
                               String(ir.accusedEmployeeId)
                             )}`}
                             className="flex w-50 items-center gap-3"

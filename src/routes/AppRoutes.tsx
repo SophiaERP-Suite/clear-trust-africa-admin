@@ -19,6 +19,8 @@ import DBSCertificate from "../pages/admin/Tracker/DBSCertificate";
 import PaymentReceipt from "../pages/admin/Payment/PaymentReceipt";
 import DBSSearchCompare from "../pages/admin/DBSSearch/DBSSearchCompare";
 import NPFProfileDetails from "../pages/admin/DBSSearch/NPFProfileDetails";
+import OrganizationProfile from "../pages/admin/Organisation/ProfileDetails";
+import IncidentReport from "../pages/admin/Incident/IncidentReport";
 
 function AppRoutes() {
   return (
@@ -43,12 +45,13 @@ function AppRoutes() {
         <Route path="IncidentMgt" element={<Incidents />} />
         <Route
           path="IncidentReportDetails/:irid"
-          element={<IncidentReportDetails />}
+          element={<IncidentReport />}
         />
         <Route path="FinanceMgt" element={<PaymentDashboard />} />
         <Route path="FinanceMgt/Receipt/:id" element={<PaymentReceipt />} />
         <Route path="Reports" element={<InvestigationPortal />} />
         <Route path="Communication" element={<CommunicationsPage />} />
+        <Route path="OrganizationProfile" element={<OrganizationProfile />} />
         <Route path="ControlPanel/*" element={<ControlPanel />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />

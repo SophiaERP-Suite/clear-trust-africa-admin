@@ -135,7 +135,7 @@ export default function IncidentDetails() {
     try {
       const token = localStorage.getItem("accessToken");
       const response = await fetch(
-        `http://localhost:5181/api/employer/IncidentReports/${originalId}`,
+        `http://192.168.1.178:5181/api/employer/IncidentReports/${originalId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -214,7 +214,7 @@ export default function IncidentDetails() {
 
       const token = localStorage.getItem("accessToken");
       const response = await fetch(
-        `http://localhost:5181/api/employer/IncidentEscalation/${organisationId}/${decoded}/register`,
+        `http://192.168.1.178:5181/api/employer/IncidentEscalation/${organisationId}/${decoded}/register`,
         {
           method: "POST",
           headers: {
@@ -609,7 +609,7 @@ export default function IncidentDetails() {
                       <div className="flex space-x-2">
                         <a
                           className="btn btn-success btn-sm flex items-center gap-2"
-                          href={`http://localhost:5181/${att.fileUrl}`}
+                          href={`http://192.168.1.178:5181/${att.fileUrl}`}
                           target="_blank"
                           rel="noopener noreferrer"
                         >

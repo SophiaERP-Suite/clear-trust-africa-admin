@@ -100,7 +100,7 @@ interface UserDocumentValues {
   userDocumentId: number;
   fileUrl: string;
   userDocumentType: string;
-  status: number;
+  status: string;
   dateCreated: string;
 }
 
@@ -1418,25 +1418,17 @@ export default function TrackerDetails() {
                                 <div className="p-2 border-2 rounded-xl mb-4" key={index} style={{ borderColor: '#7016d0' }}>
                                   <div className="flex justify-between items-center">
                                     <a className="mb-1 dark:text-white flex items-center gap-3 font-bold" href={data.fileUrl} target="_blank">
-                                      {
-                                          Number(data.userDocumentType) === 1 && 'International Passport'
-                                      }
-                                      {
-                                          Number(data.userDocumentType) === 2 && 'Identification Document'
-                                      }
-                                      {
-                                          Number(data.userDocumentType) === 3 && 'Police Certificate'
-                                      }
+                                      {data.userDocumentType}
                                       {" "}
                                     </a>
                                     {
-                                      Number(data.status) === 1 && <p className="w-15 text-sm font-light p-1 bg-orange-200 text-center rounded-lg">Pending</p>
+                                      data.status === 'Pending' && <p className="w-15 text-sm font-light p-1 bg-orange-200 text-center rounded-lg">Pending</p>
                                     }
                                     {
-                                      Number(data.status) === 2 && <p className="w-15 text-sm font-light p-1 bg-green-200 text-center rounded-lg">Verified</p>
+                                      data.status === 'Verified' && <p className="w-15 text-sm font-light p-1 bg-green-200 text-center rounded-lg">Verified</p>
                                     }
                                     {
-                                      Number(data.status) === 3 && <p className="w-15 text-sm font-light p-1 bg-red-200 text-center rounded-lg">Rejected</p>
+                                      data.status === 'Rejected' && <p className="w-15 text-sm font-light p-1 bg-red-200 text-center rounded-lg">Rejected</p>
                                     }
                                   </div>
                                   <div className="my-2">
@@ -1448,7 +1440,7 @@ export default function TrackerDetails() {
                                       <span>Uploaded On - {(new Date(data.dateCreated)).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
                                   </p>
                                   {
-                                    Number(data.status) === 1 && dbsDetails.status != 4 && (
+                                    data.status === 'Pending' && dbsDetails.status != 4 && (
                                       <div className="flex justify-end items-center gap-3 my-1">
                                         <Tippy content="Mark As Rejected">
                                           <button className="btn text-white btn-danger py-1 px-2" onClick={() => docStatusUpdate(3, data.userDocumentId)}>

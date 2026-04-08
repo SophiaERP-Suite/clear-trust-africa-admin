@@ -831,7 +831,7 @@ export default function DBSTrackerModule() {
                         </td>
                         <td className="px-6 py-4">
                           <NavLink
-                              to={`/EmployeeProfile/${hashIds.encode(
+                              to={`/ApplicantsMgt/${hashIds.encode(
                                 String(data.userId)
                               )}`}
                               className="flex w-50 items-center gap-3"
@@ -895,7 +895,7 @@ export default function DBSTrackerModule() {
                 {
                   dbsChecks1.length === 0 ?
                     <div className="py-4 whitespace-nowrap w-full">
-                          <span className="px-6 py-4 text-left font-medium text-black dark:text-white">There hasn't been any dbs checks</span>
+                          <span className="px-6 py-4 text-left font-medium text-black dark:text-white">There hasn't been any CTA checks</span>
                     </div> : <></>
                 }
               </div>
@@ -945,7 +945,7 @@ export default function DBSTrackerModule() {
               <AlertTriangle className="text-red-600 mt-1" size={24} />
               <div className="flex-1">
                 <h3 className="font-bold text-red-900 mb-2">
-                  Critical: Expired DBS Checks
+                  Critical: Expired CTA Checks
                 </h3>
                 <p className="text-red-700 mb-4">
                   {expiredCertificates.length} employee(s) have expired CTA checks and may

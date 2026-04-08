@@ -219,7 +219,7 @@ function Applicants() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <NavLink
-                            to={`/EmployeeProfile/${hashIds.encode(
+                            to={`/ApplicantsMgt/${hashIds.encode(
                               String(data.userId)
                             )}`}
                             className="flex items-center"
