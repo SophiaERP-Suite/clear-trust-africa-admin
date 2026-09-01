@@ -1,4 +1,4 @@
-const BaseURL = "http://localhost:5181";
+const BaseURL = "http://192.168.1.178:5181";
 
 export const getNotifications = async (recipientId: number) => {
   const token = localStorage.getItem("accessToken");

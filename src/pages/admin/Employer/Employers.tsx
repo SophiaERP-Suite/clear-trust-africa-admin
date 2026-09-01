@@ -267,7 +267,7 @@ function Employers() {
             Error: {error}
           </div>
         )}
-        {!loading && !error && organisations.length > 0 ? (
+        {!loading && !error ? (
           <div
             className="footer-inner mx-auto main-container container"
             x-bind:className="setting.page_layout"
@@ -432,7 +432,7 @@ function Employers() {
                                     <td className="px-6 py-4">
                                       <div className="flex items-center list-user-action">
                                         {orgData.statusDisplay ===
-                                          "Pending" && (
+                                          "Pending" && orgData.organisationTypeId !== 1 && (
                                           <div>
                                             <button
                                               className="btn btn-success btn-icon btn-sm mr-1"
@@ -469,7 +469,7 @@ function Employers() {
                                             </button>
                                           </div>
                                         )}
-                                        {orgData.statusDisplay === "Active" && (
+                                        {orgData.statusDisplay === "Active" && orgData.organisationTypeId !== 1 && (
                                           <button
                                             className="btn btn-warning btn-icon btn-sm mr-1"
                                             type="button"
@@ -489,7 +489,7 @@ function Employers() {
                                         )}
 
                                         {orgData.statusDisplay ===
-                                          "Suspended" && (
+                                          "Suspended" && orgData.organisationTypeId !== 1 && (
                                           <button
                                             className="btn btn-success btn-icon btn-sm mr-1"
                                             type="button"

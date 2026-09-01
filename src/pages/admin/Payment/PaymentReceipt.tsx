@@ -12,7 +12,7 @@ interface PaymentData {
   amount: number;
   currency: string;
   txRef: string;
-  status: number;
+  status: string;
   dateCreated: string;
 }
 
@@ -154,7 +154,7 @@ export default function PaymentReceipt() {
                         <div className="py-2 rounded-lg shadow-lg w-[794px] h-[1123px] min-w-[794px] relative" id="cta-certificate" style={{ backgroundColor: 'rgb(255, 255, 255)'}}>
                             <div className="absolute inset-0 bg-center bg-no-repeat bg-contain opacity-10"
                                 style={{
-                                    backgroundImage: "url('http://localhost:5173/xt/cta_adm/cleartrust_logo_mini.png')"
+                                    backgroundImage: "url('http://localhost:5174/xt/cta_adm/cleartrust_logo_mini.png')"
                                 }}
                             />
                             <div className="space-y-4 relative z-10">
@@ -170,7 +170,7 @@ export default function PaymentReceipt() {
                                     </div>
                                     <div className="max-w-[180px] border-l pl-4 pt-2 items-center">
                                         <img
-                                            src="http://localhost:5173/xt/cta_adm/src/assets2/img/cleartrust_logo.png"
+                                            src="http://localhost:5174/xt/cta_adm/src/assets2/img/cleartrust_logo.png"
                                             className="w-auto h-12 border-4 border-white mr-4"
                                             alt="profile-image"
                                         />
@@ -196,22 +196,22 @@ export default function PaymentReceipt() {
                                                 <p>{(new Date(payment.dateCreated)).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</p>
                                                 <b>Status:</b>
                                                 <Badge
-                                                    text={`${statusName[payment.status]}`}
+                                                    text={`${payment.status}`}
                                                     bgColor={
-                                                        payment.status == 2
+                                                        payment.status == 'Success'
                                                             ? 'rgb(209, 250, 229)'
-                                                            : payment.status == 1
+                                                            : payment.status == 'Pending'
                                                                 ? 'rgb(254, 243, 199)'
-                                                                : payment.status == 3
+                                                                : payment.status == 'Failed'
                                                                     ? 'rgb(254, 226, 226)'
                                                                     : 'rgb(232, 217, 242)'
                                                     }
                                                     textColor={
-                                                        payment.status == 2
+                                                        payment.status == 'Success'
                                                             ? 'rgb(4, 120, 87)'
-                                                            : payment.status == 1
+                                                            : payment.status == 'Pending'
                                                                 ? 'rgb(180, 83, 9)'
-                                                                : payment.status == 3
+                                                                : payment.status == 'Failed'
                                                                     ? 'rgb(185, 28, 28)'
                                                                     : 'rgb(163, 0, 255)'
                                                     }

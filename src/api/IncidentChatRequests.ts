@@ -19,7 +19,7 @@ export interface ChatParticipant {
 export const fetchIncidentChatMessages = async (incidentReportId: number): Promise<ChatMessage[]> => {
   const token = localStorage.getItem("accessToken");
   const response = await fetch(
-    `http://localhost:5181/api/employer/IncidentReports/${incidentReportId}/chat`,
+    `http://192.168.1.178:5181/api/employer/IncidentReports/${incidentReportId}/chat`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -37,7 +37,7 @@ export const sendChatMessage = async (
 ): Promise<ChatMessage> => {
   const token = localStorage.getItem("accessToken");
   const response = await fetch(
-    `http://localhost:5181/api/employer/IncidentReports/${incidentReportId}/chat`,
+    `http://192.168.1.178:5181/api/employer/IncidentReports/${incidentReportId}/chat`,
     {
       method: "POST",
       headers: {
@@ -55,7 +55,7 @@ export const sendChatMessage = async (
 export const markMessagesAsRead = async (incidentReportId: number): Promise<void> => {
   const token = localStorage.getItem("accessToken");
   await fetch(
-    `http://localhost:5181/api/employer/IncidentReports/${incidentReportId}/chat/read`,
+    `http://192.168.1.178:5181/api/employer/IncidentReports/${incidentReportId}/chat/read`,
     {
       method: "PUT",
       headers: {
@@ -68,7 +68,7 @@ export const markMessagesAsRead = async (incidentReportId: number): Promise<void
 export const fetchChatParticipants = async (incidentReportId: number): Promise<ChatParticipant[]> => {
   const token = localStorage.getItem("accessToken");
   const response = await fetch(
-    `http://localhost:5181/api/employer/IncidentReports/${incidentReportId}/chat/participants`,
+    `http://192.168.1.178:5181/api/employer/IncidentReports/${incidentReportId}/chat/participants`,
     {
       headers: {
         Authorization: `Bearer ${token}`,

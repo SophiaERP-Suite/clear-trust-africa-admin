@@ -39,7 +39,7 @@ interface PaymentData {
   amount: number;
   currency: string;
   txRef: string;
-  status: number;
+  status: string;
   dateCreated: string;
 }
 
@@ -49,23 +49,23 @@ interface FilterForm {
   EndDate: string;
 }
 
-const statusStyles: Record<number, string> = {
-  1: 'bg-orange-200/50',
-  2: 'bg-green-200/50',
+const statusStyles: Record<string, string> = {
+  'Pending': 'bg-orange-200/50',
+  'Success': 'bg-green-200/50',
   3: 'bg-red-200/50',
   4: 'bg-purple-200/50',
 };
 
-const statusTextStyles: Record<number, string> = {
-  1: 'text-orange-500',
-  2: 'text-green-500',
+const statusTextStyles: Record<string, string> = {
+  'Pending': 'text-orange-500',
+  'Success': 'text-green-500',
   3: 'text-red-500',
   4: 'text-purple-500',
 };
 
-const statusName: Record<number, string> = {
-  1: 'Pending',
-  2: 'Success',
+const statusName: Record<string, string> = {
+  'Pending': 'Pending',
+  'Success': 'Success',
   3: 'Failed',
   4: 'Reversed',
 };
@@ -144,7 +144,7 @@ function PaymentDashboard() {
             <p className="text-3xl font-semibold text-white mb-1">
               { `NGN ${(paymentStats ? paymentStats.totalAmount : 0).toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2})}` }
             </p>
-            <p className="text-sm text-white">All Payments So Far</p>
+            <p className="text-sm text-white">Total Revenue</p>
           </div>
         </div>
         <div
@@ -159,7 +159,7 @@ function PaymentDashboard() {
             <p className="text-3xl font-semibold text-white mb-1">
               { `NGN ${(paymentStats ? paymentStats.yearTotal : 0).toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2})}` }
             </p>
-            <p className="text-sm text-white">Payments This Year</p>
+            <p className="text-sm text-white">Revenue This Year</p>
           </div>
         </div>
         <div
@@ -174,7 +174,7 @@ function PaymentDashboard() {
             <p className="text-3xl font-semibold text-white mb-1">
               { `NGN ${(paymentStats ? paymentStats.monthTotal : 0).toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2})}` }
             </p>
-            <p className="text-sm text-white">Payments This Month</p>
+            <p className="text-sm text-white">Revenue This Month</p>
           </div>
         </div>
       </div>
@@ -284,7 +284,7 @@ function PaymentDashboard() {
                                 statusStyles[data.status] ?? 'bg-gray-200'
                               } ${statusTextStyles[data.status] ?? 'text-black'} font-bold`}
                             >
-                              {statusName[data.status]}
+                              {data.status}
                             </p>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">

@@ -8,7 +8,13 @@ export interface User {
   organisationId: number;
   organisationName: string;
   organisationType: string;
-  roleScope: number;
+  roleScope: string;
+  tin: string;
+  registrationNumber: string;
+  organisationAddress: string;
+  dateOfBirth: string;
+  gender: string;
+  address: string;
 }
 
 export interface AuthData {

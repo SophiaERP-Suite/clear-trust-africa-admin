@@ -464,7 +464,7 @@ export default function Incidents() {
                             <td className="px-6 py-4">
                               <div className="flex w-50 items-center gap-3">
                                 <NavLink
-                                  to={`/EmployeeProfile/${hashIds.encode(
+                                  to={`/ApplicantsMgt/${hashIds.encode(
                                     String(ir.accusedEmployeeId)
                                   )}`}
                                   className="flex w-50 items-center gap-3"
@@ -508,7 +508,7 @@ export default function Incidents() {
                             <td className="px-6 py-4 whitespace-nowrap  text-gray-900">
                               <div className="flex items-center list-user-action">
                                 <Tippy content='Preview Incident Report'>
-                                  <NavLink  to={`/IncidentMgt/Report/${hashIds.encode(ir.incidentReportId)}`}
+                                  <NavLink  to={`/IncidentReportDetails/${hashIds.encode(ir.incidentReportId)}`}
                                     className="btn btn-info btn-icon btn-sm mr-1"
                                   >
                                     <span className="btn-inner">

@@ -1,4 +1,4 @@
-const BaseURL = "http://localhost:5181";
+const BaseURL = "http://192.168.1.178:5181";
 
 export const fetchApplicants = async (pageNumber=1, limit=10) => {
   const token = localStorage.getItem('accessToken');
@@ -118,6 +118,18 @@ export const fetchStatesByCountryId = async (countryId: number) => {
 export const fetchCitiesByStateId = async (stateId: number) => {
   const token = localStorage.getItem('accessToken');
   const response = await fetch(`${BaseURL}/api/admin/City/${stateId}/GetAll`, {
+    method: 'GET',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  })
+  return response
+}
+
+export const fetchOrganizationAnalytics = async () => {
+  const token = localStorage.getItem('accessToken');
+  const url = `${BaseURL}/api/admin/Organisations/analytics`;
+  const response = await fetch(url, {
     method: 'GET',
     headers: {
       "Authorization": `Bearer ${token}`

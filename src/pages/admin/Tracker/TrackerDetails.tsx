@@ -100,7 +100,7 @@ interface UserDocumentValues {
   userDocumentId: number;
   fileUrl: string;
   userDocumentType: string;
-  status: number;
+  status: string;
   dateCreated: string;
 }
 
@@ -170,7 +170,7 @@ interface StageStatusData {
   dbsStageId: number;
   dbsStageName: string;
   dbsApplicationId: number;
-  status: number;
+  status: string;
   summary: string;
   finalStage: boolean;
   dateCreated: string;
@@ -184,10 +184,10 @@ const statusStyles: Record<number, string> = {
   5: 'bg-red-200/50',
 };
 
-const stageStatusStyles: Record<number, string> = {
-  1: 'bg-orange-200/50',
-  2: 'bg-blue-200/50',
-  3: 'bg-green-200/50',
+const stageStatusStyles: Record<string, string> = {
+  'InProgress': 'bg-orange-200/50',
+  'Completed': 'bg-blue-200/50',
+  'Approved': 'bg-green-200/50',
 };
 
 const statusTextStyles: Record<number, string> = {
@@ -198,16 +198,16 @@ const statusTextStyles: Record<number, string> = {
   5: 'text-red-500',
 };
 
-const stageStatusTextStyles: Record<number, string> = {
-  1: 'text-orange-500',
-  2: 'text-blue-500',
-  3: 'text-green-500',
+const stageStatusTextStyles: Record<string, string> = {
+  'InProgress': 'text-orange-500',
+  'Completed': 'text-blue-500',
+  'Approved': 'text-green-500',
 };
 
-const stageStatusTextValues: Record<number, string> = {
-  1: 'In Progress',
-  2: 'Completed - Awaiting Approval',
-  3: 'Approved',
+const stageStatusTextValues: Record<string, string> = {
+  'InProgress': 'In Progress',
+  'Completed': 'Completed - Awaiting Approval',
+  'Approved': 'Approved',
 };
 
 type ActivityFilterForm = {
@@ -306,6 +306,7 @@ export default function TrackerDetails() {
         if (res.status === 200) {
           res.json()
           .then(data => {
+            console.log('User', user)
             setDbsDetails(data.data.application);
             setCertificate(data.data.certificate);
           })
@@ -1256,19 +1257,19 @@ export default function TrackerDetails() {
                       {openMoreAction && (
                         <div className="absolute mt-2 top-8 right-2 w-60 bg-white border shadow-lg z-1">
                           {
-                            (user?.userId === dbsDetails.staffInChargeId || user?.userRole === "SuperAdmin") && user?.roleScope === 1 && user?.userRole.endsWith("Admin") && (
+                            (user?.userId === dbsDetails.staffInChargeId || user?.userRole === "SuperAdmin") && user?.roleScope === "Global" && user?.userRole.endsWith("Admin") && (
                               <button className="block w-full px-4 py-2 hover:bg-secondary-200 text-left text-black" onClick={() => { setStaffModalState(true); setOpenMoreAction(!openMoreAction); }}>
                                 <UserStar size={18} className="mr-2" /> Re-Assign To Staff
                               </button>
                             )
                           }
-                          {user?.roleScope === 1 && user?.userRole === "SuperAdmin" && !dbsDetails.adminId && (
+                          {user?.roleScope === "Global" && user?.userRole === "SuperAdmin" && !dbsDetails.adminId && (
                               <button className="block w-full px-4 py-2 hover:bg-secondary-200 text-left text-black" onClick={() => { setAdminModalState(true); setOpenMoreAction(!openMoreAction); }}>
                                 <UserCog size={18} className="mr-2" /> Assign Administrator
                               </button>
                             )
                           }
-                          {user?.roleScope === 1 && user?.userRole === "SuperAdmin" && dbsDetails.adminId && (
+                          {user?.roleScope === "Global" && user?.userRole === "SuperAdmin" && dbsDetails.adminId && (
                               <button className="block w-full px-4 py-2 hover:bg-secondary-200 text-left text-black" onClick={() => { setAdminModalState(true); setOpenMoreAction(!openMoreAction); }}>
                                 <UserCog size={18} className="mr-2" /> Re-Assign Administrator
                               </button>
@@ -1290,21 +1291,21 @@ export default function TrackerDetails() {
                           }
                           {
                             
-                            (dbsDetails.dbsStageAdminId == user?.userId || dbsDetails.staffInChargeId == user?.userId) && (!currentStageStatus || currentStageStatus.status == 1) && (
+                            (dbsDetails.dbsStageAdminId == user?.userId || dbsDetails.staffInChargeId == user?.userId) && (!currentStageStatus || currentStageStatus.status == 'InProgress') && (
                               <button className="block w-full px-4 py-2 hover:bg-secondary-200 text-left text-black" onClick={() => { setCompleteModalState(true); setOpenMoreAction(!openMoreAction); }}>
                                 <CircleCheckBig size={18} className="mr-2" /> Mark Stage Completed
                               </button>
                             )
                           }
                           {
-                            currentStageStatus && currentStageStatus.status == 2 && ((!currentStageStatus.finalStage && (dbsDetails.adminId == user?.userId || dbsDetails.dbsStageAdminId == user?.userId))) && (
+                            currentStageStatus && currentStageStatus.status == 'Completed' && ((!currentStageStatus.finalStage && (dbsDetails.adminId == user?.userId || dbsDetails.dbsStageAdminId == user?.userId))) && (
                             <button className="block w-full px-4 py-2 hover:bg-secondary-200 text-left text-black" onClick={() => { setApprovedModalState(true); setOpenMoreAction(!openMoreAction); }}>
                                 <SquareCheckBig size={18} className="mr-2" /> Mark Stage Approved
                               </button>
                             )
                           }
                           {
-                            currentStageStatus && currentStageStatus.status == 2 && ((currentStageStatus.finalStage && dbsDetails.adminId == user?.userId)) && (
+                            currentStageStatus && currentStageStatus.status == 'Completed' && ((currentStageStatus.finalStage && dbsDetails.adminId == user?.userId)) && (
                             <button className="block w-full px-4 py-2 hover:bg-secondary-200 text-left text-black" onClick={() => { markStageApproved(null); }}>
                                 <SquareCheckBig size={18} className="mr-2" /> Mark Stage Approved
                               </button>
@@ -1417,25 +1418,17 @@ export default function TrackerDetails() {
                                 <div className="p-2 border-2 rounded-xl mb-4" key={index} style={{ borderColor: '#7016d0' }}>
                                   <div className="flex justify-between items-center">
                                     <a className="mb-1 dark:text-white flex items-center gap-3 font-bold" href={data.fileUrl} target="_blank">
-                                      {
-                                          Number(data.userDocumentType) === 1 && 'International Passport'
-                                      }
-                                      {
-                                          Number(data.userDocumentType) === 2 && 'Identification Document'
-                                      }
-                                      {
-                                          Number(data.userDocumentType) === 3 && 'Police Certificate'
-                                      }
+                                      {data.userDocumentType}
                                       {" "}
                                     </a>
                                     {
-                                      Number(data.status) === 1 && <p className="w-15 text-sm font-light p-1 bg-orange-200 text-center rounded-lg">Pending</p>
+                                      data.status === 'Pending' && <p className="w-15 text-sm font-light p-1 bg-orange-200 text-center rounded-lg">Pending</p>
                                     }
                                     {
-                                      Number(data.status) === 2 && <p className="w-15 text-sm font-light p-1 bg-green-200 text-center rounded-lg">Verified</p>
+                                      data.status === 'Verified' && <p className="w-15 text-sm font-light p-1 bg-green-200 text-center rounded-lg">Verified</p>
                                     }
                                     {
-                                      Number(data.status) === 3 && <p className="w-15 text-sm font-light p-1 bg-red-200 text-center rounded-lg">Rejected</p>
+                                      data.status === 'Rejected' && <p className="w-15 text-sm font-light p-1 bg-red-200 text-center rounded-lg">Rejected</p>
                                     }
                                   </div>
                                   <div className="my-2">
@@ -1447,7 +1440,7 @@ export default function TrackerDetails() {
                                       <span>Uploaded On - {(new Date(data.dateCreated)).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
                                   </p>
                                   {
-                                    Number(data.status) === 1 && dbsDetails.status != 4 && (
+                                    data.status === 'Pending' && dbsDetails.status != 4 && (
                                       <div className="flex justify-end items-center gap-3 my-1">
                                         <Tippy content="Mark As Rejected">
                                           <button className="btn text-white btn-danger py-1 px-2" onClick={() => docStatusUpdate(3, data.userDocumentId)}>
@@ -1544,7 +1537,7 @@ export default function TrackerDetails() {
                         </div>
                         {
                           dbsDetails.status != 4 &&
-                          user?.roleScope === 1 &&
+                          user?.roleScope === "Global" &&
                           ( user?.userRole === 'SuperAdmin' ||
                             user?.userId === dbsDetails.adminId ||
                             user?.userId === dbsDetails.staffInChargeId
@@ -1688,7 +1681,7 @@ export default function TrackerDetails() {
                         </div>
                         {
                           dbsDetails.status != 4 &&
-                          user?.roleScope === 1 &&
+                          user?.roleScope === "Global" &&
                           ( user?.userRole === 'SuperAdmin' ||
                             user?.userId === dbsDetails.adminId ||
                             user?.userId === dbsDetails.staffInChargeId

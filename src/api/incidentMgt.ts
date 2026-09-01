@@ -1,7 +1,7 @@
 import type { IncidentReportDto } from "../types/controlPanel/IncidentReport";
 import api from "./axios";
 
-const BaseURL = "http://localhost:5181";
+const BaseURL = "http://192.168.1.178:5181";
 
 export const fetchIncidentReports = async (page: number, pageSize: number) => {
   const response = await api.get<IncidentReportDto[]>(
@@ -15,7 +15,7 @@ export const UpdateStatus = async (incidentReportId: number) => {
   const token = localStorage.getItem("accessToken");
 
   const response = await fetch(
-    `${BaseURL}  http://localhost:5181/api/employer/IncidentReports/${originalId}/updateStatus`,
+    `${BaseURL}  http://192.168.1.178:5181/api/employer/IncidentReports/${originalId}/updateStatus`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
