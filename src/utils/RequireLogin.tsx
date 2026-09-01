@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from './useAuth';
 import { fetchUser } from './Requests/AuthRequests';
-const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2IiwiZW1haWwiOiJpbmZvQGNsZWFydHJ1c3RhZnJpY2EuY29tIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiU3VwZXJBZG1pbiAtIEdsb2JhbCIsImp0aSI6ImE3MjliZDIyLWQ2YWQtNDA3NS05OTJkLWIxZWU3YzAxZDU5MSIsImV4cCI6MTc3NTkxMDczNCwiaXNzIjoiQ2xlYXJUcnVzdEFmcmljYSIsImF1ZCI6IkNsZWFyVHJ1c3RBZnJpY2FVc2VycyJ9.Wml5Yn2MWGA3k3v-GHRTOs632AtlFJdz-F-6iF_miYk";
+const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2IiwiZW1haWwiOiJpbmZvQGNsZWFydHJ1c3RhZnJpY2EuY29tIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiU3VwZXJBZG1pbiAtIEdsb2JhbCIsImp0aSI6ImIxZTIzMDJjLWU5NDEtNGQ2ZC1hZGQ0LTkyMmZjNWExMjU1ZiIsImV4cCI6MTc4ODYxNjE4NSwiaXNzIjoiQ2xlYXJUcnVzdEFmcmljYSIsImF1ZCI6IkNsZWFyVHJ1c3RBZnJpY2FVc2VycyJ9.fn39yJ5WBDIZrAhXg3N2z_9HgKLJeN6WULrRb3jpmEI";
 export const RequireLogin = ({ children }: { children: React.ReactNode }) => {
   const { user, loadUser } = useAuth();
   const [checkingAuth, setCheckingAuth] = useState(true);
@@ -10,7 +10,8 @@ export const RequireLogin = ({ children }: { children: React.ReactNode }) => {
 
     if (!token) {
       setCheckingAuth(false);
-      window.location.replace("http://localhost:5174/xt/login");
+      console.log("No Token")
+      // window.location.replace("http://localhost:5174/xt/login");
       return;
     }
 
@@ -33,7 +34,7 @@ export const RequireLogin = ({ children }: { children: React.ReactNode }) => {
       .catch((err) => {
         console.error(err);
         localStorage.removeItem("accessToken");
-        window.location.replace("http://localhost:5174/xt/login");
+        // window.location.replace("http://localhost:5174/xt/login");
       })
       .finally(() => {
         setCheckingAuth(false);

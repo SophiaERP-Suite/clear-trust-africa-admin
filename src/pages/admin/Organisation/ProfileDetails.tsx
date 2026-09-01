@@ -206,7 +206,7 @@ export default function OrganizationProfile() {
         user && (
           <div className="mx-auto">
             {/* Tabs */}
-            <div className="flex gap-1 bg-white p-1 rounded-lg border border-slate-200 mb-8 w-fit">
+            <div className="flex gap-1 bg-white p-1 rounded-lg border border-slate-200 mb-8 w-full overflow-y-auto">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
                 return (

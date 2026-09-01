@@ -7,26 +7,28 @@ import {
   AlertCircle,
   Plus,
   ChevronRightIcon,
-  Pen,
   SendHorizonal,
   AlarmCheckIcon,
+  X,
 } from "lucide-react";
-
+import Modal from 'react-modal';
 import { useAuth } from "../../../utils/useAuth";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from 'react-toastify';
 import {
   getConversations,
   getMessages,
   createMessage,
   createConversation,
+  type CreateConversationDto,
 } from "../../../api/MessagingRequest";
-import Modal from "../../../components/modal";
 import { formatMessageTime } from "../../../utils/dateUtils";
 import Loading from "../../utils/Loading";
 import type { OrganisationDto } from "../../../types/controlPanel/organisation";
 import { getEveryOrganisation } from "../../../api/adminApi";
 import { useNavigate } from "react-router-dom";
 import { getNotifications, readNotifications } from "../../../api/NotificationRequest";
+import { useForm } from "react-hook-form";
+import { handleCreateEmployee } from "../../../utils/ResponseHandlers/EmployeeResponse";
 
 type ModalType = "add" | "edit" | "delete" | null;
 
@@ -82,6 +84,8 @@ export default function CommunicationsPage() {
   const currentUserId = user?.userId;
   const [notifications, setNotifications] = useState<NotificationDto[]>();
   const [notificationCount, setNotificationCount] = useState<number | null>(0);
+  const [addModalState, setAddModalState] = useState(false);
+  const { register, formState: { isValid, errors }, reset, handleSubmit } = useForm<CreateConversationDto>();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -150,14 +154,6 @@ export default function CommunicationsPage() {
     }
   };
 
-  const openAddModal = () => {
-    setModalType("add");
-  };
-
-  const closeModal = () => {
-    setModalType(null);
-  };
-
   const handleSendMessage = async () => {
     try {
       const messagePayload = {
@@ -208,35 +204,25 @@ export default function CommunicationsPage() {
     }
   };
 
-  const handleCreateConversation = async (
-    inputValue?: string,
-    inputValue2?: string,
-  ) => {
-    try {
-      setLoading(true);
-      const conversationPayload = {
-        subject: inputValue || " ",
-        recipientId: 0,
-        messageBody: inputValue2 || " ",
-        organisationId: organisationId || 0,
-      };
-
-      const response = createConversation(conversationPayload);
-
-      if (!response) {
-        toast.error("Could not send message");
-        return;
+  const submitCreateConversation = async (data: CreateConversationDto) => {
+    if (isValid) {
+      const loader = document.getElementById('query-loader-2');
+      const text = document.getElementById('query-text-2');
+      if (loader) {
+        loader.style.display = 'flex';
       }
-
-      toast.success("Message sent");
-      await fetchConversations();
-      setModalType(null);
-    } catch (error: any) {
-      setError(error);
-    } finally {
-      setLoading(false);
+      if (text) {
+        text.style.display = 'none';
+      }
+      data.organisationId = organisationId ?? 0;
+      const res = await createConversation(data);
+      handleCreateEmployee(res, loader, text, { toast }, reset)
+      .finally(() => {
+        fetchConversations();
+        setAddModalState(false);
+      });
     }
-  };
+  }
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
@@ -287,34 +273,129 @@ export default function CommunicationsPage() {
       className="p-6 lg:p-8 footer-inner mx-auto main-container container"
       x-bind:className="setting.page_layout"
     >
-      <Modal
-        isOpen={modalType === "add"}
-        title="Start a conversation"
-        message=""
-        confirmText="Start"
-        confirmColor="green"
-        dropdownLabel="Select a recipient"
-        dropdownPlaceholder="Select a recipient"
-        dropdownOptions={organisations.map((emp) => ({
-          value: emp.organisationId,
-          label: `${emp.name}`,
-        }))}
-        inputLabel="Enter Message Subject"
-        inputPlaceholder="Enter subject here"
-        inputLabel2="Enter Message "
-        inputPlaceholder2="Enter message here"
-        loading={loading}
-        headerIcon={<Pen />}
-        butonIcon={<SendHorizonal />}
-        onConfirm={({
-          inputValue,
-          inputValue2,
-        }: {
-          inputValue?: string;
-          inputValue2?: string;
-        }) => handleCreateConversation(inputValue, inputValue2)}
-        onCancel={closeModal}
-      />
+      <ToastContainer />
+      <Modal isOpen={addModalState} onRequestClose={() => { setAddModalState(false); }}
+        style={{
+        content: {
+          width: 'fit-content',
+          height: 'fit-content',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          backgroundColor: 'rgb(255 255 255)',
+          borderRadius: '0.5rem',
+          boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)'
+        },
+        overlay: {
+          backgroundColor: 'rgba(255, 255, 255, 0.7)'
+        }
+      }}
+      >
+        
+        <div className="h-fit max-h-[70vh] overflow-y-auto  w-70 md:w-100">
+          <div className="flex justify-start">
+            <p className="font-semibold text-black py-1 text-lg"><MessageSquare size={20} className="mr-2" /> Start Conversation</p>
+          </div>
+          <form
+                onSubmit={handleSubmit(submitCreateConversation)}
+                noValidate
+              >
+            <div className="grid grid-cols-1 gap-x-8 gap-y-5 mt-2">
+              <div>
+                <label
+                  className="inline-block mb-2 text-black dark:text-white"
+                  htmlFor="email"
+                >
+                  Subject
+                </label>
+                <div>
+                  <input
+                    type="text"
+                    className="w-full h-10 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-black placeholder-secondary-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                      {
+                      ...register('subject', {
+                        required: 'Required'
+                      })
+                    }
+                    required
+                  />
+                  <p className='error-msg'>{errors.subject?.message}</p>
+                </div>
+              </div>
+              <div>
+                <label
+                  className="inline-block mb-2 text-black dark:text-white"
+                  htmlFor="email"
+                >
+                  Message Body
+                </label>
+                <div>
+                  <input
+                    type="text"
+                    className="w-full h-12 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-black placeholder-secondary-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                      {
+                      ...register('messageBody', {
+                        required: 'Required'
+                      })
+                    }
+                    required
+                  />
+                  <p className='error-msg'>{errors.messageBody?.message}</p>
+                </div>
+                <div>
+                  <label
+                    className="inline-block mb-2 text-black dark:text-white"
+                    htmlFor="email"
+                  >
+                    Select Recipient
+                  </label>
+                  <div>
+                    <select
+                      className="w-full h-12 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-black placeholder-secondary-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                      {
+                        ...register('recipientId', {
+                          required: 'Required',
+                          pattern: {
+                            value: /^(?!default$).+$/,
+                            message: 'Required'
+                          }
+                        })
+                      }
+                    >
+                      <option value="default">Select Recipient</option>
+                      {
+                        organisations.filter((data) => data.organisationId !== organisationId).map((data, index) => (
+                            <option value={data.organisationId} key={index}>{data.name}</option>
+                        ))
+                      }
+                    </select>
+                    <p className='error-msg'>{errors.recipientId?.message}</p>
+                  </div>
+                </div>
+                  
+              </div>
+            </div>
+            <hr className="mt-5" />
+            <div className="flex justify-end my-2 gap-2">
+              <button className="btn text-white bg-black" onClick={() => setAddModalState(false) }>
+                <X size={18} className="mr-2" />
+                Cancel
+              </button>
+              <button className="btn btn-success">
+                <div className="dots hidden" id="query-loader">
+                  <div className="dot"></div>
+                  <div className="dot"></div>
+                  <div className="dot"></div>
+                </div>
+                <span id="query-text">
+                  <SendHorizonal size={18} className="mr-2" />
+                  Send
+                </span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </Modal>
       {/* Header */}
       <div className="flex flex-wrap justify-between gap-4">
         <div className="col-md-12">
@@ -370,7 +451,7 @@ export default function CommunicationsPage() {
               <div className="p-4 border-b border-slate-200">
                 <button
                   className="btn-sm btn-success btn"
-                  onClick={() => openAddModal()}
+                  onClick={() => setAddModalState(true)}
                 >
                   <Plus size={15} /> New Conversation
                 </button>

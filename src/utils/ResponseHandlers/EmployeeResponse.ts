@@ -41,7 +41,7 @@ export const handleCreateEmployee = async (res: any, loader: HTMLElement | null,
     }
     if (res.status === 201 || res.status === 200) {
       const responseData: DataResponse = await res.json();
-      console.log(responseData);
+      console.log("The response", responseData);
       toast.success(responseData.message ?? msg);
       if (reset) {
         reset();
